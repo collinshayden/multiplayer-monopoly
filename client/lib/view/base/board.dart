@@ -32,9 +32,10 @@ class _BoardState extends State<Board> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
+    return const AspectRatio(
       aspectRatio: 1 / 1,
-      child: GridView.count(crossAxisCount: 10, children: [Placeholder()]),
+      child: Placeholder(),
+      // child: GridView.count(crossAxisCount: 10, children: [Placeholder()]),
     );
   }
 }
