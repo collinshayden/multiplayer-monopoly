@@ -13,7 +13,12 @@ import 'package:flutter/material.dart';
 /// it back to the client.
 
 void main() {
-  runApp(const Monopoly());
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Monopoly(),
+    ),
+  );
 }
 
 class Monopoly extends StatefulWidget {
@@ -26,6 +31,6 @@ class Monopoly extends StatefulWidget {
 class _MonopolyState extends State<Monopoly> {
   @override
   Widget build(BuildContext context) {
-    return const Background();
+    return const Scaffold(body: Background());
   }
 }

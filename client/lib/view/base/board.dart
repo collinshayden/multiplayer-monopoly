@@ -9,33 +9,25 @@ class Board extends StatefulWidget {
 }
 
 class _BoardState extends State<Board> {
-  late List<Tile> tiles;
-
-  @override
-  initState() {
-    super.initState();
-
-    tiles = List.generate(
-      40,
-      (index) {
-        return Tile();
-      },
-      growable: false,
-    );
-  }
-
-  @override
-  dispose() {
-    // ...
-    super.dispose();
-  }
+  late List<Widget> tiles = List.generate(
+    40,
+    (index) {
+      return Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Tile(index: index),
+      );
+    },
+    growable: false,
+  );
 
   @override
   Widget build(BuildContext context) {
-    return const AspectRatio(
+    return AspectRatio(
       aspectRatio: 1 / 1,
-      child: Placeholder(),
-      // child: GridView.count(crossAxisCount: 10, children: [Placeholder()]),
+      child: GridView.count(
+        crossAxisCount: 8,
+        children: tiles,
+      ),
     );
   }
 }

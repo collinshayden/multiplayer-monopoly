@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Tile extends StatefulWidget {
-  const Tile({super.key});
+  final int index;
+
+  const Tile({required this.index, super.key});
 
   @override
   State<Tile> createState() => _TileState();
@@ -14,6 +16,20 @@ class _TileState extends State<Tile> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(3.0)),
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: FittedBox(
+          child: Text(
+            'Tile ${widget.index + 1}',
+            style:
+                const TextStyle(fontFamily: 'Helvetica', color: Colors.black),
+          ),
+        ),
+      ),
+    );
   }
 }
