@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:client/view/base/background.dart';
 import 'package:client/view/base/tiles.dart';
 
 class Board extends StatefulWidget {
@@ -24,9 +25,14 @@ class _BoardState extends State<Board> {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1 / 1,
-      child: GridView.count(
-        crossAxisCount: 8,
-        children: tiles,
+      child: Stack(
+        children: [
+          const Background(),
+          GridView.count(
+            crossAxisCount: 8,
+            children: tiles,
+          ),
+        ],
       ),
     );
   }

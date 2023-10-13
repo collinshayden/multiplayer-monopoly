@@ -2,8 +2,8 @@
 /// Author: Alex Hall
 /// Date: 10/12/2023
 
-import 'package:client/view/base/background.dart';
 import 'package:flutter/material.dart';
+import 'package:client/view/base/board.dart';
 // import 'package:socket_io_client/socket_io_client.dart' as socket_io;
 
 /// This application demonstrates Socket.IO functionality, including connection,
@@ -16,21 +16,24 @@ void main() {
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Monopoly(),
+      home: MonopolyApp(),
     ),
   );
 }
 
-class Monopoly extends StatefulWidget {
-  const Monopoly({super.key});
+class MonopolyApp extends StatefulWidget {
+  const MonopolyApp({super.key});
 
   @override
-  State<Monopoly> createState() => _MonopolyState();
+  State<MonopolyApp> createState() => _MonopolyAppState();
 }
 
-class _MonopolyState extends State<Monopoly> {
+class _MonopolyAppState extends State<MonopolyApp> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Background());
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(body: Board()),
+    );
   }
 }
