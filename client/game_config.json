@@ -1,0 +1,312 @@
+{
+	"monetaryUnitName": "dollar",
+	"monetaryUnitSymbol": "$",
+	"propertyHexColors": [
+		"#955436",
+		"#AAE0FC",
+		"#DC3897",
+		"#F7941D",
+		"#ED1B24",
+		"#FEF102",
+		"#1FB25A",
+		"#0171BB"
+	],
+	"tileConfig": [
+		{
+			"_comment": "This tile configuration must contain exactly 40 items (not counting `_comment`) representing tiles, where each item must provide an `id` value and certain fields according to its position on the board. The `id` is unique and its value is an integer in the range [0, 39]."
+		},
+		{
+			"id": 0,
+			"upperText": [
+				"COLLECT",
+				"$200 SALARY",
+				"AS YOU PASS"
+			],
+			"goImage": "go_text.png",
+			"arrowImage": "go_arrow.png"
+		},
+		{
+			"id": 1,
+			"name": [
+				"MEDITER-",
+				"RANEAN",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 2,
+			"name": [
+				"COMMUNITY",
+				"CHEST"
+			],
+			"image": "community_chest.png"
+		},
+		{
+			"id": 3,
+			"name": [
+				"BALTIC",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 4,
+			"name": [
+				"INCOME",
+				"TAX"
+			],
+			"image": "income_tax.png",
+			"payCommandText": "PAY"
+		},
+		{
+			"id": 5,
+			"name": [
+				"READING",
+				"RAILROAD"
+			],
+			"image": "railroad.png"
+		},
+		{
+			"id": 6,
+			"name": [
+				"ORIENTAL",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 7,
+			"name": [
+				"CHANCE"
+			],
+			"image": "chance-1.png"
+		},
+		{
+			"id": 8,
+			"name": [
+				"VERMONT",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 9,
+			"name": [
+				"CONNECTICUT",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 10,
+			"upperText": ["IN"],
+			"image": "jail.png",
+			"lowerText": ["JAIL"],
+			"visitingText": ["JUST", "VISITING"]
+		},
+		{
+			"id": 11,
+			"name": [
+				"ST. CHARLES",
+				"PLACE"
+			]
+		},
+		{
+			"id": 12,
+			"name": [
+				"ELECTRIC",
+				"COMPANY"
+			]
+		},
+		{
+			"id": 13,
+			"name": [
+				"STATES",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 14,
+			"name": [
+				"VIRGINIA",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 15,
+			"name": [
+				"PENNSYLVANIA",
+				"RAILROAD"
+			],
+			"image": "railroad.png"
+		},
+		{
+			"id": 16,
+			"name": [
+				"ST. JAMES",
+				"PLACE"
+			]
+		},
+		{
+			"id": 17,
+			"name": [
+				"COMMUNITY",
+				"CHEST"
+			],
+			"image": "community_chest.png"
+		},
+		{
+			"id": 18,
+			"name": [
+				"TENNESSEE",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 19,
+			"name": [
+				"NEW YORK",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 20,
+			"upperText": ["FREE"],
+			"image": "free_parking.png",
+			"lowerText": ["PARKING"]
+		},
+		{
+			"id": 21,
+			"name": [
+				"KENTUCKY",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 22,
+			"name": [
+				"CHANCE"
+			],
+			"image": "chance-2.png"
+		},
+		{
+			"id": 23,
+			"name": [
+				"INDIANA",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 24,
+			"name": [
+				"ILLINOIS",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 25,
+			"name": [
+				"B. & O.",
+				"RAILROAD"
+			],
+			"image": "railroad.png"
+		},
+		{
+			"id": 26,
+			"name": [
+				"ATLANTIC",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 27,
+			"name": [
+				"VENTNOR",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 28,
+			"name": [
+				"WATER",
+				"WORKS"
+			]
+		},
+		{
+			"id": 29,
+			"name": [
+				"MARVIN",
+				"GARDENS"
+			]
+		},
+		{
+			"id": 30,
+			"upperText": ["GO TO"],
+			"image": "go_to_jail.png",
+			"lowerText": ["JAIL"]
+		},
+		{
+			"id": 31,
+			"name": [
+				"PACIFIC",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 32,
+			"name": [
+				"NORTH",
+				"CAROLINA",
+				"AVENUE"
+			]
+		},
+		{
+			"id": 33,
+			"name": [
+				"COMMUNITY",
+				"CHEST"
+			],
+			"image": "community_chest.png"
+		},
+		{
+			"id": 34,
+			"name": [
+				"PENNSYLVANIA",
+				"AVNEUE"
+			]
+		},
+		{
+			"id": 35,
+			"name": [
+				"SHORT",
+				"LINE"
+			],
+			"image": "railroad.png"
+		},
+		{
+			"id": 36,
+			"name": [
+				"CHANCE"
+			],
+			"image": "chance-3.png"
+		},
+		{
+			"id": 37,
+			"name": [
+				"PARK",
+				"PLACE"
+			]
+		},
+		{
+			"id": 38,
+			"name": [
+				"LUXURY",
+				"TAX"
+			],
+			"image": "luxury_tax.png",
+			"payCommandText": "PAY"
+		},
+		{
+			"id": 39,
+			"name": [
+				"BOARDWALK"
+			]
+		}
+	]
+}
