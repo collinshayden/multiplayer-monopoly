@@ -16,15 +16,31 @@ class PlayerData {
   PlayerData({required this.money, required this.location, required this.properties, required this.jail_card});
   int money;
   int location;
-  List properties;
+  Map<String, dynamic> properties;
   bool jail_card;
 
   factory PlayerData.fromJson(Map<String, dynamic> data) {
     int money = data['money'] as int;
     int location = data['money'] as int;
-    List? properties = data['properties'] as List?;
+    Map<String, dynamic> properties = data['properties'];
     bool? jail_card = data['jail_card'] as bool?;
-    return PlayerData(money: money, location: location, properties: properties ?? [], jail_card: jail_card ?? false);
+    return PlayerData(money: money, location: location, properties: properties, jail_card: jail_card ?? false);
+  }
+
+  void setMoney(int val) {
+    money = val;
+  }
+
+  void setLocation(int val) {
+    location = val;
+  }
+
+  // void setProperties(Map props) {
+  //   properties = props;
+  // }
+
+  void setJailCard(bool val) {
+    jail_card = val;
   }
 }
 

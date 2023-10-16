@@ -36,11 +36,14 @@ const jsonData = '''
   }
 ''';
 
-final playerInfo = readJson(jsonData);
+
 
 main() {
+  final playerInfo = readJson(jsonData);
   Map<int, PlayerData> player_data = {}; 
-  for (int i = 0; i < playerInfo.length; i++) {
-    player_data[i] = PlayerData.fromJson(playerInfo[i]);
+  for (int i = 1; i < playerInfo.length; i++) {
+    player_data[i] = PlayerData.fromJson(playerInfo["$i"]);
   }
+  print("${player_data}");
+  print('${playerInfo["1"]}');
 }
