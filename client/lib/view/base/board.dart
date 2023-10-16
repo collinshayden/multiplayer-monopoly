@@ -2,24 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:client/view/base/background.dart';
 import 'package:client/view/base/tiles.dart';
 
-class Board extends StatefulWidget {
+class Board extends StatelessWidget {
   const Board({super.key});
-
-  @override
-  State<Board> createState() => _BoardState();
-}
-
-class _BoardState extends State<Board> {
-  late List<Widget> tiles = List.generate(
-    40,
-    (index) {
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Tile(index: index),
-      );
-    },
-    growable: false,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +14,15 @@ class _BoardState extends State<Board> {
           const Background(),
           GridView.count(
             crossAxisCount: 8,
-            children: tiles,
+            children: [
+              PropertyTile(
+                id: 0,
+                size: Size(100, 100),
+                color: Colors.red,
+                name: 'GO',
+                price: 0,
+              ),
+            ],
           ),
         ],
       ),
