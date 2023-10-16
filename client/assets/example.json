@@ -1,0 +1,28 @@
+{
+    "1": {
+      "money": 1500,
+      "location": 20,
+      "properties": {
+        "tile_a": [
+          1,
+          0
+        ]
+      },
+      "jail_card": true
+    },
+    "2": {
+      "money": 2500,
+      "location": 5,
+      "properties": {
+        "tile_b": [
+          2,
+          0
+        ],
+        "tile_c": [
+          0,
+          1
+        ]
+      },
+      "jail_card": false
+    }
+  }
