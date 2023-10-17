@@ -13,36 +13,32 @@ readJson(String data) {
 }
 
 class PlayerData {
-  PlayerData({required this.money, required this.location, required this.properties, required this.jail_card});
-  int money;
-  int location;
-  Map<String, dynamic> properties;
-  bool jail_card;
+  PlayerData({this.money, this.location, this.properties, this.jail_card});
+  int? money;
+  int? location;
+  Map<String, dynamic>? properties;
+  bool? jail_card;
 
   factory PlayerData.fromJson(Map<String, dynamic> data) {
-    int money = data['money'] as int;
-    int location = data['money'] as int;
-    Map<String, dynamic> properties = data['properties'];
+    int? money = data['money'] as int;
+    int? location = data['money'] as int;
+    Map<String, dynamic>? properties = data['properties'];
     bool? jail_card = data['jail_card'] as bool?;
     return PlayerData(money: money, location: location, properties: properties, jail_card: jail_card ?? false);
-  }
+  } // end factory
+} // end PlayerData
 
-  void setMoney(int val) {
-    money = val;
-  }
+class PlayerDataManager {
+  PlayerDataManager({this.players});
+  Map<int, PlayerData>? players;
 
-  void setLocation(int val) {
-    location = val;
-  }
-
-  // void setProperties(Map props) {
-  //   properties = props;
-  // }
-
-  void setJailCard(bool val) {
-    jail_card = val;
-  }
-}
-
+  factory PlayerDataManager.fromJson(Map<String, dynamic> data) {
+    Map<int, PlayerData> players = {};
+    for (int i = 1; i <= data.length; i++) {
+      players[i] = PlayerData.fromJson(data["$i"]);
+    } // end for
+    return PlayerDataManager(players: players);
+  } // end factory
+} // end PlayerDataManager
 
 
