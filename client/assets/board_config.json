@@ -1,7 +1,6 @@
 {
-	"monetaryUnitName": "dollar",
-	"monetaryUnitSymbol": "$",
-	"propertyHexColors": [
+	"monetaryUnit": {"name": "dollar", "symbol": "$"},
+	"propertyColorsHex": [
 		"#955436",
 		"#AAE0FC",
 		"#DC3897",
@@ -19,7 +18,7 @@
 			"id": 0,
 			"upperText": [
 				"COLLECT",
-				"$200 SALARY",
+				"SALARY",
 				"AS YOU PASS"
 			],
 			"goImage": "go_text.png",
