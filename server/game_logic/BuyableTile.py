@@ -1,9 +1,13 @@
-# BuyableTile class
-# Created by Hayden Collins 
-# 2023/10/18
-import Player, Tile
+"""
+Description:    Class representing a buyable tile.
+Date:           10/18/2023
+Author:         Hayden Collins
+"""
+import Player
+import Tile
 
 class BuyableTile(Tile):
+
     def __init__(self, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None:
         self.owner = owner
         self.price = price

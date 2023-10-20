@@ -1,8 +1,12 @@
-# RailroadTile class
-# Created by Hayden Collins 
-# 2023/10/18
+"""
+Description:    Class representing a Railroad tile.
+Date:           10/18/2023
+Author:         Hayden Collins
+"""
 
-import BuyableTile, Player
+import BuyableTile
+import Player
+
 
 class RailroadTile(BuyableTile):
     def __init__(self, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None: 
@@ -10,9 +14,9 @@ class RailroadTile(BuyableTile):
         self.rent = 25
 
     # computes rent based on number of other railroads owned
-    def computeRent(self) -> int:
+    def compute_rent(self) -> int:
         return self.rent * self.computeGroupOwnership
     
     # return number of total railroads owned
-    def computeGroupOwnership(self) -> int:
+    def compute_group_ownership(self) -> int:
         pass

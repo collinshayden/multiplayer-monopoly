@@ -1,6 +1,8 @@
-# Player class
-# Created by Hayden Collins 
-# 2023/10/18
+"""
+Description:    Class representing the information for a player.
+Date:           10/18/2023
+Author:         Hayden Collins
+"""
 
 class Player:
     def __init__(self, player_id: int, display_name: str) -> None:
