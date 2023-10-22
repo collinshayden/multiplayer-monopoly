@@ -30,7 +30,7 @@ def register_player():
     if username is None:
         return jsonify({"registered": False})
     game.register_player(username)
-    return jsonify({"registered": True})
+    return jsonify(game.to_dict())
 
 
 @app.route("/game/roll_dice", methods=["GET"])
@@ -40,10 +40,11 @@ def roll_dice():
     return jsonify(game.to_dict())
 
 
+@app.route("/game/reset", methods=["GET"])
 def reset_game():
     global game
-    game = None
-
+    game = Game()
+    return jsonify(game.to_dict())
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
