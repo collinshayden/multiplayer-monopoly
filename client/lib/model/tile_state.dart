@@ -14,5 +14,5 @@ class TileState {
   factory TileState.fromJson(Map<String, dynamic> json) =>
       _$TileStateFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TileStateFromJson(this);
+  Map<String, dynamic> toJson() => _$TileStateToJson(this);
 }
