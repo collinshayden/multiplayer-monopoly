@@ -2,7 +2,7 @@ import 'dart:convert' as convert;
 import 'dart:convert';
 import 'dart:io';
 
-enum Action {
+enum GameActions {
   resetGame,
   registerPlayer,
   rollDice,
@@ -24,17 +24,17 @@ class EndpointManager {
   final port = 80;
   final client = HttpClient();
 
-  Future<Map<String, dynamic>> send(Action action,
+  Future<Map<String, dynamic>> send(GameActions action,
       Map<String, dynamic> parameters) async {
     var path;
 
     // Determine the endpoint path based on the enum
     switch (action) {
-      case Action.resetGame:
+      case GameActions.resetGame:
         path = "./game/reset";
-      case Action.registerPlayer:
+      case GameActions.registerPlayer:
         path = "./game/register_player";
-      case Action.rollDice:
+      case GameActions.rollDice:
         path = "/game/roll_dice";
     }
     final uri = Uri.http(host, path, parameters);
@@ -66,11 +66,11 @@ void main() async {
   print(gameState);
 
   print("Registering player!");
-  var serverResponse = await gameRequests.send(Action.registerPlayer,
+  var serverResponse = await gameRequests.send(GameActions.registerPlayer,
       {"username": "jordan"});
   print(serverResponse);
 
   print("Resetting game!");
-  serverResponse = await gameRequests.send(Action.resetGame, {});
+  serverResponse = await gameRequests.send(GameActions.resetGame, {});
   print(serverResponse);
 }
