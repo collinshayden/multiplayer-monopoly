@@ -8,11 +8,9 @@ import "../model/utils/endpoint.dart";
 
 import "package:json_annotation/json_annotation.dart";
 
-
-
 class GameController {
   GameController();
-  final EndpointController _endpointController = EndpointController();
+  final _endpoint = Endpoint();
 
   void rollDice() {
     //
@@ -20,4 +18,3 @@ class GameController {
     //update the game state
   }
 }
-
