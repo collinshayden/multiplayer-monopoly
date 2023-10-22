@@ -10,7 +10,7 @@ class Player:
         self.display_name = display_name
         self.money = 1500
         self.location = 0
-        self.roll_double_streaks = 0
+        self.doubles_streaks = 0
         self.jail_cards = 0
         self.turns_in_jail = 0
     
