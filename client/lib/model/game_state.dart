@@ -41,5 +41,4 @@ const jsonData = '''
 main() {
   final playerInfo = readJson(jsonData);
   PlayerDataManager manager = PlayerDataManager.fromJson(playerInfo);
-
 }
