@@ -4,7 +4,9 @@ Date:           10/18/2023
 Author:         Hayden Collins
 """
 
-import Player, Tile
+from .Player import Player
+from .Tile import Tile
+
 from random import randint
 
 class Game:

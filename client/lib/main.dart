@@ -2,9 +2,8 @@
 /// Author: Alex Hall
 /// Date: 10/12/2023
 
-import 'package:flutter/material.dart';
 import 'package:client/view/base/board.dart';
-// import 'package:socket_io_client/socket_io_client.dart' as socket_io;
+import 'package:flutter/material.dart';
 
 /// This application demonstrates Socket.IO functionality, including connection,
 /// connection error, disconnection, and a custom event handler. The user is

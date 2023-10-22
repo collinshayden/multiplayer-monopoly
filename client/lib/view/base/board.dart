@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:client/view/base/background.dart';
 import 'package:client/view/base/tiles.dart';
 
+List TILE_NAMES = [];
+
 class Board extends StatelessWidget {
   const Board({super.key});
 
@@ -20,6 +22,13 @@ class Board extends StatelessWidget {
                 size: Size(100, 100),
                 color: Colors.red,
                 name: 'GO',
+                price: 0,
+              ),
+              PropertyTile(
+                id: 1,
+                size: Size(100, 100),
+                color: Colors.brown,
+                name: 'Mediterranean Avenue',
                 price: 0,
               ),
             ],
