@@ -6,7 +6,6 @@ import "package:flutter/material.dart";
 
 import "../model/utils/endpoint.dart";
 
-
 // just defining as a string because I was having difficulty reading from json file
 const jsonData = '''
    {
@@ -24,13 +23,17 @@ const jsonData = '''
 ''';
 
 class PlayerData {
-  PlayerData({required this.playerID, this.displayName, this.money, this.location, this.jailCard});
+  PlayerData(
+      {required this.playerID,
+      this.displayName,
+      this.money,
+      this.location,
+      this.jailCard});
   int playerID;
   String? displayName;
   int? money;
   int? location;
   int? jailCard;
-
 } // end PlayerData
 
 class PlayerManager {
@@ -45,17 +48,16 @@ class PlayerManager {
 
   // overwrites player data from json
   void setPlayerData(Map<String, dynamic> data) {
-    PlayerData player = players[data["player_id"]]!; 
+    PlayerData player = players[data["player_id"]]!;
     player
-    ..displayName ??= data["displayName"]
-    ..money ??= data["money"]
-    ..location ??= data["location"]
-    ..jailCard ??= data["jail_card"];
+      ..displayName ??= data["displayName"]
+      ..money ??= data["money"]
+      ..location ??= data["location"]
+      ..jailCard ??= data["jail_card"];
   }
 } // end PlayerManager
 
-
 main() {
   final playerInfo = readJson(jsonData);
-
+  PlayerDataManager manager = PlayerDataManager.fromJson(playerInfo);
 }
