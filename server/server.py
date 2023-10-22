@@ -1,23 +1,25 @@
+"""
+Description:    Flask app running to handle HTTP requests managing the game state and communication across clients.
+Date:           10/06/23
+Author:         Jordan Bourdeau
+"""
+
+from constants import SECRET_KEY
+from game_logic.Game import Game
+
 from flask import Flask
-from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-app.secret_key = 'secret_key'
-socketio = SocketIO(app)
+app.secret_key = SECRET_KEY
 
-@socketio.on('connect')
-def handle_connect():
-    print('(Socket.IO) connect: Client connected.')
+game: Game = None
 
 
-@socketio.on('disconnect')
-def handle_disconnect():
-    print('(Socket.IO) disconnect: Client disconnected.')
+@app.route("/")
+def index():
+    if globals()['game'] is None:
+        globals()['game'] = Game()
 
-@socketio.on('custom_event')
-def handle_message(data: str):
-    print(f'(Socket.IO) custom_event: {data}')
-    emit('custom_event', data)  # Reflect back to client
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=5000)
+    app.run(debug=True, port=5000)
