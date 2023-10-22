@@ -41,7 +41,15 @@ class Game:
         pass
 
     def turn(self) -> None:
-        pass
+        dice = self.roll_dice()
+        if dice[0] == dice[1]:
+            self.players[self.active_player_id].doubles_streak += 1
+        if self.players[self.active_player_id].doubles_streak != 3:
+            self.move(dice[0] + dice[1])
+            if dice[0] == dice[1]:
+                self.turn()
+        self.players[self.active_player_id].doubles_streak = 0        
+        self.active_player_id += 1
 
     def mortage(self, tile: Tile) -> None:
         pass

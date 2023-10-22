@@ -4,12 +4,16 @@
 
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:client/model/game_state.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
-// temp function, TODO read from .json file (was having trouble)
-readJson(String data) {
-  return jsonDecode(data);
+
+// function to read json data
+Future<Map<String, dynamic>> readJson() async {
+  final file = await rootBundle.loadString('assets/playerdata.json');
+  final json = jsonDecode(file);
+  return json;
 }
 
 // endpoint class 
