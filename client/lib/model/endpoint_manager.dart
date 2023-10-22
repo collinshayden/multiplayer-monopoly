@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 
 enum Action {
+  registerPlayer,
   rollDice,
   // buyProperty,
   // mortgageProperty,
+  // unmortgageProperty,
   // drawChance,
   // drawCommunityChest,
   // getOutOfJail,
@@ -26,10 +28,11 @@ class EndpointManager {
 
     // Determine the endpoint path based on the enum
     switch (action) {
+      case Action.registerPlayer:
+        path = "./register_player";
       case Action.rollDice:
         path = "/roll_dice";
     }
-
     final uri = Uri.http(this.host, path, parameters);
     try {
       final request = await client.get(this.host, this.port, './');
@@ -37,7 +40,7 @@ class EndpointManager {
       final data = await response.transform(utf8.decoder).join();
       return data;
     } finally {
-        client.close();
+
     }
   }
 
@@ -50,13 +53,18 @@ class EndpointManager {
       final data = await response.transform(utf8.decoder).join();
       return jsonDecode(data);
     } finally {
-        client.close();
+
     }
   }
 }
 
 void main() async {
   var gameRequests = EndpointManager();
-  var data = await gameRequests.receive();
-  print(data);
+  var gameState = await gameRequests.receive();
+  print(gameState);
+  var serverResponse = gameRequests.send(Action.registerPlayer,
+      {"username": "jordan"});
+  print(serverResponse);
+  gameState = await gameRequests.receive();
+  print(gameState);
 }
