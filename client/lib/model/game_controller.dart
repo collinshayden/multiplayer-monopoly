@@ -4,13 +4,13 @@
 
 import "package:flutter/material.dart";
 
-import "../model/utils/endpoint.dart";
+import "endpoint_manager.dart";
 
 import "package:json_annotation/json_annotation.dart";
 
 class GameController {
   GameController();
-  final _endpoint = Endpoint();
+  final _endpoint = EndpointManager();
 
   void rollDice() {
     //

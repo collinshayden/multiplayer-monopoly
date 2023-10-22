@@ -1,8 +1,8 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+// import 'package:bloc/bloc.dart';
+// import 'package:meta/meta.dart';
 
-part 'game_state.dart';
+// part '../model/game_state.dart';
 
-class GameCubit extends Cubit<GameState> {
-  GameCubit() : super(GameInitial());
-}
+// class GameCubit extends Cubit<GameState> {
+//   GameCubit() : super(GameInitial());
+// }
