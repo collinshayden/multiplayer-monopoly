@@ -8,10 +8,12 @@ environment:
 
 dependencies:
   bloc: ^8.1.2
+  build_runner: ^2.4.6
   equatable: ^2.0.5
   flutter:
     sdk: flutter
-  http: ^1.1.0
+  json_annotation: ^4.8.1
+  json_serializable: ^6.7.1
   socket_io_client: ^2.0.3+1
 
 dev_dependencies:
@@ -23,3 +25,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/board_config.json
+    - assets/playerdata.json

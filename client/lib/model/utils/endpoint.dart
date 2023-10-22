@@ -4,10 +4,9 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:client/model/game_state.dart';
+import 'package:client/model/game_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-
 
 // function to read json data
 Future<Map<String, dynamic>> readJson() async {
@@ -16,9 +15,6 @@ Future<Map<String, dynamic>> readJson() async {
   return json;
 }
 
-// endpoint class 
+// endpoint class
 // read a .dart file with json information into a map
-// 
-
-
-
+class Endpoint {}
