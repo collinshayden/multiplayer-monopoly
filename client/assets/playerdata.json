@@ -1,0 +1,13 @@
+{
+    "1": {
+      "player_id": 1,
+      "money": 1500,
+      "location": 20,
+      "jail_card": 1
+    },
+    "2": {
+      "money": 2500,
+      "location": 5,
+      "jail_card": 0
+    }
+  }
