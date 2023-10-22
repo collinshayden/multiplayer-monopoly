@@ -13,13 +13,15 @@ class Player:
         self.doubles_streak = 0
         self.jail_cards = 0
         self.turns_in_jail = 0
+        self.active = True
     
     def to_dict(self) -> dict:
-        player_dict = {'playerId' : self.player_id,
-                       'displayName' : self.display_name,
-                       'money' : self.money,
-                       'location' : self.location,
-                       'doublesStreak' : self.doubles_streak,
-                       'jailCards' : self.jail_cards,
-                       'turnsInJail' : self.turns_in_jail}
+        player_dict = {'playerId': self.player_id,
+                       'displayName': self.display_name,
+                       'money': self.money,
+                       'location': self.location,
+                       'doublesStreak': self.doubles_streak,
+                       'jailCards': self.jail_cards,
+                       'turnsInJail': self.turns_in_jail,
+                       'active': self.active}
         return player_dict

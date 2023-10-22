@@ -19,8 +19,8 @@ deactivate
 Loading Silk App:
 ```
 silk app <hostname> load
-# Use this to load app for the first time
-silk app jbourde2.w3.uvm.edu load
+# Use this to load app for the first time and to reload
+silk app jbourde2.w3.uvm.edu/* load
 silk site jbourde2.w3.uvm.edu update
 ```
 
