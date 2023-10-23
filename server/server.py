@@ -46,5 +46,6 @@ def reset_game():
     game = Game()
     return jsonify(game.to_dict())
 
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
