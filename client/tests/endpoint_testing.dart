@@ -4,6 +4,9 @@
 
 import '../lib/model/endpoint_manager.dart';
 
+// to run this isolated .dart file in terminal:
+// navigate to client/tests/
+// run "dart endpoint_testing.dart" in terminal. 
 void main() async {
   print("Testing the server: sending requests and receiving data.");
   var gameRequests = EndpointManager();
