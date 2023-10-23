@@ -1,13 +1,9 @@
-
-import "../model/utils/endpoint.dart";
-
 import "package:json_annotation/json_annotation.dart";
 
 import 'player_state.dart';
 import 'tile_state.dart';
 
 part 'game_state.g.dart';
-
 
 @JsonSerializable(explicitToJson: true)
 class GameState {
