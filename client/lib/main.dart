@@ -4,6 +4,9 @@
 
 import 'package:client/view/base/board.dart';
 import 'package:flutter/material.dart';
+import 'cubit/game_manager_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:math';
 
 /// This application demonstrates Socket.IO functionality, including connection,
 /// connection error, disconnection, and a custom event handler. The user is
@@ -30,9 +33,33 @@ class MonopolyApp extends StatefulWidget {
 class _MonopolyAppState extends State<MonopolyApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: Board()),
+      home: Scaffold(
+        body: BlocProvider(
+          create: (context) => GameManagerCubit(),
+          child: Stack(
+            children: [
+              const Board(),
+              Center(
+                child: SizedBox.fromSize(
+                  size: const Size(100.0, 50.0),
+                  child: Column(
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          print('Rolling dice!');
+                        },
+                        child: const Text('Roll Dice!'),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
