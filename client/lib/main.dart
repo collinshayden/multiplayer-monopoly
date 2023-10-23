@@ -2,6 +2,7 @@
 /// Author: Alex Hall
 /// Date: 10/12/2023
 
+import 'package:client/model/endpoint_manager.dart';
 import 'package:client/view/base/board.dart';
 import 'package:flutter/material.dart';
 import 'cubit/game_manager_cubit.dart';
@@ -31,6 +32,7 @@ class MonopolyApp extends StatefulWidget {
 }
 
 class _MonopolyAppState extends State<MonopolyApp> {
+  EndpointManager endpointManager = EndpointManager();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,6 +50,7 @@ class _MonopolyAppState extends State<MonopolyApp> {
                     children: [
                       TextButton(
                         onPressed: () {
+                          endpointManager.send(GameActions.rollDice, {});
                           print('Rolling dice!');
                         },
                         child: const Text('Roll Dice!'),
