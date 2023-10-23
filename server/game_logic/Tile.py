@@ -6,5 +6,10 @@ Author:         Hayden Collins
 
 
 class Tile:
+
     def __init__(self) -> None:
+        """
+        Description:    Class representing a Tile on the board.
+        :returns:       None.
+        """
         pass
