@@ -1,7 +1,12 @@
+/// Managing game state data
+/// Author: Jordan Bourdeau
+/// Date: 10/22/2023
+
 import 'dart:convert' as convert;
 import 'dart:convert';
 import 'dart:io';
 
+// enum of possible Actions to be passed in the send() method.
 enum GameActions {
   resetGame,
   registerPlayer,
@@ -26,6 +31,8 @@ class EndpointManager {
 
   Future<Map<String, dynamic>> send(
       GameActions action, Map<String, dynamic> parameters) async {
+    // sends a request to the Flask server, specifying the type of action and parameters.
+    //For resetGame and rollDice, no parameters are needed (pass empty map)
     var path;
 
     // Determine the endpoint path based on the enum
@@ -60,7 +67,7 @@ class EndpointManager {
 }
 
 void main() async {
-  print("Testing the server: sending requests and receiving data."); 
+  print("Testing the server: sending requests and receiving data.");
   var gameRequests = EndpointManager();
   print("\nStarting game!");
   var gameState = await gameRequests.receive();
@@ -73,7 +80,8 @@ void main() async {
 
   print("\nRequesting a dice roll!");
   serverResponse = await gameRequests.send(GameActions.rollDice, {});
-  print("\nDie 1: ${serverResponse['die_1']}. Die 2: ${serverResponse['die_2']}");
+  print(
+      "\nDie 1: ${serverResponse['die_1']}. Die 2: ${serverResponse['die_2']}");
 
   print("\nResetting game!");
   serverResponse = await gameRequests.send(GameActions.resetGame, {});
