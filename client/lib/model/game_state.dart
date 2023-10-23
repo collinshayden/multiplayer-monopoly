@@ -19,6 +19,9 @@ class GameState {
     required this.tiles,
   });
 
+  factory GameState.initial() =>
+      GameState(activePlayerId: 0, players: {}, lastRoll: [], tiles: {});
+
   factory GameState.fromJson(Map<String, dynamic> json) =>
       _$GameStateFromJson(json);
 
