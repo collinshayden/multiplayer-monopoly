@@ -24,8 +24,8 @@ class EndpointManager {
   final port = 80;
   final client = HttpClient();
 
-  Future<Map<String, dynamic>> send(GameActions action,
-      Map<String, dynamic> parameters) async {
+  Future<Map<String, dynamic>> send(
+      GameActions action, Map<String, dynamic> parameters) async {
     var path;
 
     // Determine the endpoint path based on the enum
@@ -38,11 +38,11 @@ class EndpointManager {
         path = "/game/roll_dice";
     }
     final uri = Uri.http(host, path, parameters);
-    try {                                                        
-      final request = await client.getUrl(uri);                  
-      final response = await request.close();                    
+    try {
+      final request = await client.getUrl(uri);
+      final response = await request.close();
       final data = await response.transform(utf8.decoder).join();
-      return jsonDecode(data);                                   
+      return jsonDecode(data);
     } finally {}
   }
 
@@ -60,17 +60,22 @@ class EndpointManager {
 }
 
 void main() async {
+  print("Testing the server: sending requests and receiving data."); 
   var gameRequests = EndpointManager();
-  print("Starting game!");
+  print("\nStarting game!");
   var gameState = await gameRequests.receive();
   print(gameState);
 
-  print("Registering player!");
-  var serverResponse = await gameRequests.send(GameActions.registerPlayer,
-      {"username": "jordan"});
+  print("\nRegistering player!");
+  var serverResponse = await gameRequests
+      .send(GameActions.registerPlayer, {"username": "jordan"});
   print(serverResponse);
 
-  print("Resetting game!");
+  print("\nRequesting a dice roll!");
+  serverResponse = await gameRequests.send(GameActions.rollDice, {});
+  print("\nDie 1: ${serverResponse['die_1']}. Die 2: ${serverResponse['die_2']}");
+
+  print("\nResetting game!");
   serverResponse = await gameRequests.send(GameActions.resetGame, {});
   print(serverResponse);
 }
