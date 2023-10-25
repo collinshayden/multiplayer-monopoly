@@ -5,8 +5,8 @@ Author:         Jordan Bourdeau
 """
 
 from game_logic.constants import SECRET_KEY
-from game_logic.Game import Game
-from game_logic.Player import Player
+from game_logic.game import Game
+from game_logic.player import Player
 from game_logic.types import CardType, JailMethod
 
 from flask import Flask, jsonify, request
@@ -38,11 +38,15 @@ def register_player():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    username: str = request.args.get("username")
-    if username is None:
+
+    try:
+        username: str = request.args.get("username")
+    # No query parameters passed in
+    except AttributeError as e:
         return jsonify({"registered": False})
+
     """
-    Does the following:
+    Checks that the total number of players is under the limit (8) then does the following:
         1) Creates a new player with a given username and adds it to the list of players.
         2) Generates a random, unique, 16 character hex ascii code for the player ID if they are added.
             -> This id is how the player will authenticate future requests.
@@ -63,7 +67,12 @@ def roll_dice():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
+    try:
+        player_id: str = request.args.get("playerId").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+
     """
     Does the following:
         1) Does the player ID correspond to a valid, active player?
@@ -86,8 +95,16 @@ def draw_card():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
-    match request.args.get("cardType").lower():
+
+    try:
+        player_id: str = request.args.get("playerId").lower()
+        card_arg: str = request.args.get("cardType").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+        card_arg: str = ""
+
+    match card_arg:
         case "chance":
             card_type: CardType = CardType.CHANCE
         case "communityChest":
@@ -109,16 +126,22 @@ def draw_card():
     return jsonify(state)
 
 
-@app.route("/game/purchase_property")
-def purchase_property():
+@app.route("/game/buy_property")
+def buy_property():
     """
     Description:    Endpoint which will take a property being purchased and compute game state based on the current
                     state.
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
-    property: str = request.args.get("property")
+    try:
+        player_id: str = request.args.get("playerId").lower()
+        property: str = request.args.get("property").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+        property: str = ""
+
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
@@ -127,7 +150,7 @@ def purchase_property():
         4) Does the player have the funds to purchase the property?
     If the answers are all yes, the game will give ownership of the tile to the player and subtract their funds.
     """
-    success: bool = game.purchase_property(player_id=player_id, property=property)
+    success: bool = game.buy_property(player_id=player_id, property=property)
     state: dict = game.to_dict()
     state["event"] = "transaction"
     state["success"] = success
@@ -141,9 +164,16 @@ def buy_improvements():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
-    property: str = request.args.get("property")
-    amount: int = int(request.args.get("amount"))
+    try:
+        player_id: str = request.args.get("playerId").lower()
+        property: str = request.args.get("property").lower()
+        amount: int = int(request.args.get("amount"))
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+        property: str = ""
+        amount: int = 0
+
     """ 
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
@@ -168,9 +198,16 @@ def sell_improvements():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
-    property: str = request.args.get("property")
-    amount: int = int(request.args.get("amount"))
+    try:
+        player_id: str = request.args.get("playerId").lower()
+        property: str = request.args.get("property").lower()
+        amount: int = int(request.args.get("amount"))
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+        property: str = ""
+        amount: int = 0
+
     """ 
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
@@ -194,8 +231,14 @@ def mortgage():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
-    property: str = request.args.get("property")
+    try:
+        player_id: str = request.args.get("playerId").lower()
+        property: str = request.args.get("property").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+        property: str = ""
+
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
@@ -218,8 +261,14 @@ def unmortgage():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
-    property: str = request.args.get("property")
+    try:
+        player_id: str = request.args.get("playerId").lower()
+        property: str = request.args.get("property").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+        property: str = ""
+
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
@@ -239,12 +288,19 @@ def unmortgage():
 @app.route("/game/get_out_of_jail")
 def get_out_of_jail():
     """
-    Description:
+    Description:    Endpoint for requesting to get out of jail.
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
-    match request.args.get("method").lower():
+    try:
+        player_id: str = request.args.get("playerId").lower()
+        method_arg: str = request.args.get("method").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+        method_arg: str = ""
+
+    match method_arg:
         case "doubles":
             method: JailMethod = JailMethod.DOUBLES
         case "money":
@@ -253,6 +309,7 @@ def get_out_of_jail():
             method: JailMethod = JailMethod.CARD
         case _:
             method: JailMethod = JailMethod.INVALID
+
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
@@ -262,46 +319,60 @@ def get_out_of_jail():
         5) If the player is getting out with money, do they have the funds to do so?
     If the answers are all yes, the game will free the player from jail.
     """
-    game.get_out_of_jail(player_id=player_id, method=method)
+    success: bool = game.get_out_of_jail(player_id=player_id, method=method)
     state: dict = game.to_dict()
     state["event"] = "getOutOfJail"
+    state["success"] = success
     return jsonify(state)
 
 
 @app.route("/game/end_turn")
 def end_turn():
     """
-    Description:
+    Description:    Endpoint for a player requesting to end their turn.
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
+    try:
+        player_id: str = request.args.get("playerId").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
     If so, end the player's turn.
     """
-    game.end_turn(player_id=player_id)
+    success: bool = game.end_turn(player_id=player_id)
     state: dict = game.to_dict()
     state["event"] = "turnEnd"
+    state["success"] = success
     return jsonify(state)
 
 
 @app.route("/game/reset", methods=["GET"])
-def reset_game():
+def reset():
     """
     Description:    Endpoint used for resetting a game and clearing all associated state.
     :return:        Returns json-formatted data with the cleared game state.
     """
     global game
-    player_id: str = request.args.get("playerId")
+    try:
+        player_id: str = request.args.get("playerId").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        pass
+
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
     If the request was from a valid and active player, then it will reset the game.
     """
-    game.reset(player_id=player_id)
-    return jsonify(game.to_dict())
+    success: bool = game.reset(player_id=player_id)
+    state: dict = game.to_dict()
+    state["success"] = success
+    return jsonify(state)
 
 
 if __name__ == '__main__':

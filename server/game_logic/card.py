@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/22/2023
 """
 
-from .Player import Player
+from .player import Player
 
 
 class Card:

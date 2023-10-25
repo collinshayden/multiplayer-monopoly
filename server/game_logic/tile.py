@@ -1,7 +1,7 @@
 """
 Description:    Class representing a tile on the game board.
 Date:           10/18/2023
-Author:         Hayden Collins
+Author:         Jordan Bourdeau, Hayden Collins
 """
 
 

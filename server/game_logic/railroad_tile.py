@@ -1,11 +1,11 @@
 """
 Description:    Class representing a Railroad tile.
 Date:           10/18/2023
-Author:         Hayden Collins
+Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .BuyableTile import BuyableTile
-from .Player import Player
+from .buyable_tile import BuyableTile
+from .player import Player
 
 
 class RailroadTile(BuyableTile):

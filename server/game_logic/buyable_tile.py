@@ -1,10 +1,10 @@
 """
 Description:    Class representing a buyable tile.
 Date:           10/18/2023
-Author:         Hayden Collins
+Author:         Jordan Bourdeau, Hayden Collins
 """
-from .Player import Player
-from .Tile import Tile
+from .player import Player
+from .tile import Tile
 
 
 class BuyableTile(Tile):
@@ -27,9 +27,9 @@ class BuyableTile(Tile):
 
     def compute_rent(self, dice_roll: int = None) -> int:
         """
-        Description:    Method for computing rent for a set of properties.
-        :dice_roll:     Int value for the overall dice roll.
-        :return:        Integer value for rent cost.
+        Description:        Method for computing rent for a set of properties.
+        :param dice_roll:   Int value for the overall dice roll.
+        :return:            Integer value for rent cost.
         """
         pass
 
@@ -40,3 +40,14 @@ class BuyableTile(Tile):
         :return:        Return type depends on subclass type.
         """
         pass
+
+    # TODO: Add additional implementation to this when the improvements are also kept track of.
+    def compute_worth(self) -> int:
+        """
+        Description:    Method used to compute the value of a buyable tile by summing up the cost of selling all
+                        improvements and mortgaging it.
+        :return:        Sum worth of a property.
+        """
+        improvement_values: int = 0
+        # TODO: Update this section with improvement values
+        return 0 if self.is_mortaged else self.mortage_price + improvement_values
