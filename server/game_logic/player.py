@@ -11,15 +11,15 @@ from random import randint
 
 
 class Player:
-    def __init__(self, player_id: str, display_name: str) -> None:
+    def __init__(self, player_id: str, username: str) -> None:
         from .buyable_tile import BuyableTile
         """
         Description:            Class representing a Player.
         :param player_id:       Unique 16-character ID generated from Game class
-        :param display_name:    Display name/username
+        :param username:    Display name/username
         """
         self.player_id: str = player_id
-        self.display_name: str = display_name
+        self.username: str = username
 
         # State variables
         self.properties: list[BuyableTile] = []
@@ -177,7 +177,7 @@ class Player:
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        player_dict = {"displayName": self.display_name,
+        player_dict = {"displayName": self.username,
                        "money": self.money,
                        "location": self.location,
                        "doublesStreak": self.doubles_streak,

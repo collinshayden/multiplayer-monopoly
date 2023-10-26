@@ -4,14 +4,192 @@ Author:         Jordan Bourdeau
 Date:           10/24/23
 """
 
+from ..game_logic.constants import MAX_NUM_PLAYERS, PLAYER_ID_LENGTH, STARTING_MONEY
 from ..game_logic.game import Game
+from ..game_logic.types import PlayerStatus
 
 import unittest
 
 
 class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)  # add assertion here
+
+    """ Test Exposed API Methods """
+
+    def test_start_game(self):
+        game: Game = Game()
+        # Can't start game with no players and without valid player ID
+        self.assertFalse(game.start_game(""))
+        id1: str = game.register_player("test1")
+        # Valid id but not enough players
+        self.assertFalse(game.start_game(id1))
+        id2: str = game.register_player("test2")
+        # Valid number of players but invalid ID
+        self.assertFalse(game.start_game(""))
+        # Valid start
+        self.assertTrue(game.start_game(id1))
+
+        # Verify it creates a turn order with the 2 ids and sets active player id and idx
+        self.assertEqual(2, len(game.turn_order))
+        self.assertEqual(0, game.active_player_idx)
+        self.assertEqual(game.turn_order[0], game.active_player_id)
+
+        # Can't start game again while it is still running
+        self.assertFalse(game.start_game(id1))
+        self.assertFalse(game.start_game(id2))
+
+    def test_register_player(self):
+        game: Game = Game()
+        self.assertEqual(0, len(game.players))
+        # Verify up to the maximum number of players can be added
+        for i in range(1, MAX_NUM_PLAYERS + 1):
+            username: str = f"test{i}"
+            id: str = game.register_player(username)
+            self.assertEqual(PLAYER_ID_LENGTH, len(id))
+            self.assertEqual(i, len(game.players))
+            self.assertEqual(username, game.players[id].username)
+            self.assertEqual(id, game.players[id].player_id)
+        # Can't register a player beyond the maximum
+        username = f"test{MAX_NUM_PLAYERS + 1}"
+        id = game.register_player(username)
+        self.assertTrue(id == "")
+        self.assertEqual(MAX_NUM_PLAYERS, len(game.players))
+
+    def test_roll_dice(self):
+        game: Game = Game()
+        # Can't roll dice when there is < 2 players or the active player ID is invalid
+        self.assertFalse(game.roll_dice("bogus"))
+        # Get a valid ID and verify it still doesn't let them roll the dice
+        username: str = "player1"
+        id: str = game.register_player(username)
+        self.assertFalse(game.roll_dice(id))
+
+        # Create a second player and now there are enough to start but the active player ID has not been decided.
+        username2: str = "player2"
+        id2: str = game.register_player(username2)
+        self.assertFalse(game.roll_dice(id))
+
+        # Start the game and get the turn order
+        game.start_game(id2)
+        turn_order: list[str] = game.turn_order
+        # Can't roll the dice without being the active player
+        self.assertFalse(game.roll_dice(turn_order[1]))
+        # Can roll the dice as the active player
+        self.assertTrue(game.roll_dice(turn_order[0]))
+
+    def test_draw_card(self):
+        game: Game = Game()
+
+    def test_buy_property(self):
+        game: Game = Game()
+
+    def test_buy_improvements(self):
+        game: Game = Game()
+
+    def test_sell_improvements(self):
+        game: Game = Game()
+
+    def test_mortgage(self):
+        game: Game = Game()
+
+    def test_unmortgage(self):
+        game: Game = Game()
+
+    def test_get_out_of_jail(self):
+        game: Game = Game()
+
+    def test_reset(self):
+        game: Game = Game()
+        # Register 8 players
+        for i in range(1, MAX_NUM_PLAYERS + 1):
+            username: str = f"test{i}"
+            id: str = game.register_player(username)
+        self.assertEqual(MAX_NUM_PLAYERS, len(game.players))
+        # Verify reset doesn't work without valid ID
+        self.assertFalse(game.reset("bogus"))
+        self.assertEqual(MAX_NUM_PLAYERS, len(game.players))
+        # Game hasn't started and so it cannot be reset
+        self.assertFalse(game.reset(id))
+        # Start the game then verify it can be reset
+        game.start_game(id)
+        self.assertTrue(game.started)
+        self.assertTrue(game.reset(id))
+        self.assertEqual(0, len(game.players))
+
+    """ Test Private Helper Methods """
+
+    def test_update_money(self):
+        game: Game = Game()
+        # Money can't be updated when the game has not started
+        self.assertFalse(game._update_money({}))
+        # Register 8 players
+        ids: list[str] = []
+        for i in range(1, MAX_NUM_PLAYERS + 1):
+            username: str = f"test{i}"
+            id: str = game.register_player(username)
+            ids.append(id)
+        game.start_game(id)
+        # Empty list of deltas trivially evaluates to True
+        self.assertTrue(game._update_money({}))
+        # Make sure nothing changed
+        for id in ids:
+            self.assertEqual(STARTING_MONEY, game.players[id].money)
+        deltas: dict[str: int] = {id: 200 for id in ids}
+        # Method should succeed
+        self.assertTrue(game._update_money(deltas))
+        # Verify money was updated
+        for id in ids:
+            self.assertEqual(STARTING_MONEY + 200, game.players[id].money)
+        deltas["bogus"] = 13
+        # Verify method fails and money was not updated
+        self.assertFalse(game._update_money(deltas))
+        for id in ids:
+            self.assertEqual(STARTING_MONEY + 200, game.players[id].money)
+
+    def test_match_tile(self):
+        game: Game = Game()
+
+    def test_next_player(self):
+        game: Game = Game()
+        # Game hasn't started yet and there are no players
+        self.assertFalse(game._next_player())
+        # Populate the game with players
+        ids: list[str] = []
+        for i in range(1, MAX_NUM_PLAYERS + 1):
+            username: str = f"test{i}"
+            id: str = game.register_player(username)
+            ids.append(id)
+        # Game hasn't started yet
+        self.assertFalse(game._next_player())
+        game.start_game(id)
+        # Note: This test fails with very low odds when the randomized order is also the order players joined
+        self.assertFalse(ids == game.turn_order)
+        # Increment the player in 2 loops and verify it properly wraps around
+        for i in range(2 * MAX_NUM_PLAYERS):
+            self.assertEqual(game.turn_order[i % MAX_NUM_PLAYERS], game.active_player_id)
+            self.assertTrue(game._next_player())
+        # Set the player at index 1 to inactive and verify it skips him
+        id = game.turn_order[1]
+        game.players[id].status = PlayerStatus.BANKRUPT
+        self.assertEqual(game.turn_order[0], game.active_player_id)
+        self.assertTrue(game._next_player())
+        self.assertEqual(game.turn_order[2], game.active_player_id)
+        # Set all but 2 to be inactive
+        game.players[id].status = PlayerStatus.GOOD
+        for i in range(2, MAX_NUM_PLAYERS):
+            id = game.turn_order[i]
+            game.players[id].status = PlayerStatus.BANKRUPT
+        game.active_player_idx = 0
+        game.active_player_id = game.turn_order[0]
+        # Make sure it just loops between the same two people
+        for i in range(3):
+            self.assertTrue(game._next_player())
+            self.assertEqual(game.turn_order[1], game.active_player_id)
+            self.assertTrue(game._next_player())
+            self.assertEqual(game.turn_order[0], game.active_player_id)
+        # Make it just a single player left and verify it returns False
+        id = game.turn_order[1]
+        game.players[id].status = PlayerStatus.BANKRUPT
+        self.assertFalse(game._next_player())
 
 
 if __name__ == '__main__':

@@ -31,6 +31,27 @@ def index():
     return jsonify(game.to_dict())
 
 
+@app.route("/game/start_game", methods=["GET"])
+def start_game():
+    """
+    Description:    Endpoint for starting the game. Requires >= 2 players and <= max to be registered.
+    :return:        Returns json-formatted data with the game state if it starts. Otherwise, simple message it failed to
+                    start.
+    """
+    global game
+    try:
+        player_id: str = request.args.get("playerId").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+
+    success: bool = game.roll_dice(player_id=player_id)
+    state: dict = game.to_dict()
+    state["event"] = "startGame"
+    state["success"] = success
+    return jsonify(state)
+
+
 @app.route("/game/register_player", methods=["GET"])
 def register_player():
     """
@@ -56,7 +77,7 @@ def register_player():
     state: dict = game.to_dict()
     state["event"] = "registerPlayer"
     state["playerId"] = player_id
-    state["success"] = player_id is None
+    state["success"] = player_id is ""
     return jsonify(state)
 
 
@@ -346,7 +367,7 @@ def end_turn():
     """
     success: bool = game.end_turn(player_id=player_id)
     state: dict = game.to_dict()
-    state["event"] = "turnEnd"
+    state["event"] = "endTurn"
     state["success"] = success
     return jsonify(state)
 

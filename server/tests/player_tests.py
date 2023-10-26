@@ -17,7 +17,7 @@ class MyTestCase(unittest.TestCase):
     def make_player(self) -> Player:
         id: str = "abcdefghi1234567"
         username: str = "Test"
-        player: Player = Player(player_id=id, display_name=username)
+        player: Player = Player(player_id=id, username=username)
         return player
 
     def test_in_jail(self):
