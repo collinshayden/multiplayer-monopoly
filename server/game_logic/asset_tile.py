@@ -25,29 +25,21 @@ class AssetTile(Tile):
         self.mortage_price = mortage_price
         self.group = group
 
-    def compute_rent(self, dice_roll: int = None) -> int:
-        """
-        Description:        Method for computing rent for a set of properties.
-        :param dice_roll:   Int value for the overall dice roll.
-        :return:            Integer value for rent cost.
-        """
-        pass
+        @property
+        def liquid_value(self) -> int:
+            # TODO overwrite in property subclass
+            """
+            Description:    Returns the value of the property
+            :return:        int value representing how much money the property is worth
+            """
+            return mortage_price
+        
+        @property
+        def lift_mortage_cost(self) -> int:
+            """
+            Description:    Returns how much it costs to lift the mortage of a mortaged property
+            :return:        int value of original mortage cost + 10%
+            """
+            return round(mortage_price * 1.1)
 
-    def compute_group_ownership(self):
-        """
-        Description:    Method for determining whether all properties of a given
-                        type are owned.
-        :return:        Return type depends on subclass type.
-        """
-        pass
 
-    # TODO: Add additional implementation to this when the improvements are also kept track of.
-    def compute_worth(self) -> int:
-        """
-        Description:    Method used to compute the value of a buyable tile by summing up the cost of selling all
-                        improvements and mortgaging it.
-        :return:        Sum worth of a property.
-        """
-        improvement_values: int = 0
-        # TODO: Update this section with improvement values
-        return 0 if self.is_mortaged else self.mortage_price + improvement_values
