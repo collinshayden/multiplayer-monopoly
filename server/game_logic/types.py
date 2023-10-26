@@ -45,3 +45,18 @@ class PlayerStatus(Enum):
     BANKRUPT = 1
     IN_THE_HOLE = 2
     INVALID = 4
+
+class PropertyStatus(Enum):
+    """
+    Description:    Enumeration of potential rents for properties
+    NO_MONOPOLY:    base rent
+    MONOPOLY:       rent when all properties in a group are owned
+    #_IMPROVEMENTS: rent for the number of houses built on the property (1-5)
+    """
+    NO_MONOPOLY = 0
+    MONOPOLY = 1
+    ONE_IMPROVEMENT = 2
+    TWO_IMPROVEMENTS = 3
+    THREE_IMPROVEMENTS = 4
+    FOUR_IMPROVEMENTS = 5
+    FIVE_IMPROVEMENTS = 6
