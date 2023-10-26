@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/24/23
 """
 
-from ..game_logic.buyable_tile import BuyableTile
+from ..game_logic.asset_tile import AssetTile
 from ..game_logic.constants import JAIL_LOCATION, JAIL_TURNS, MAX_ROLL, MIN_ROLL, STARTING_MONEY
 from ..game_logic.player import Player
 from ..game_logic.types import PlayerStatus
@@ -198,7 +198,7 @@ class MyTestCase(unittest.TestCase):
 
         # Redo this but give the player a faux-property so they can enter the IN_THE_HOLE state.
         player: Player = self.make_player()
-        property: BuyableTile = BuyableTile(player, 200, False, 100, None)
+        property: AssetTile = AssetTile(player, 200, False, 100, None)
         player.properties.append(property)
         self.assertEqual(STARTING_MONEY, player.money)
         self.assertEqual(PlayerStatus.IN_THE_HOLE, player.update_money(-(STARTING_MONEY + 1)))
@@ -207,7 +207,7 @@ class MyTestCase(unittest.TestCase):
     def test_calculate_net_worth(self):
         player: Player = self.make_player()
         self.assertEqual(STARTING_MONEY, player.calculate_net_worth())
-        property: BuyableTile = BuyableTile(player, 200, False, 100, None)
+        property: AssetTile = AssetTile(player, 200, False, 100, None)
         player.properties.append(property)
         self.assertEqual(STARTING_MONEY + 100, player.calculate_net_worth())
         property.is_mortaged = True
