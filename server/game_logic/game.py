@@ -4,7 +4,7 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .buyable_tile import BuyableTile
+from .asset_tile import AssetTile
 from .card import Card
 from .constants import MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
 from .player import Player

@@ -7,7 +7,7 @@ from .player import Player
 from .tile import Tile
 
 
-class BuyableTile(Tile):
+class AssetTile(Tile):
 
     def __init__(self, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None:
         """

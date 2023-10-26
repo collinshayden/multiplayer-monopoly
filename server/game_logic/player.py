@@ -12,7 +12,7 @@ from random import randint
 
 class Player:
     def __init__(self, player_id: str, username: str) -> None:
-        from .buyable_tile import BuyableTile
+        from .asset_tile import AssetTile
         """
         Description:            Class representing a Player.
         :param player_id:       Unique 16-character ID generated from Game class
@@ -22,7 +22,7 @@ class Player:
         self.username: str = username
 
         # State variables
-        self.properties: list[BuyableTile] = []
+        self.properties: list[AssetTile] = []
         self.money: int = STARTING_MONEY
         self.location: int = START_LOCATION
         self.doubles_streak: int = 0

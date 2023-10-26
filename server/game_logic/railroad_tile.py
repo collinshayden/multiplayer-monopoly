@@ -4,11 +4,11 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .buyable_tile import BuyableTile
+from .asset_tile import AssetTile
 from .player import Player
 
 
-class RailroadTile(BuyableTile):
+class RailroadTile(AssetTile):
 
     def __init__(self, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None:
         """
