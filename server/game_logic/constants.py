@@ -12,8 +12,10 @@ START_LOCATION: int = 0
 NUM_TILES: int = 40
 
 # Constants for bound checking rolls
-MIN_ROLL: int = 2
-MAX_ROLL: int = 12
+MIN_DIE: int = 1
+MAX_DIE: int = 6
+MIN_ROLL: int = 2 * MIN_DIE
+MAX_ROLL: int = 2 * MAX_DIE
 
 # Other constants
 STARTING_MONEY: int = 1500

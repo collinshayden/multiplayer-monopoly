@@ -4,12 +4,12 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .asset_tile import AssetTile
 from .card import Card
-from .constants import MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
+from .constants import MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
 from .player import Player
+from .player_updates import MoneyUpdate, RollUpdate
 from .tile import Tile
-from .types import CardType, JailMethod
+from .types import CardType, JailMethod, PlayerStatus
 
 import random
 import secrets
@@ -75,11 +75,19 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            True if the request succeeds. False otherwise.
         """
-        # Reject requests when there are no players or if the request is made from the wrong player.
-        if len(self.players) < MIN_NUM_PLAYERS or player_id != self.active_player_id:
+        # Reject requests when there are not enough players
+        if len(self.players) < MIN_NUM_PLAYERS:
+            return False
+        # Reject requests if the player making it is not the active player
+        elif player_id != self.active_player_id:
+            return False
+        # Reject request to roll dice if the game hasn't started.
+        elif not self.started:
             return False
         player: Player = self.players[self.active_player_id]
-        return player.roll_dice()
+        die1: int = random.randint(MIN_DIE, MAX_DIE)
+        die2: int = random.randint(MIN_DIE, MAX_DIE)
+        return player.update(RollUpdate(die1, die2)) != PlayerStatus.INVALID
 
     def draw_card(self, player_id: str, card_type: CardType) -> bool:
         """
@@ -192,7 +200,6 @@ class Game:
 
     """ Helper Methods """
 
-    # TODO: Implement this.
     def _update_money(self, deltas: dict) -> bool:
         """
         Description:    Private method used to update the money for players.
@@ -207,10 +214,10 @@ class Game:
         if len(player_deltas) != len(deltas):
             return False
         for player, delta in player_deltas:
-            player.update_money(delta)
+            player.update(MoneyUpdate(delta))
         return True
 
-    # TODO: Implement this. Returns default Tile() for now.
+    # TODO: Implement this.
     def _match_tile(self, tile: str) -> Tile:
         """
         Description:    Private method to match string representations of a tile passed through JSON to the actual
