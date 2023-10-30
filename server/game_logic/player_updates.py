@@ -5,8 +5,7 @@ Date:           10/30/23
 """
 
 from .asset_tile import AssetTile
-from .constants import JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_ROLL, MIN_DIE, MIN_ROLL, NUM_TILES, STARTING_MONEY, \
-    START_LOCATION
+from .constants import JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MIN_DIE, NUM_TILES, START_LOCATION
 from .player import Player, PlayerStatus
 
 

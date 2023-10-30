@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/15/2023
 """
 
-from .types import AssetGroup, PropertyStatus
+from .types import AssetGroups, PropertyStatus, RailroadStatus
 
 # Secret key
 SECRET_KEY: str = "replace"
@@ -27,13 +27,18 @@ PLAYER_ID_LENGTH: int = 16
 MIN_NUM_PLAYERS: int = 2
 MAX_NUM_PLAYERS: int = 8
 
-GROUP_SIZE: dict[AssetGroup: int] = {
-    AssetGroup.UTILITY: 2,
-    AssetGroup.RAILROAD: 4,
-    AssetGroup.BROWN: 2,
-    AssetGroup.LIGHT_BLUE: 3,
-    AssetGroup.PINK: 4,
-    AssetGroup.ORANGE: 5,
+# Lookup table for the number of properties in an asset group
+GROUP_SIZE: dict[AssetGroups: int] = {
+    AssetGroups.UTILITY: 2,
+    AssetGroups.RAILROAD: 4,
+    AssetGroups.BROWN: 2,
+    AssetGroups.LIGHT_BLUE: 3,
+    AssetGroups.PINK: 3,
+    AssetGroups.ORANGE: 3,
+    AssetGroups.RED: 3,
+    AssetGroups.YELLOW: 3,
+    AssetGroups.GREEN: 3,
+    AssetGroups.DARK_BLUE: 2
 }
 
 # TODO add railroads
@@ -242,3 +247,12 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FIVE_IMPROVEMENTS: 2000,
     },
 }
+
+# Add in railroads
+for tile_idx in [5, 15, 25, 35]:
+    RENTS[tile_idx] = {
+        RailroadStatus.ONE_OWNED: 25,
+        RailroadStatus.TWO_OWNED: 25,
+        RailroadStatus.THREE_OWNED: 100,
+        RailroadStatus.FOUR_OWNED: 200,
+    }

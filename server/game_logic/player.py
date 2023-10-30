@@ -4,10 +4,8 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .constants import JAIL_LOCATION, JAIL_TURNS, MAX_ROLL, MIN_ROLL, NUM_TILES, STARTING_MONEY, START_LOCATION
+from .constants import STARTING_MONEY, START_LOCATION
 from .types import PlayerStatus
-
-from random import randint
 
 
 class Player:
