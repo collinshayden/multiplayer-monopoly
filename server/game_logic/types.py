@@ -60,3 +60,18 @@ class PropertyStatus(Enum):
     THREE_IMPROVEMENTS = 4
     FOUR_IMPROVEMENTS = 5
     FIVE_IMPROVEMENTS = 6
+
+class AssetGroups(Enum):
+    """
+    Description:    Enumeration of groups asset_tile objects can be part of
+    """
+    UTILITY = 0
+    RAILROAD = 1
+    BROWN = 2
+    LIGHT_BLUE = 3
+    PINK = 4
+    ORANGE = 5
+    RED = 6
+    YELLOW = 7
+    GREEN = 8
+    DARK_BLUE = 9
