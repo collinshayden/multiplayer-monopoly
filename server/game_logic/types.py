@@ -46,6 +46,7 @@ class PlayerStatus(Enum):
     IN_THE_HOLE = 2
     INVALID = 4
 
+
 class PropertyStatus(Enum):
     """
     Description:    Enumeration of potential rents for properties
@@ -60,3 +61,4 @@ class PropertyStatus(Enum):
     THREE_IMPROVEMENTS = 4
     FOUR_IMPROVEMENTS = 5
     FIVE_IMPROVEMENTS = 6
+
