@@ -1,4 +1,4 @@
-import 'package:client/controller/file_service.dart';
+import 'package:client/cubit/file_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'game_state.dart';
 
