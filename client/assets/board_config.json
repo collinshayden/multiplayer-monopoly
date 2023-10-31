@@ -26,7 +26,7 @@
 		},
 		{
 			"id": 1,
-			"name": [
+			"title": [
 				"MEDITER-",
 				"RANEAN",
 				"AVENUE"
@@ -34,7 +34,7 @@
 		},
 		{
 			"id": 2,
-			"name": [
+			"title": [
 				"COMMUNITY",
 				"CHEST"
 			],
@@ -42,14 +42,14 @@
 		},
 		{
 			"id": 3,
-			"name": [
+			"title": [
 				"BALTIC",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 4,
-			"name": [
+			"title": [
 				"INCOME",
 				"TAX"
 			],
@@ -58,7 +58,7 @@
 		},
 		{
 			"id": 5,
-			"name": [
+			"title": [
 				"READING",
 				"RAILROAD"
 			],
@@ -66,28 +66,28 @@
 		},
 		{
 			"id": 6,
-			"name": [
+			"title": [
 				"ORIENTAL",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 7,
-			"name": [
+			"title": [
 				"CHANCE"
 			],
 			"image": "chance-1.png"
 		},
 		{
 			"id": 8,
-			"name": [
+			"title": [
 				"VERMONT",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 9,
-			"name": [
+			"title": [
 				"CONNECTICUT",
 				"AVENUE"
 			]
@@ -101,35 +101,35 @@
 		},
 		{
 			"id": 11,
-			"name": [
+			"title": [
 				"ST. CHARLES",
 				"PLACE"
 			]
 		},
 		{
 			"id": 12,
-			"name": [
+			"title": [
 				"ELECTRIC",
 				"COMPANY"
 			]
 		},
 		{
 			"id": 13,
-			"name": [
+			"title": [
 				"STATES",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 14,
-			"name": [
+			"title": [
 				"VIRGINIA",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 15,
-			"name": [
+			"title": [
 				"PENNSYLVANIA",
 				"RAILROAD"
 			],
@@ -137,14 +137,14 @@
 		},
 		{
 			"id": 16,
-			"name": [
+			"title": [
 				"ST. JAMES",
 				"PLACE"
 			]
 		},
 		{
 			"id": 17,
-			"name": [
+			"title": [
 				"COMMUNITY",
 				"CHEST"
 			],
@@ -152,14 +152,14 @@
 		},
 		{
 			"id": 18,
-			"name": [
+			"title": [
 				"TENNESSEE",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 19,
-			"name": [
+			"title": [
 				"NEW YORK",
 				"AVENUE"
 			]
@@ -172,35 +172,35 @@
 		},
 		{
 			"id": 21,
-			"name": [
+			"title": [
 				"KENTUCKY",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 22,
-			"name": [
+			"title": [
 				"CHANCE"
 			],
 			"image": "chance-2.png"
 		},
 		{
 			"id": 23,
-			"name": [
+			"title": [
 				"INDIANA",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 24,
-			"name": [
+			"title": [
 				"ILLINOIS",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 25,
-			"name": [
+			"title": [
 				"B. & O.",
 				"RAILROAD"
 			],
@@ -208,28 +208,28 @@
 		},
 		{
 			"id": 26,
-			"name": [
+			"title": [
 				"ATLANTIC",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 27,
-			"name": [
+			"title": [
 				"VENTNOR",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 28,
-			"name": [
+			"title": [
 				"WATER",
 				"WORKS"
 			]
 		},
 		{
 			"id": 29,
-			"name": [
+			"title": [
 				"MARVIN",
 				"GARDENS"
 			]
@@ -242,14 +242,14 @@
 		},
 		{
 			"id": 31,
-			"name": [
+			"title": [
 				"PACIFIC",
 				"AVENUE"
 			]
 		},
 		{
 			"id": 32,
-			"name": [
+			"title": [
 				"NORTH",
 				"CAROLINA",
 				"AVENUE"
@@ -257,7 +257,7 @@
 		},
 		{
 			"id": 33,
-			"name": [
+			"title": [
 				"COMMUNITY",
 				"CHEST"
 			],
@@ -265,14 +265,14 @@
 		},
 		{
 			"id": 34,
-			"name": [
+			"title": [
 				"PENNSYLVANIA",
 				"AVNEUE"
 			]
 		},
 		{
 			"id": 35,
-			"name": [
+			"title": [
 				"SHORT",
 				"LINE"
 			],
@@ -280,21 +280,21 @@
 		},
 		{
 			"id": 36,
-			"name": [
+			"title": [
 				"CHANCE"
 			],
 			"image": "chance-3.png"
 		},
 		{
 			"id": 37,
-			"name": [
+			"title": [
 				"PARK",
 				"PLACE"
 			]
 		},
 		{
 			"id": 38,
-			"name": [
+			"title": [
 				"LUXURY",
 				"TAX"
 			],
@@ -303,7 +303,7 @@
 		},
 		{
 			"id": 39,
-			"name": [
+			"title": [
 				"BOARDWALK"
 			]
 		}
