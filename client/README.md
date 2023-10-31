@@ -15,6 +15,8 @@ Currently, this application communicates with the server, however communication 
 
 ## Project Setup
 
+If generated code (`.g.dart` files) hasn't been built yet, run `dart run build_runner build` from the `client/` directory.
+
 ### Installation
 
 This client application uses the Flutter framework to render its UI components. In order to run the application, you will need to follow the steps specified on (this page)[https://docs.flutter.dev/get-started/install]. (Warning: This may take some time...) You can check the progress of your installation by running `flutter doctor` from the command line at any point. In order to build a Flutter application, you must ensure that all items displayed when running `flutter doctor` are green.
