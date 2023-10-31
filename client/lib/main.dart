@@ -2,7 +2,6 @@ import 'package:client/cubit/game_cubit.dart';
 import 'package:client/view/base/board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 /// This application demonstrates Socket.IO functionality, including connection,
 /// connection error, disconnection, and a custom event handler. The user is
@@ -13,7 +12,6 @@ import 'package:get_it/get_it.dart';
 void main() {
   // Dependency injection here
   // Initialise get_it singleton
-  var serviceLocator = GetIt.instance;
   // register lazy singletons
 
   runApp(
