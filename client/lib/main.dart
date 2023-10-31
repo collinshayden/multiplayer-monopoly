@@ -1,13 +1,8 @@
-/// Socket.IO test program
-/// Author: Alex Hall
-/// Date: 10/12/2023
-
-import 'package:client/model/endpoint_manager.dart';
+import 'package:client/cubit/game_cubit.dart';
 import 'package:client/view/base/board.dart';
 import 'package:flutter/material.dart';
-import 'cubit/game_manager_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:math';
+import 'package:get_it/get_it.dart';
 
 /// This application demonstrates Socket.IO functionality, including connection,
 /// connection error, disconnection, and a custom event handler. The user is
@@ -16,6 +11,11 @@ import 'dart:math';
 /// it back to the client.
 
 void main() {
+  // Dependency injection here
+  // Initialise get_it singleton
+  var serviceLocator = GetIt.instance;
+  // register lazy singletons
+
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -32,14 +32,13 @@ class MonopolyApp extends StatefulWidget {
 }
 
 class _MonopolyAppState extends State<MonopolyApp> {
-  EndpointManager endpointManager = EndpointManager();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: BlocProvider(
-          create: (context) => GameManagerCubit(),
+          create: (context) => GameCubit(),
           child: Stack(
             children: [
               const Board(),
@@ -50,7 +49,6 @@ class _MonopolyAppState extends State<MonopolyApp> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          endpointManager.send(GameActions.rollDice, {});
                           print('Rolling dice!');
                         },
                         child: const Text('Roll Dice!'),
