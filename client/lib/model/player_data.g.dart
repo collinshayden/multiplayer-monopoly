@@ -1,24 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'player_state.dart';
+part of 'player_data.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PlayerState _$PlayerStateFromJson(Map<String, dynamic> json) => PlayerState(
-      playerID: json['playerID'] as int,
+PlayerData _$PlayerDataFromJson(Map<String, dynamic> json) => PlayerData(
+      id: json['id'] as int,
       displayName: json['displayName'] as String,
       money: json['money'] as int,
       location: json['location'] as int,
-      jailCard: json['jailCard'] as int,
+      getOutOfJailFreeCards: json['getOutOfJailFreeCards'] as int,
     );
 
-Map<String, dynamic> _$PlayerStateToJson(PlayerState instance) =>
+Map<String, dynamic> _$PlayerDataToJson(PlayerData instance) =>
     <String, dynamic>{
-      'playerID': instance.playerID,
+      'id': instance.id,
       'displayName': instance.displayName,
       'money': instance.money,
       'location': instance.location,
-      'jailCard': instance.jailCard,
+      'getOutOfJailFreeCards': instance.getOutOfJailFreeCards,
     };

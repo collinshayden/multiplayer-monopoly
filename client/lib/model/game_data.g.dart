@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'game_state.dart';
+part of 'game_data.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-GameState _$GameStateFromJson(Map<String, dynamic> json) => GameState(
+GameData _$GameDataFromJson(Map<String, dynamic> json) => GameData(
       activePlayerId: json['activePlayerId'] as int,
       players: (json['players'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(
-            int.parse(k), PlayerState.fromJson(e as Map<String, dynamic>)),
+            int.parse(k), PlayerData.fromJson(e as Map<String, dynamic>)),
       ),
       lastRoll:
           (json['lastRoll'] as List<dynamic>).map((e) => e as int).toList(),
       tiles: (json['tiles'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(
-            int.parse(k), TileState.fromJson(e as Map<String, dynamic>)),
+            int.parse(k), TileData.fromJson(e as Map<String, dynamic>)),
       ),
     );
 
-Map<String, dynamic> _$GameStateToJson(GameState instance) => <String, dynamic>{
+Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
       'activePlayerId': instance.activePlayerId,
       'players':
           instance.players.map((k, e) => MapEntry(k.toString(), e.toJson())),
