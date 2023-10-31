@@ -46,6 +46,7 @@ class PlayerStatus(Enum):
     IN_THE_HOLE = 2
     INVALID = 4
 
+
 class PropertyStatus(Enum):
     """
     Description:    Enumeration of potential rents for properties
@@ -60,3 +61,30 @@ class PropertyStatus(Enum):
     THREE_IMPROVEMENTS = 4
     FOUR_IMPROVEMENTS = 5
     FIVE_IMPROVEMENTS = 6
+
+
+class RailroadStatus(Enum):
+    """
+    Description:    Enumeration for the number of owned railroads.
+    #_OWNED:        Corresponds to the number of railroad tiles owned.
+    """
+    ONE_OWNED = 0
+    TWO_OWNED = 1
+    THREE_OWNED = 2
+    FOUR_OWNED = 4
+
+
+class AssetGroups(Enum):
+    """
+    Description:    Enumeration of groups AssetTile objects can be part of.
+    """
+    UTILITY = 0
+    RAILROAD = 1
+    BROWN = 2
+    LIGHT_BLUE = 3
+    PINK = 4
+    ORANGE = 5
+    RED = 6
+    YELLOW = 7
+    GREEN = 8
+    DARK_BLUE = 9

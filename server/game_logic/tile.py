@@ -13,5 +13,4 @@ class Tile:
         :param id:      An integer identifier for each tile.
         :returns:       None.
         """
-        
         pass
