@@ -6,16 +6,17 @@ Author:         Jordan Bourdeau, Hayden Collins
 
 from .asset_tile import AssetTile
 from .player import Player
+from .types import AssetGroups
 
 
 class UtilityTile(AssetTile):
 
-    def __init__(self, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None:
+    def __init__(self, id: int, owner: Player, price: int, is_mortaged: bool, mortage_price: int) -> None:
         """
         Description:    Class representing the two utility tiles.
         :returns:       None.
         """
-        super().__init__(owner, price, is_mortaged, mortage_price, group)
+        super().__init__(id, owner, price, is_mortaged, mortage_price, AssetGroups.UTILITY)
 
     def compute_rent(self, dice_roll: int = None) -> int:
         """
@@ -41,4 +42,9 @@ class UtilityTile(AssetTile):
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        pass
+        utility_dict = {"id": self.id,
+                        "owner": self.owner,
+                        "price": self.price,
+                        "isMortgaged": self.is_mortaged,
+                        "mortgagePrice": self.mortgage_price}
+        return utility_dict
