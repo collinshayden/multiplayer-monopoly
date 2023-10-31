@@ -3,17 +3,7 @@ import 'package:client/view/base/board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// This application demonstrates Socket.IO functionality, including connection,
-/// connection error, disconnection, and a custom event handler. The user is
-/// able to enter text into a text field and hit the send button. The console
-/// will then print the entered text only if the server has received it and sent
-/// it back to the client.
-
 void main() {
-  // Dependency injection here
-  // Initialise get_it singleton
-  // register lazy singletons
-
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -39,6 +29,7 @@ class _MonopolyAppState extends State<MonopolyApp> {
           create: (context) => GameCubit(),
           child: Stack(
             children: [
+              CubitTest(),
               const Board(),
               Center(
                 child: SizedBox.fromSize(
@@ -59,6 +50,30 @@ class _MonopolyAppState extends State<MonopolyApp> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CubitTest extends StatelessWidget {
+  const CubitTest({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(
+      builder: (context, state) {
+        if (state is GameInitial) {
+          return TextButton(
+            onPressed: () {
+              BlocProvider.of<GameCubit>(context).loadLocalConfig();
+            },
+            child: Text('Load local config'),
+          );
+        }
+        if (state is LocalConfigLoading) {
+          return const CircularProgressIndicator();
+        }
+        return const Text('Loaded local config!');
+      },
     );
   }
 }

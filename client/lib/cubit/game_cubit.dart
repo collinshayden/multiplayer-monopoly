@@ -9,9 +9,10 @@ class GameCubit extends Cubit<GameState> {
   final fileService = FileService();
   final endpointService = EndpointService();
 
-  void loadLocalConfig() {
+  void loadLocalConfig() async {
     emit(LocalConfigLoading());
-    final boardConfig = fileService.readFile('board_config.json');
+    final boardConfig = await fileService.readFile('board_config.json');
+    await Future.delayed(Duration(seconds: 3));
     print(boardConfig);
     emit(LocalConfigSuccess());
   }
