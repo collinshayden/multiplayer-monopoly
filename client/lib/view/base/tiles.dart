@@ -1,90 +1,96 @@
 import 'package:flutter/material.dart';
 
 abstract class Tile extends StatelessWidget {
-  const Tile({super.key});
+  final int id;
+  final int quarterTurns;
+  const Tile({required this.id, required this.quarterTurns, super.key});
 }
 
-class AssetTile extends Tile {
-  final int id;
-  final Size size;
+abstract class SideTile extends Tile {
+  final String title;
+
+  const SideTile(
+      {required super.id,
+      required super.quarterTurns,
+      required this.title,
+      super.key});
+}
+
+class PropertyTile extends SideTile {
   final Color color;
-  final String name;
   final int price;
 
-  const AssetTile({
-    required this.id,
-    required this.size,
+  const PropertyTile({
+    required super.id,
+    required super.quarterTurns,
+    required super.title,
     required this.color,
-    required this.name,
     required this.price,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: size.width,
-                  height: size.height / 4,
-                  child: Container(color: color),
-                ),
-                Center(
-                    child: Text(
-                  '$name',
-                  textAlign: TextAlign.center,
-                )),
-                Spacer(),
-                Padding(
-                    padding: EdgeInsets.only(bottom: size.height / 10),
-                    child: Text('Price: $price'))
-              ],
-            )));
+    return Container(
+        color: Colors.grey,
+        child: Column(children: [
+          Flexible(
+            flex: 1,
+            child: Container(color: color),
+          ),
+          Flexible(
+              flex: 3,
+              child: Column(
+                children: [
+                  Expanded(
+                      child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                  )),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Price: $price', textAlign: TextAlign.center),
+                  )
+                ],
+              ))
+        ]));
   }
 }
 
 class CornerTile extends Tile {
-  final int id;
-  final Size size;
-  final String name;
+  final String title;
 
   const CornerTile({
-    required this.id,
-    required this.size,
-    required this.name,
+    required super.id,
+    required super.quarterTurns,
+    required this.title,
+    
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  name,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )));
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ));
   }
 }
 
 class ChanceTile extends Tile {
-  final int id;
   final Size size;
 
   const ChanceTile({
-    required this.id,
+    required super.id,
+    required super.quarterTurns,
     required this.size,
+    
     super.key,
   });
 
@@ -106,13 +112,15 @@ class ChanceTile extends Tile {
   }
 }
 
-class CommunityTile extends Tile {
-  final int id;
+class CommunityTile extends SideTile {
   final Size size;
 
   const CommunityTile({
-    required this.id,
+    required super.id,
+    required super.quarterTurns,
+    required super.title,
     required this.size,
+    
     super.key,
   });
 
@@ -140,17 +148,17 @@ class CommunityTile extends Tile {
   }
 }
 
-class TaxTile extends Tile {
-  final int id;
-  final String name;
+class TaxTile extends SideTile {
   final Size size;
   final int payment;
 
   const TaxTile({
-    required this.id,
+    required super.id,
+    required super.title,
+    required super.quarterTurns,
     required this.size,
-    required this.name,
     required this.payment,
+    
     super.key,
   });
 
@@ -165,7 +173,7 @@ class TaxTile extends Tile {
             child: Column(
               children: [
                 Text(
-                  name,
+                  title,
                   textAlign: TextAlign.center,
                 ),
                 Spacer(),
@@ -177,17 +185,18 @@ class TaxTile extends Tile {
   }
 }
 
-class UtilityTile extends Tile {
-  final int id;
-  final String name;
+class UtilityTile extends SideTile {
   final Size size;
   final int price;
 
   const UtilityTile({
-    required this.id,
+    required super.id,
+    required super.title,
+    required super.quarterTurns,
     required this.size,
-    required this.name,
+    
     required this.price,
+    
     super.key,
   });
 
@@ -202,7 +211,7 @@ class UtilityTile extends Tile {
             child: Column(
               children: [
                 Text(
-                  name,
+                  title,
                   textAlign: TextAlign.center,
                 ),
                 Spacer(),
