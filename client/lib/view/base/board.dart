@@ -7,7 +7,6 @@ class Board extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final boardSize = MediaQuery.of(context).size.width;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40.0),
