@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:client/view/base/tiles.dart';
 
 class Board extends StatelessWidget {
   const Board({super.key});
@@ -125,24 +126,44 @@ class _CustomLayoutDelegate extends MultiChildLayoutDelegate {
 }
 
 class CustomLayout extends StatelessWidget {
-  final Map<int, PlaceholderTile> tiles = {};
+  final Map<int, Tile> tiles = {};
 
   CustomLayout({super.key}) {
-    tiles[0] = PlaceholderTile(angle: pi / 4);
+    tiles[0] = CornerTile(id: 0, title: "Go", quarterTurns: 0);
     for (int id = 1; id < 10; id++) {
-      tiles[id] = PlaceholderTile(angle: pi / 2);
+      tiles[id] = PropertyTile(
+          id: id,
+          color: Colors.red,
+          title: "id: $id",
+          price: id * 15,
+          quarterTurns: 1);
     }
-    tiles[10] = PlaceholderTile(angle: 3 * pi / 4);
+    tiles[10] = CornerTile(id: 10, title: "Jail", quarterTurns: 0);
     for (int id = 11; id < 20; id++) {
-      tiles[id] = PlaceholderTile(angle: pi);
+      tiles[id] = PropertyTile(
+          id: id,
+          color: Colors.red,
+          title: "id: $id",
+          price: id * 15,
+          quarterTurns: 2);
     }
-    tiles[20] = PlaceholderTile(angle: -3 * pi / 4);
+    tiles[20] = CornerTile(id: 20, title: "Free Parking", quarterTurns: 0);
     for (int id = 21; id < 30; id++) {
-      tiles[id] = PlaceholderTile(angle: -pi / 2);
+      tiles[id] = PropertyTile(
+          id: id,
+          color: Colors.red,
+          title: "id: $id",
+          price: id * 15,
+          quarterTurns: 3);
     }
-    tiles[30] = PlaceholderTile(angle: -pi / 4);
+    tiles[30] = CornerTile(id: 30, title: "Go to Jail", quarterTurns: 0);
     for (int id = 31; id < 40; id++) {
-      tiles[id] = PlaceholderTile(angle: 0);
+      tiles[id] = PropertyTile(
+          id: id,
+          color: Colors.red,
+          title: "id: $id",
+          price: id * 15,
+          quarterTurns: 0);
     }
   }
 
@@ -159,13 +180,10 @@ class CustomLayout extends StatelessWidget {
           LayoutId(
             id: id,
             child: GestureDetector(
-              onTap: () => print('Tapped Tile $id'),
-              child: Container(
-                color: randomColor(),
-                alignment: Alignment.center,
-                child: Text('Tile $id'),
-              ),
-            ),
+                onTap: () => print('Tapped Tile $id'),
+                // child: Transform.rotate(angle: tiles[id]!.angle, child: tiles[id]),
+                child: RotatedBox(
+                    quarterTurns: tiles[id]!.quarterTurns, child: tiles[id])),
           ),
       ],
     );
