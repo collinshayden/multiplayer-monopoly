@@ -4,14 +4,14 @@ abstract class Tile extends StatelessWidget {
   const Tile({super.key});
 }
 
-class PropertyTile extends Tile {
+class AssetTile extends Tile {
   final int id;
   final Size size;
   final Color color;
   final String name;
   final int price;
 
-  const PropertyTile({
+  const AssetTile({
     required this.id,
     required this.size,
     required this.color,
@@ -22,15 +22,28 @@ class PropertyTile extends Tile {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.black,
-          width: 5,
-          strokeAlign: BorderSide.strokeAlignInside,
-        ),
-      ),
-      child: Center(child: Text('$id: $name')),
-    );
+    return SizedBox(
+        width: size.width,
+        height: size.height,
+        child: Container(
+            color: Colors.grey,
+            child: Column(
+              children: [
+                SizedBox(
+                  width: size.width,
+                  height: size.height / 4,
+                  child: Container(color: color),
+                ),
+                Center(
+                    child: Text(
+                  '$name',
+                  textAlign: TextAlign.center,
+                )),
+                Spacer(),
+                Padding(
+                    padding: EdgeInsets.only(bottom: size.height / 10),
+                    child: Text('Price: $price'))
+              ],
+            )));
   }
 }
