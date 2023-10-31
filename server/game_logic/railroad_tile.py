@@ -6,31 +6,27 @@ Author:         Jordan Bourdeau, Hayden Collins
 
 from .asset_tile import AssetTile
 from .player import Player
+from .types import AssetGroups, RailroadStatus
+from .constants import RENTS
 
 
 class RailroadTile(AssetTile):
 
-    def __init__(self, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None:
+    def __init__(self, id: int, owner: Player, price: int, is_mortaged: bool, mortage_price: int) -> None:
         """
         Description:    Class representing a railroad tile.
+        :param id:                  An integer identifier for each tile.
+        :param owner:               Player owning the tile.
+        :param price:               Price to purchase the property.
+        :param is_mortaged:         Boolean for whether the property is mortgaged or not.
+        :param mortage_price:       The amount for mortgaging a property.
         :returns:        None.
         """
-        super().__init__(owner, price, is_mortaged, mortage_price, group)
+        super().__init__(id, owner, price, is_mortaged, mortage_price, AssetGroups.RAILROAD)
+        rent_map = RENTS[id]
         self.rent: int = 25
 
-    def compute_rent(self, dice_roll: int = None) -> int:
-        """
-        Description:    Method for calculating railroad rent computations.
-        :return:        Rent amount.
-        """
-        return self.rent * self.compute_group_ownership()
-
-    def compute_group_ownership(self) -> int:
-        """
-        Description:    Method for computing the number of railroads owned to assist
-                        with rent calculations.
-        :return:        Integer for the number of owned railroads.
-        """
+    def update_rent(self) -> None:
         pass
 
     def to_dict(self) -> dict:
@@ -39,4 +35,11 @@ class RailroadTile(AssetTile):
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        pass
+        railroad_dict = {"id": self.id,
+                         "owner": self.owner,
+                         "price": self.price,
+                         "isMortgaged": self.is_mortaged,
+                         "mortgagePrice": self.mortgage_price,
+                         "rentMap": self.rent_map,
+                         "rent": self.rent}
+        return railroad_dict

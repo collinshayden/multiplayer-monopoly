@@ -10,7 +10,7 @@ from .tile import Tile
 
 class AssetTile(Tile):
 
-    def __init__(self, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None:
+    def __init__(self, id: int, owner: Player, price: int, is_mortaged: bool, mortage_price: int, group) -> None:
         """
         Description:            Class representing a tile which can be bought.
         :param owner:           Player who owns a tile.
