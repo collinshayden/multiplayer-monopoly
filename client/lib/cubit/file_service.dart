@@ -8,7 +8,7 @@ class FileService {
   /// Internal constructor which should only be called once by the class itself.
   FileService._internal();
 
-  /// Factor constructor which returns the singleton.
+  /// Factory constructor which returns the singleton.
   factory FileService() => _instance;
 
   // Instantiate singleton
