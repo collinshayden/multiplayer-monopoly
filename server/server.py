@@ -178,10 +178,10 @@ def buy_property():
     return jsonify(state)
 
 
-@app.route("/game/buy_improvements")
-def buy_improvements():
+@app.route("/game/improvements")
+def improvements():
     """
-    Description:    Endpoint for buying an improvement (hotel/house) on a property.
+    Description:    Endpoint for buying/selling improvements (hotel/house) on a property.
     :return:        Returns json-formatted data with the game state.
     """
     global game
@@ -201,44 +201,11 @@ def buy_improvements():
         2) Is the property valid?
         3) Can the property be developed?
         4) Does the player own the property and its associated monopoly?
-        5) Would the total number of improvements be less than or equal to the maximum number of improvements?
+        5) Would the total number of improvements be less than or equal to the maximum number of improvements and greater than or equal to 0?
         6) Does the player have the funds to buy all the improvements?
     If the answers are all yes, the game will add an improvement to the property and subtract player funds.
     """
     success: bool = game.buy_improvement(player_id=player_id, property=property, amount=amount)
-    state: dict = game.to_dict()
-    state["event"] = "transaction"
-    state["success"] = success
-    return jsonify(state)
-
-
-@app.route("/game/sell_improvements")
-def sell_improvements():
-    """
-    Description:    Endpoint for selling improvements (inverse of buying them).
-    :return:        Returns json-formatted data with the game state.
-    """
-    global game
-    try:
-        player_id: str = request.args.get("playerId").lower()
-        property: str = request.args.get("property").lower()
-        amount: int = int(request.args.get("amount"))
-    # No query parameters passed in
-    except AttributeError as e:
-        player_id: str = ""
-        property: str = ""
-        amount: int = 0
-
-    """ 
-    Checks the following:
-        1) Does the player ID correspond to a valid, active player?
-        2) Is the property valid?
-        3) Does the player own the property and its associated monopoly?
-        4) Does the property have developments which can be sold?
-        5) Are the number of developments being sold less than or equal to the total number of developments?
-    If the answers are all yes, the game will sell the number of specified development and add player funds.
-    """
-    success: bool = game.sell_improvement(player_id=player_id, property=property, amount=amount)
     state: dict = game.to_dict()
     state["event"] = "transaction"
     state["success"] = success
