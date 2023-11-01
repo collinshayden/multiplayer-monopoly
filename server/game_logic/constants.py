@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/15/2023
 """
 
-from .types import AssetGroups, PropertyStatus, RailroadStatus
+from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
 # Secret key
 SECRET_KEY: str = "replace"
@@ -252,7 +252,14 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
 for tile_idx in [5, 15, 25, 35]:
     RENTS[tile_idx] = {
         RailroadStatus.ONE_OWNED: 25,
-        RailroadStatus.TWO_OWNED: 25,
+        RailroadStatus.TWO_OWNED: 50,
         RailroadStatus.THREE_OWNED: 100,
         RailroadStatus.FOUR_OWNED: 200,
     }
+
+# Add in utilities
+    for tile_idx in [12, 28]:
+        RENTS[tile_idx] = {
+            UtilityStatus.NO_MONOPOLY: 4,
+            UtilityStatus.MONOPOLY: 10
+        }
