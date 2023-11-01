@@ -5,8 +5,13 @@ Date:           10/30/23
 """
 
 from .asset_tile import AssetTile
-from .constants import JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MIN_DIE, NUM_TILES, START_LOCATION
+from .types import UtilityStatus, PropertyStatus
+from .constants import JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MIN_DIE, NUM_TILES, START_LOCATION, GROUP_SIZE, RENTS
 from .player import Player, PlayerStatus
+from .asset_tile import AssetTile
+from .property_tile import PropertyTile
+from .railroad_tile import RailroadTile
+from .utility_tile import UtilityTile
 
 
 class PlayerUpdate:
@@ -122,15 +127,45 @@ class RollUpdate:
         player.update(MoveUpdate(self.die1 + self.die2))
 
 
-class PropertyUpdate:
-    def __init__(self):
+class BuyUpdate:
+    def __init__(self, tile: AssetTile):
         """
-        Description:
+        Description:    Object for a player buying a tile
+        :param tile:    The AssetTile object being bought
         """
-        pass
+        self.tile = tile
 
     def update(self, player: Player):
-        pass
+        player.assets.append(self.tile)
+        self.tile.owner = player
+        # List of tiles in the same group as the tile being bought
+        group_share = []
+        # Loop through the tiles the player owns and add them to group_share if needed
+        for i in player.assets:
+            # check if the current player-owned tile is of the same group as the tile being bought
+            if i.group == self.tile.group:
+                group_share.append(i)
+        # 
+        tile_type = type(self.tile)
+        match (tile_type):
+            case ("RailroadTile"):
+                # Loop through the tiles in group_share
+                for i in group_share:
+                    # Adjust the rent of each tile according to how many rqailroads are owned
+                    i.rent = i.rent_map.get(len(group_share))
+            case ("UtilityTile"):
+                # Check if every utility is owned
+                if len(group_share) == GROUP_SIZE.get(self.tile.group):
+                    # Loop through the tiles in group_share
+                    for i in group_share:
+                        # Set the rent (multiplier) accordingly
+                        i.rent_multiplier = i.rent_map.get(UtilityStatus.MONOPOLY)
+            # Operates the same as with UtilityTile objects
+            case ("PropertyTile"):
+                if len(group_share) == GROUP_SIZE.get(self.tile.group):
+                    for i in group_share:
+                        i.rent_multiplier = i.rent_map.get(PropertyStatus.MONOPOLY)
+
 
 
 class MortgageUpdate:
