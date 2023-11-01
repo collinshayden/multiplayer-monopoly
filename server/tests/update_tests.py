@@ -23,15 +23,74 @@ class MyTestCase(unittest.TestCase):
 
     def test_buy_update(self):
         player: Player = self.make_player()
-        asset: AssetTile = AssetTile(id=0, owner=None, price=200, group=AssetGroups.ORANGE)
-        self.assertIsNone(asset.owner)
-        self.assertEqual(STARTING_MONEY, player.money)
-        # Verify buying an asset will update the asset's owner and decrement the player's money.
-        player.update(BuyUpdate(asset))
-        self.assertEqual(player, asset.owner)
-        self.assertEqual(STARTING_MONEY - 200, player.money)
-        self.assertIn(asset, player.assets)
-        self.assertEqual(asset)
+        # This asset corresponds to the oranges on the original Monopoly board
+        st_james: AssetTile = AssetTile(id=16, owner=None, price=180, group=AssetGroups.ORANGE)
+        ten_ave: AssetTile = AssetTile(id=18, owner=None, price=180, group=AssetGroups.ORANGE)
+        ny_ave: AssetTile = AssetTile(id=19, owner=None, price=200, group=AssetGroups.ORANGE)
+        assets: list[AssetTile] = [st_james, ten_ave, ny_ave]
+        # Properties are unowned, so they currently have a rent of 0
+        for asset in assets:
+            self.assertEqual(0, asset.rent)
+
+        # Pre-Monopoly rents
+        for asset in assets[:2]:
+            starting_money: int = player.money
+            self.assertIsNone(asset.owner)
+            # Verify buying an asset will update the asset's owner and decrement the player's money.
+            player.update(BuyUpdate(asset))
+            self.assertEqual(player, asset.owner)
+            self.assertEqual(starting_money - asset.price, player.money)
+            self.assertIn(asset, player.assets)
+            self.assertEqual(14, asset.rent)
+        player.update(BuyUpdate(ny_ave))
+        for asset in assets:
+            self.assertEqual(PropertyStatus.MONOPOLY, asset.status)
+        # Post-Monopoly rents
+        self.assertEqual(14 * 2, st_james.rent)
+        self.assertEqual(14 * 2, ten_ave.rent)
+        self.assertEqual(16 * 2, ny_ave.rent)
+
+        # Test with utility tiles
+        electric_company: AssetTile = AssetTile(id=12, owner=None, price=150, group=AssetGroups.UTILITY)
+        water_works: AssetTile = AssetTile(id=28, owner=None, price=150, group=AssetGroups.UTILITY)
+        # Buy electric company
+        starting_money = player.money
+        player.update(BuyUpdate(electric_company))
+        self.assertEqual(player, electric_company.owner)
+        self.assertEqual(starting_money - electric_company.price, player.money)
+        self.assertIn(electric_company, player.assets)
+        self.assertEqual(UtilityStatus.NO_MONOPOLY, electric_company.status)
+        self.assertEqual(4, electric_company.rent)  # Utility rent multiplier is stored as rent
+        # Buy Water Works
+        starting_money = player.money
+        player.update(BuyUpdate(water_works))
+        self.assertEqual(player, water_works.owner)
+        self.assertEqual(starting_money - water_works.price, player.money)
+        self.assertIn(water_works, player.assets)
+        self.assertEqual(UtilityStatus.MONOPOLY, water_works.status)
+        self.assertEqual(UtilityStatus.MONOPOLY, electric_company.status)
+        self.assertEqual(10, water_works.rent)  # Utility rent multiplier is stored as rent
+        self.assertEqual(10, electric_company.rent)  # Utility rent multiplier is stored as rent
+
+        # Test with railroad tiles
+        reading: AssetTile = AssetTile(id=5, owner=None, price=200, group=AssetGroups.RAILROAD)
+        pensylvania: AssetTile = AssetTile(id=15, owner=None, price=200, group=AssetGroups.RAILROAD)
+        bno: AssetTile = AssetTile(id=25, owner=None, price=200, group=AssetGroups.RAILROAD)
+        short_line: AssetTile = AssetTile(id=35, owner=None, price=200, group=AssetGroups.RAILROAD)
+        # Player needs some more money to buy these tiles
+        player.money = STARTING_MONEY
+        for idx, railroad in enumerate([reading, pensylvania, bno, short_line]):
+            self.assertEqual(RailroadStatus.UNOWNED, railroad.status)
+            self.assertEqual(0, railroad.rent)
+            self.assertIsNone(railroad.owner)
+            starting_money = player.money
+            player.update(BuyUpdate(railroad))
+            self.assertEqual(player, railroad.owner)
+            self.assertEqual(starting_money - railroad.price, player.money)
+            self.assertIn(railroad, player.assets)
+            self.assertEqual(RailroadStatus(idx + 1), railroad.status)
+            self.assertEqual(25 * 2**idx, railroad.rent)
+
 
     def test_improvements(self):
         player: Player = self.make_player()

@@ -5,7 +5,7 @@ Date:           10/30/23
 """
 
 from .asset_tile import AssetTile
-from .types import JailMethod, PropertyStatus
+from .types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
 from .constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MIN_DIE, NUM_TILES, START_LOCATION, GROUP_SIZE,
                         RENTS)
 from .player import Player, PlayerStatus
@@ -160,36 +160,30 @@ class BuyUpdate(PlayerUpdate):
         :param player:  Player purchasing a property.
         :return:        None.
         """
+        # Can't buy a property that is already owned
+        if self.tile in player.assets:
+            return
         player.assets.append(self.tile)
         self.tile.owner = player
         player.money -= self.tile.price
         # List of tiles in the same group as the tile being bought
-        group_share = []
-        # Loop through the tiles the player owns and add them to group_share if needed
-        for i in player.assets:
-            # check if the current player-owned tile is of the same group as the tile being bought
-            if i.group == self.tile.group:
-                group_share.append(i)
-
-        tile_type = type(self.tile)
-        match tile_type:
-            case ("RailroadTile"):
-                # Loop through the tiles in group_share
-                for i in group_share:
-                    # Adjust the rent of each tile according to how many railroads are owned
-                    i.rent = i.rent_map.get(len(group_share))
-            case ("UtilityTile"):
-                # Check if every utility is owned
-                if len(group_share) == GROUP_SIZE.get(self.tile.group):
-                    # Loop through the tiles in group_share
-                    for i in group_share:
-                        # Set the rent (multiplier) accordingly
-                        i.rent_multiplier = i.rent_map.get(PropertyStatus.MONOPOLY)
-            # Operates the same as with UtilityTile objects
-            case ("PropertyTile"):
-                if len(group_share) == GROUP_SIZE.get(self.tile.group):
-                    for i in group_share:
-                        i.rent_multiplier = i.rent_map.get(PropertyStatus.MONOPOLY)
+        group_share: list[AssetTile] = [asset for asset in player.assets if asset.group == self.tile.group]
+        # Depending on the group, update all the matched group share property statuses accordingly
+        match self.tile.group:
+            case AssetGroups.RAILROAD:
+                for asset in group_share:
+                    # Sort of cursed way to convert from integer to enum representation
+                    if len(group_share) < len(RailroadStatus):
+                        asset.status = RailroadStatus(len(group_share))
+            case AssetGroups.UTILITY:
+                for asset in group_share:
+                    if len(group_share) == GROUP_SIZE[AssetGroups.UTILITY]:
+                        asset.status = UtilityStatus.MONOPOLY
+            # Match any other property group
+            case _:
+                for asset in group_share:
+                    if len(group_share) == GROUP_SIZE[self.tile.group]:
+                        asset.status = PropertyStatus.MONOPOLY
 
 
 class ImprovementUpdate(PlayerUpdate):

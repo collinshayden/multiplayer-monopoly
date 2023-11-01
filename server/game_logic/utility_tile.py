@@ -21,7 +21,6 @@ class UtilityTile(AssetTile):
         rent_map = RENTS[id]
         rent_multiplier = 4
 
-
     def to_dict(self) -> dict:
         """
         Description:    Method used to return a dictionary representation of the class.

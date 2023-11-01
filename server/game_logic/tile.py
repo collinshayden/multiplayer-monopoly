@@ -12,7 +12,7 @@ class Tile:
         :param id:      An integer identifier for each tile.
         :returns:       None.
         """
-        pass
+        self.id: int = id
 
     def on_land(self, roll: int, player):
         """

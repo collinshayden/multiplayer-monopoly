@@ -20,6 +20,7 @@ MIN_ROLL: int = 2 * MIN_DIE
 MAX_ROLL: int = 2 * MAX_DIE
 
 # Other constants
+NUM_RAILROADS: int = 4
 STARTING_MONEY: int = 1500
 JAIL_TURNS: int = 3
 JAIL_LOCATION: int = 10
@@ -49,6 +50,7 @@ Dictionary of dictionaries for rent amounts based on improvements.
 source: https://www.falstad.com/monopoly.html
 """
 RENTS: dict[int: dict[PropertyStatus: int]] = {
+    # Browns
     1: {
         PropertyStatus.NO_MONOPOLY: 2,
         PropertyStatus.MONOPOLY: 4,
@@ -67,6 +69,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 320,
         PropertyStatus.FIVE_IMPROVEMENTS: 450,
     },
+    # Light blues
     6: {
         PropertyStatus.NO_MONOPOLY: 6,
         PropertyStatus.MONOPOLY: 12,
@@ -85,7 +88,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 400,
         PropertyStatus.FIVE_IMPROVEMENTS: 550,
     },
-     9: {
+    9: {
         PropertyStatus.NO_MONOPOLY: 8,
         PropertyStatus.MONOPOLY: 16,
         PropertyStatus.ONE_IMPROVEMENT: 40,
@@ -94,6 +97,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 450,
         PropertyStatus.FIVE_IMPROVEMENTS: 600,
     },
+    # Pinks
     11: {
         PropertyStatus.NO_MONOPOLY: 10,
         PropertyStatus.MONOPOLY: 20,
@@ -121,6 +125,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 700,
         PropertyStatus.FIVE_IMPROVEMENTS: 900,
     },
+    # Oranges
     16: {
         PropertyStatus.NO_MONOPOLY: 14,
         PropertyStatus.MONOPOLY: 28,
@@ -148,6 +153,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 800,
         PropertyStatus.FIVE_IMPROVEMENTS: 1000,
     },
+    # Reds
     21: {
         PropertyStatus.NO_MONOPOLY: 18,
         PropertyStatus.MONOPOLY: 36,
@@ -175,6 +181,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 925,
         PropertyStatus.FIVE_IMPROVEMENTS: 1100,
     },
+    # Yellows
     26: {
         PropertyStatus.NO_MONOPOLY: 22,
         PropertyStatus.MONOPOLY: 44,
@@ -202,6 +209,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 1025,
         PropertyStatus.FIVE_IMPROVEMENTS: 1200,
     },
+    # Greens
     31: {
         PropertyStatus.NO_MONOPOLY: 26,
         PropertyStatus.MONOPOLY: 52,
@@ -229,6 +237,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 1200,
         PropertyStatus.FIVE_IMPROVEMENTS: 1400,
     },
+    # Blues
     37: {
         PropertyStatus.NO_MONOPOLY: 35,
         PropertyStatus.MONOPOLY: 70,
@@ -259,8 +268,8 @@ for tile_idx in [5, 15, 25, 35]:
     }
 
 # Add in utilities
-    for tile_idx in [12, 28]:
-        RENTS[tile_idx] = {
-            UtilityStatus.NO_MONOPOLY: 4,
-            UtilityStatus.MONOPOLY: 10
-        }
+for tile_idx in [12, 28]:
+    RENTS[tile_idx] = {
+        UtilityStatus.NO_MONOPOLY: 4,
+        UtilityStatus.MONOPOLY: 10
+    }

@@ -4,9 +4,12 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
+from .constants import RENTS
 from .player import Player
 from .tile import Tile
-from.types import AssetGroups
+from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
+
+from typing import Union
 
 
 class AssetTile(Tile):
@@ -20,7 +23,7 @@ class AssetTile(Tile):
         :param mortage_price:   The amount of moneu which can be received when mortaged.
         :param group:           The group which the BuyableTile is a part of.
         """
-        # TODO: Add call to superclass constructor
+        super().__init__(id=id)
         self.owner: Player = owner
         self.price: int = price
         self.group: AssetGroups = group
@@ -28,6 +31,31 @@ class AssetTile(Tile):
         # Default values here
         self.is_mortgaged: bool = False
         self.mortage_price: int = int(price / 2)
+
+        self.status: Union[PropertyStatus, RailroadStatus, UtilityStatus]
+        match group:
+            case AssetGroups.UTILITY:
+                self.status = UtilityStatus.NO_MONOPOLY
+            case AssetGroups.RAILROAD:
+                self.status = RailroadStatus.UNOWNED
+            case _:
+                self.status = PropertyStatus.NO_MONOPOLY
+
+    @property
+    def rent(self) -> int:
+        """
+        Description:    Property which will compute the rent based on the rent map and property status.
+        :return:        Returns integer value for rent or -1 if it could not be computed.
+        """
+        # No rent if the tile is unowned or mortgaged.
+        if self.is_mortgaged or self.owner is None:
+            return 0
+        # Otherwise, look up the cost in the rent map based on the number in the owner's list of assets.
+        else:
+            rent: dict = (RENTS.get(self.id, False))
+            if rent is not None:
+                rent = rent.get(self.status)
+            return rent if rent is not None else -1
 
     @property
     def liquid_value(self) -> int:

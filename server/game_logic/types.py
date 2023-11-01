@@ -68,10 +68,12 @@ class RailroadStatus(Enum):
     Description:    Enumeration for the number of owned railroads.
     #_OWNED:        Corresponds to the number of railroad tiles owned.
     """
+    UNOWNED = 0
     ONE_OWNED = 1
     TWO_OWNED = 2
     THREE_OWNED = 3
     FOUR_OWNED = 4
+
 
 class UtilityStatus(Enum):
     """
@@ -80,6 +82,7 @@ class UtilityStatus(Enum):
     """
     NO_MONOPOLY = 0
     MONOPOLY = 1
+
 
 class AssetGroups(Enum):
     """
