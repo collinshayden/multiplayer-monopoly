@@ -1,19 +1,7 @@
-/// Socket.IO test program
-/// Author: Alex Hall
-/// Date: 10/12/2023
-
-import 'package:client/model/endpoint_manager.dart';
+import 'package:client/cubit/game_cubit.dart';
 import 'package:client/view/base/board.dart';
 import 'package:flutter/material.dart';
-import 'cubit/game_manager_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:math';
-
-/// This application demonstrates Socket.IO functionality, including connection,
-/// connection error, disconnection, and a custom event handler. The user is
-/// able to enter text into a text field and hit the send button. The console
-/// will then print the entered text only if the server has received it and sent
-/// it back to the client.
 
 void main() {
   runApp(
@@ -32,16 +20,16 @@ class MonopolyApp extends StatefulWidget {
 }
 
 class _MonopolyAppState extends State<MonopolyApp> {
-  EndpointManager endpointManager = EndpointManager();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: BlocProvider(
-          create: (context) => GameManagerCubit(),
+          create: (context) => GameCubit(),
           child: Stack(
             children: [
+              CubitTest(),
               const Board(),
               Center(
                 child: SizedBox.fromSize(
@@ -50,7 +38,6 @@ class _MonopolyAppState extends State<MonopolyApp> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          endpointManager.send(GameActions.rollDice, {});
                           print('Rolling dice!');
                         },
                         child: const Text('Roll Dice!'),
@@ -63,6 +50,30 @@ class _MonopolyAppState extends State<MonopolyApp> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CubitTest extends StatelessWidget {
+  const CubitTest({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(
+      builder: (context, state) {
+        if (state is GameInitial) {
+          return TextButton(
+            onPressed: () {
+              BlocProvider.of<GameCubit>(context).loadLocalConfig();
+            },
+            child: Text('Load local config'),
+          );
+        }
+        if (state is LocalConfigLoading) {
+          return const CircularProgressIndicator();
+        }
+        return const Text('Loaded local config!');
+      },
     );
   }
 }
