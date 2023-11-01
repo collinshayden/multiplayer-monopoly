@@ -44,7 +44,7 @@ class PlayerStatus(Enum):
     GOOD = 0
     BANKRUPT = 1
     IN_THE_HOLE = 2
-    INVALID = 4
+    INVALID = 3
 
 
 class PropertyStatus(Enum):

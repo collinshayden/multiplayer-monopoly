@@ -20,7 +20,7 @@ class Player:
         self.username: str = username
 
         # State variables
-        self.properties: list[AssetTile] = []
+        self.assets: list[AssetTile] = []
         self.money: int = STARTING_MONEY
         self.location: int = START_LOCATION
         self.doubles_streak: int = 0
@@ -53,10 +53,10 @@ class Player:
                             3) Mortgaging properties
         :return:        Final dollar amount for a player's net worth.
         """
-        property_values: int = 0
-        for property in self.properties:
-            property_values += property.liquid_value
-        return self.money + property_values
+        asset_values: int = 0
+        for asset in self.assets:
+            asset_values += asset.liquid_value
+        return self.money + asset_values
 
     def update(self, update) -> PlayerStatus:
         """

@@ -4,7 +4,6 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-
 class Tile:
 
     def __init__(self, id: int) -> None:
@@ -14,3 +13,11 @@ class Tile:
         :returns:       None.
         """
         pass
+
+    def on_land(self, roll: int, player):
+        """
+        Description:    Tile method to be called when a tile gets landed on.
+        :param roll:
+        :param player:
+        :return:
+        """

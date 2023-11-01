@@ -11,12 +11,12 @@ from .types import AssetGroups
 
 class UtilityTile(AssetTile):
 
-    def __init__(self, id: int, owner: Player, price: int, is_mortaged: bool, mortage_price: int) -> None:
+    def __init__(self, id: int, owner: Player, price: int, is_mortgaged: bool, mortage_price: int) -> None:
         """
         Description:    Class representing the two utility tiles.
         :returns:       None.
         """
-        super().__init__(id, owner, price, is_mortaged, mortage_price, AssetGroups.UTILITY)
+        super().__init__(id, owner, price, is_mortgaged, mortage_price, AssetGroups.UTILITY)
 
     def compute_rent(self, dice_roll: int = None) -> int:
         """
@@ -45,6 +45,6 @@ class UtilityTile(AssetTile):
         utility_dict = {"id": self.id,
                         "owner": self.owner,
                         "price": self.price,
-                        "isMortgaged": self.is_mortaged,
+                        "isMortgaged": self.is_mortgaged,
                         "mortgagePrice": self.mortgage_price}
         return utility_dict
