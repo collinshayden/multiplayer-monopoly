@@ -4,15 +4,11 @@ Author:         Jordan Bourdeau
 Date:           10/30/23
 """
 
-from .asset_tile import AssetTile
-from .types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
-from .constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE, NUM_TILES,
+from server.game_logic.types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
+from server.game_logic.constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE, NUM_TILES,
                         START_LOCATION, GROUP_SIZE, RENTS)
-from .player import Player, PlayerStatus
-from .asset_tile import AssetTile
-from .improvable_tile import ImprovableTile
-from .railroad_tile import RailroadTile
-from .utility_tile import UtilityTile
+from server.game_logic.player import Player, PlayerStatus
+from server.game_logic.improvable_tile import ImprovableTile
 
 
 class PlayerUpdate:
@@ -147,12 +143,13 @@ class RollUpdate(PlayerUpdate):
 
 
 class BuyUpdate(PlayerUpdate):
-    def __init__(self, tile: AssetTile):
+
+    def __init__(self, tile):
         """
         Description:    Object for a player buying a tile.
         :param tile:    The AssetTile object being bought.
         """
-        self.tile: AssetTile = tile
+        self.tile = tile
 
     def update(self, player: Player):
         """
@@ -160,14 +157,12 @@ class BuyUpdate(PlayerUpdate):
         :param player:  Player purchasing a property.
         :return:        None.
         """
-        # Can't buy a property that is already owned
-        if self.tile in player.assets:
-            return
         player.assets.append(self.tile)
         self.tile.owner = player
+        
         player.money -= self.tile.price
         # List of tiles in the same group as the tile being bought
-        group_share: list[AssetTile] = player.group_share(self.tile.group)
+        group_share: list = player.group_share(self.tile.group)
         # Depending on the group, update all the matched group share property statuses accordingly
         match self.tile.group:
             case AssetGroups.RAILROAD:
@@ -187,13 +182,13 @@ class BuyUpdate(PlayerUpdate):
 
 
 class ImprovementUpdate(PlayerUpdate):
-    def __init__(self, asset: AssetTile, delta: int):
+    def __init__(self, asset, delta: int):
         """
         Description:        Update to change the number of improvements a property has.
         :param asset:       The property to improve/degrade.
         :param delta:       Delta for the number of improvements to buy/sell.
         """
-        self.asset: AssetTile = asset
+        self.asset = asset
         self.delta: int = delta
 
     def update(self, player: Player):
@@ -217,7 +212,7 @@ class ImprovementUpdate(PlayerUpdate):
         # Evil enumeration integer conversion hacking with IntEnum.
         elif self.asset.status < PropertyStatus.MONOPOLY:
             return
-        group_share: list[AssetTile] = player.group_share(self.asset.group)
+        group_share: list = player.group_share(self.asset.group)
         # 2 cases:
         # 1. Player is looking to increase the number of improvements.
         if self.delta > 0:
@@ -258,13 +253,13 @@ class ImprovementUpdate(PlayerUpdate):
 
 
 class MortgageUpdate(PlayerUpdate):
-    def __init__(self, property: AssetTile, mortgage: bool):
+    def __init__(self, property, mortgage: bool):
         """
         Description:        Update to mortgage a property owned by a player.
         :param property:    The property to mortgage.
         :param mortage:     Bool for whether property is being mortgaged (True) or unmortgaged (False).
         """
-        self.asset: AssetTile = property
+        self.asset = property
         self.mortgage: bool = mortgage
 
     def update(self, player: Player):
@@ -325,3 +320,14 @@ class LocationUpdate(PlayerUpdate):
         """
         if START_LOCATION <= self.destination < NUM_TILES:
             player.location = self.destination
+
+class NullUpdate(PlayerUpdate):
+    def __init__(self):
+        """
+        Description:    Object used when nothing needs to happen to a Player but an update needs to be produced.
+        :return:        None.
+        """
+        pass
+
+    def update(self, player: Player):
+        pass

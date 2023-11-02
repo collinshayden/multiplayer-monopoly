@@ -4,10 +4,10 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .asset_tile import AssetTile
-from .player import Player
-from .types import AssetGroups, RailroadStatus
-from .constants import RENTS
+from server.game_logic.asset_tile import AssetTile
+from server.game_logic.player import Player
+from server.game_logic.types import AssetGroups, RailroadStatus
+from server.game_logic.constants import RENTS
 
 
 class RailroadTile(AssetTile):

@@ -4,9 +4,9 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .asset_tile import AssetTile
-from .constants import IMPROVEMENT_MAP
-from .types import AssetGroups
+from server.game_logic.asset_tile import AssetTile
+from server.game_logic.constants import IMPROVEMENT_MAP
+from server.game_logic.types import AssetGroups
 
 
 class ImprovableTile(AssetTile):
@@ -35,14 +35,16 @@ class ImprovableTile(AssetTile):
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        property_dict = {"id": self.id,
+        property_dict = {
+            "id": self.id,
             "owner": self.owner,
             "price": self.price,
             "isMortgaged": self.is_mortgaged,
             "mortgagePrice": self.mortage_price,
-            "group": self.group,
-            "rentMap": self.rent_map,
+            "group": self.group.name,
+            "status": self.status.name,
             "rent": self.rent,
-            "improvements": self.improvements,
-            "improvementCost": self.improvement_cost}
+            "improvementCost": self.improvement_cost
+        }
+
         return property_dict

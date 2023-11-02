@@ -4,11 +4,11 @@ Author:         Jordan Bourdeau
 Date:           10/30/23
 """
 
-from ..game_logic.asset_tile import AssetTile
-from ..game_logic.constants import JAIL_LOCATION, JAIL_TURNS, STARTING_MONEY
-from ..game_logic.player import Player, PlayerStatus
-from ..game_logic.player_updates import *
-from ..game_logic.types import AssetGroups
+from server.game_logic.asset_tile import AssetTile
+from server.game_logic.constants import JAIL_LOCATION, JAIL_TURNS, STARTING_MONEY
+from server.game_logic.player import Player, PlayerStatus
+from server.game_logic.player_updates import *
+from server.game_logic.types import AssetGroups
 
 import unittest
 
@@ -24,10 +24,10 @@ class MyTestCase(unittest.TestCase):
     def test_buy_update(self):
         player: Player = self.make_player()
         # These assets correspond to the oranges on the original Monopoly board
-        st_james: AssetTile = AssetTile(id=16, price=180, group=AssetGroups.ORANGE)
-        ten_ave: AssetTile = AssetTile(id=18, price=180, group=AssetGroups.ORANGE)
-        ny_ave: AssetTile = AssetTile(id=19, price=200, group=AssetGroups.ORANGE)
-        assets: list[AssetTile] = [st_james, ten_ave, ny_ave]
+        st_james = AssetTile(id=16, price=180, group=AssetGroups.ORANGE)
+        ten_ave = AssetTile(id=18, price=180, group=AssetGroups.ORANGE)
+        ny_ave = AssetTile(id=19, price=200, group=AssetGroups.ORANGE)
+        assets: list = [st_james, ten_ave, ny_ave]
         # Properties are unowned, so they currently have a rent of 0
         for asset in assets:
             self.assertEqual(0, asset.rent)
@@ -51,8 +51,8 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(16 * 2, ny_ave.rent)
 
         # Test with utility tiles
-        electric_company: AssetTile = AssetTile(id=12, price=150, group=AssetGroups.UTILITY)
-        water_works: AssetTile = AssetTile(id=28, price=150, group=AssetGroups.UTILITY)
+        electric_company = AssetTile(id=12, price=150, group=AssetGroups.UTILITY)
+        water_works = AssetTile(id=28, price=150, group=AssetGroups.UTILITY)
         # Buy electric company
         starting_money = player.money
         player.update(BuyUpdate(electric_company))
@@ -73,10 +73,10 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(10, electric_company.rent)  # Utility rent multiplier is stored as rent
 
         # Test with railroad tiles
-        reading: AssetTile = AssetTile(id=5, price=200, group=AssetGroups.RAILROAD)
-        pensylvania: AssetTile = AssetTile(id=15, price=200, group=AssetGroups.RAILROAD)
-        bno: AssetTile = AssetTile(id=25, price=200, group=AssetGroups.RAILROAD)
-        short_line: AssetTile = AssetTile(id=35, price=200, group=AssetGroups.RAILROAD)
+        reading = AssetTile(id=5, price=200, group=AssetGroups.RAILROAD)
+        pensylvania = AssetTile(id=15, price=200, group=AssetGroups.RAILROAD)
+        bno = AssetTile(id=25, price=200, group=AssetGroups.RAILROAD)
+        short_line = AssetTile(id=35, price=200, group=AssetGroups.RAILROAD)
         # Player needs some more money to buy these tiles
         player.money = STARTING_MONEY
         for idx, railroad in enumerate([reading, pensylvania, bno, short_line]):
@@ -98,13 +98,13 @@ class MyTestCase(unittest.TestCase):
         ten_ave: ImprovableTile = ImprovableTile(id=18, price=180, group=AssetGroups.ORANGE)
         ny_ave: ImprovableTile = ImprovableTile(id=19, price=200, group=AssetGroups.ORANGE)
         # Non-improvable tile monopolies
-        reading: AssetTile = AssetTile(id=5, price=200, group=AssetGroups.RAILROAD)
-        pensylvania: AssetTile = AssetTile(id=15, price=200, group=AssetGroups.RAILROAD)
-        bno: AssetTile = AssetTile(id=25, price=200, group=AssetGroups.RAILROAD)
-        short_line: AssetTile = AssetTile(id=35, price=200, group=AssetGroups.RAILROAD)
+        reading = AssetTile(id=5, price=200, group=AssetGroups.RAILROAD)
+        pensylvania = AssetTile(id=15, price=200, group=AssetGroups.RAILROAD)
+        bno = AssetTile(id=25, price=200, group=AssetGroups.RAILROAD)
+        short_line = AssetTile(id=35, price=200, group=AssetGroups.RAILROAD)
 
-        electric_company: AssetTile = AssetTile(id=12, price=150, group=AssetGroups.UTILITY)
-        water_works: AssetTile = AssetTile(id=28, price=150, group=AssetGroups.UTILITY)
+        electric_company = AssetTile(id=12, price=150, group=AssetGroups.UTILITY)
+        water_works = AssetTile(id=28, price=150, group=AssetGroups.UTILITY)
 
         # Try updating tiles the player doesn't own. Nothing happens.
         for idx, asset in enumerate([st_james, ten_ave,
@@ -194,7 +194,7 @@ class MyTestCase(unittest.TestCase):
     def test_mortgage_update(self):
         # Make the player and given them an AssetTile
         player: Player = self.make_player()
-        asset: AssetTile = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
+        asset = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
         asset.owner = player
         player.assets.append(asset)
 
@@ -428,7 +428,7 @@ class MyTestCase(unittest.TestCase):
 
         # Redo this but give the player a faux-property so they can enter the IN_THE_HOLE state.
         player: Player = self.make_player()
-        asset: AssetTile = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
+        asset = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
         asset.owner = player
         player.assets.append(asset)
         self.assertEqual(STARTING_MONEY, player.money)
