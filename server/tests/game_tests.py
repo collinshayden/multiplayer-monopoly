@@ -4,9 +4,9 @@ Author:         Jordan Bourdeau
 Date:           10/24/23
 """
 
-from ..game_logic.constants import MAX_NUM_PLAYERS, PLAYER_ID_LENGTH, STARTING_MONEY
-from ..game_logic.game import Game
-from ..game_logic.types import PlayerStatus
+from server.game_logic.constants import MAX_NUM_PLAYERS, PLAYER_ID_LENGTH, STARTING_MONEY
+from server.game_logic.game import Game
+from server.game_logic.types import PlayerStatus
 
 import unittest
 

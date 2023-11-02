@@ -3,11 +3,10 @@ Description:    Class representing a buyable tile.
 Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
-
-from .constants import IMPROVEMENT_MAP, RENTS
-from .player import Player
-from .tile import Tile
-from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
+from server.game_logic.constants import RENTS
+from server.game_logic.player import Player
+from server.game_logic.tile import Tile
+from server.game_logic.types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
 from typing import Union
 
