@@ -1,352 +1,304 @@
 {
-	"monetaryUnitName": "dollar",
-	"monetaryUnitSymbol": "$",
-	"propertyColorsARGB": [
-		"#FF955436",
-		"#FFAAE0FC",
-		"#FFDC3897",
-		"#FFF7941D",
-		"#FFED1B24",
-		"#FFFEF102",
-		"#FF1FB25A",
-		"#FF0171BB"
-	],
-	"tiles": [
-		{
-			"_comment": "This tile configuration must contain exactly 40 items (not counting `_comment`) representing tiles, where each item must provide an `id` value and certain fields according to its position on the board. The `id` is unique and its value is an integer in the range [0, 39]."
-		},
-		{
-			"id": 0,
-			"type" : "corner",
-			"upperText": [
-				"COLLECT",
-				"SALARY",
-				"AS YOU PASS"
-			],
-			"goImage": "go_text.png",
-			"arrowImage": "go_arrow.png"
-		},
-		{
-			"id": 1,
-			"type" : "improvement",
-			"title": [
-				"MEDITER-",
-				"RANEAN",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 2,
-			"type" : "community",
-			"title": [
-				"COMMUNITY",
-				"CHEST"
-			],
-			"image": "community_chest.png"
-		},
-		{
-			"id": 3,
-			"type" : "improvement",
-			"title": [
-				"BALTIC",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 4,
-			"type" : "tax",
-			"title": [
-				"INCOME",
-				"TAX"
-			],
-			"image": "income_tax.png",
-			"payCommandText": "PAY"
-		},
-		{
-			"id": 5,
-			"type" : "railroad",
-			"title": [
-				"READING",
-				"RAILROAD"
-			],
-			"image": "railroad.png"
-		},
-		{
-			"id": 6,
-			"type" : "improvement",
-			"title": [
-				"ORIENTAL",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 7,
-			"type" : "chance",
-			"title": [
-				"CHANCE"
-			],
-			"image": "chance-1.png"
-		},
-		{
-			"id": 8,
-			"type" : "improvement",
-			"title": [
-				"VERMONT",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 9,
-			"type" : "improvement",
-			"title": [
-				"CONNECTICUT",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 10,
-			"type" : "corner",
-			"upperText": ["IN"],
-			"image": "jail.png",
-			"lowerText": ["JAIL"],
-			"visitingText": ["JUST", "VISITING"]
-		},
-		{
-			"id": 11,
-			"type" : "improvement",
-			"title": [
-				"ST. CHARLES",
-				"PLACE"
-			]
-		},
-		{
-			"id": 12,
-			"type" : "utility",
-			"title": [
-				"ELECTRIC",
-				"COMPANY"
-			]
-		},
-		{
-			"id": 13,
-			"type" : "improvement",
-			"title": [
-				"STATES",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 14,
-			"type" : "improvement",
-			"title": [
-				"VIRGINIA",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 15,
-			"type" : "railroad",
-			"title": [
-				"PENNSYLVANIA",
-				"RAILROAD"
-			],
-			"image": "railroad.png"
-		},
-		{
-			"id": 16,
-			"type" : "improvement",
-			"title": [
-				"ST. JAMES",
-				"PLACE"
-			]
-		},
-		{
-			"id": 17,
-			"type" : "community",
-			"title": [
-				"COMMUNITY",
-				"CHEST"
-			],
-			"image": "community_chest.png"
-		},
-		{
-			"id": 18,
-			"type" : "improvement",
-			"title": [
-				"TENNESSEE",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 19,
-			"type" : "improvement",
-			"title": [
-				"NEW YORK",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 20,
-			"type" : "corner",
-			"upperText": ["FREE"],
-			"image": "free_parking.png",
-			"lowerText": ["PARKING"]
-		},
-		{
-			"id": 21,
-			"type" : "improvement",
-			"title": [
-				"KENTUCKY",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 22,
-			"type" : "chance",
-			"title": [
-				"CHANCE"
-			],
-			"image": "chance-2.png"
-		},
-		{
-			"id": 23,
-			"type" : "improvement",
-			"title": [
-				"INDIANA",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 24,
-			"type" : "improvement",
-			"title": [
-				"ILLINOIS",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 25,
-			"type" : "railroad",
-			"title": [
-				"B. & O.",
-				"RAILROAD"
-			],
-			"image": "railroad.png"
-		},
-		{
-			"id": 26,
-			"type" : "improvement",
-			"title": [
-				"ATLANTIC",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 27,
-			"type" : "improvement",
-			"title": [
-				"VENTNOR",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 28,
-			"type" : "utility",
-			"title": [
-				"WATER",
-				"WORKS"
-			]
-		},
-		{
-			"id": 29,
-			"type" : "improvement",
-			"title": [
-				"MARVIN",
-				"GARDENS"
-			]
-		},
-		{
-			"id": 30,
-			"type" : "corner",
-			"upperText": ["GO TO"],
-			"image": "go_to_jail.png",
-			"lowerText": ["JAIL"]
-		},
-		{
-			"id": 31,
-			"type" : "improvement",
-			"title": [
-				"PACIFIC",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 32,
-			"type" : "improvement",
-			"title": [
-				"NORTH",
-				"CAROLINA",
-				"AVENUE"
-			]
-		},
-		{
-			"id": 33,
-			"type" : "community",
-			"title": [
-				"COMMUNITY",
-				"CHEST"
-			],
-			"image": "community_chest.png"
-		},
-		{
-			"id": 34,
-			"type" : "improvement",
-			"title": [
-				"PENNSYLVANIA",
-				"AVNEUE"
-			]
-		},
-		{
-			"id": 35,
-			"type" : "railroad",
-			"title": [
-				"SHORT",
-				"LINE"
-			],
-			"image": "railroad.png"
-		},
-		{
-			"id": 36,
-			"type" : "chance",
-			"title": [
-				"CHANCE"
-			],
-			"image": "chance-3.png"
-		},
-		{
-			"id": 37,
-			"type" : "improvement",
-			"title": [
-				"PARK",
-				"PLACE"
-			]
-		},
-		{
-			"id": 38,
-			"type" : "tax",
-			"title": [
-				"LUXURY",
-				"TAX"
-			],
-			"image": "luxury_tax.png",
-			"payCommandText": "PAY"
-		},
-		{
-			"id": 39,
-			"type" : "improvement",
-			"title": [
-				"BOARDWALK"
-			]
-		}
-	]
+  "monetaryUnitName": "dollar",
+  "monetaryUnitSymbol": "$",
+  "propertyColorsARGB": [
+    "#FF955436",
+    "#FFAAE0FC",
+    "#FFDC3897",
+    "#FFF7941D",
+    "#FFED1B24",
+    "#FFFEF102",
+    "#FF1FB25A",
+    "#FF0171BB"
+  ],
+  "tiles": [
+    {
+      "_comment": "This tile configuration must contain exactly 40 items (not counting `_comment`) representing tiles, where each item must provide an `id` value and certain fields according to its position on the board. The `id` is unique and its value is an integer in the range [0, 39]."
+    },
+    {
+      "id": 0,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": ["COLLECT", "SALARY", "AS YOU PASS"],
+      "goImage": "go_text.png",
+      "arrowImage": "go_arrow.png"
+    },
+    {
+      "id": 1,
+      "type": "improvement",
+	  "colorIndex" : 0,
+	  "quarterTurns": 1,
+      "title": ["MEDITER-", "RANEAN", "AVENUE"]
+    },
+    {
+      "id": 2,
+      "type": "community",
+	  "quarterTurns": 1,
+      "title": ["COMMUNITY", "CHEST"],
+      "image": "community_chest.png"
+    },
+    {
+      "id": 3,
+      "type": "improvement",
+	  "colorIndex" : 0,
+	  "quarterTurns": 1,
+      "title": ["BALTIC", "AVENUE"]
+    },
+    {
+      "id": 4,
+      "type": "tax",
+	  "quarterTurns": 1,
+      "title": ["INCOME", "TAX"],
+      "image": "income_tax.png",
+      "payCommandText": "PAY"
+    },
+    {
+      "id": 5,
+      "type": "railroad",
+	  "quarterTurns": 1,
+      "title": ["READING", "RAILROAD"],
+      "image": "railroad.png"
+    },
+    {
+      "id": 6,
+      "type": "improvement",
+	  "colorIndex" : 1,
+	  "quarterTurns": 1,
+      "title": ["ORIENTAL", "AVENUE"]
+    },
+    {
+      "id": 7,
+      "type": "chance",
+	  "quarterTurns": 1,
+      "title": ["CHANCE"],
+      "image": "chance-1.png"
+    },
+    {
+      "id": 8,
+      "type": "improvement",
+	  "colorIndex" : 1,
+	  "quarterTurns": 1,
+      "title": ["VERMONT", "AVENUE"]
+    },
+    {
+      "id": 9,
+      "type": "improvement",
+	  "colorIndex" : 1,
+	  "quarterTurns": 1,
+      "title": ["CONNECTICUT", "AVENUE"]
+    },
+    {
+      "id": 10,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": ["IN"],
+      "image": "jail.png",
+      "lowerText": ["JAIL"],
+      "visitingText": ["JUST", "VISITING"]
+    },
+    {
+      "id": 11,
+      "type": "improvement",
+	  "colorIndex" : 3,
+	  "quarterTurns": 2,
+      "title": ["ST. CHARLES", "PLACE"]
+    },
+    {
+      "id": 12,
+      "type": "utility",
+	  "quarterTurns": 2,
+      "title": ["ELECTRIC", "COMPANY"]
+    },
+    {
+      "id": 13,
+      "type": "improvement",
+	  "colorIndex" : 3,
+	  "quarterTurns": 2,
+      "title": ["STATES", "AVENUE"]
+    },
+    {
+      "id": 14,
+      "type": "improvement",
+	  "colorIndex" : 3,
+	  "quarterTurns": 2,
+      "title": ["VIRGINIA", "AVENUE"]
+    },
+    {
+      "id": 15,
+      "type": "railroad",
+	  "quarterTurns": 2,
+      "title": ["PENNSYLVANIA", "RAILROAD"],
+      "image": "railroad.png"
+    },
+    {
+      "id": 16,
+      "type": "improvement",
+	  "colorIndex" : 4,
+	  "quarterTurns": 2,
+      "title": ["ST. JAMES", "PLACE"]
+    },
+    {
+      "id": 17,
+      "type": "community",
+	  "quarterTurns": 2,
+      "title": ["COMMUNITY", "CHEST"],
+      "image": "community_chest.png"
+    },
+    {
+      "id": 18,
+      "type": "improvement",
+	  "colorIndex" : 4,
+	  "quarterTurns": 2,
+      "title": ["TENNESSEE", "AVENUE"]
+    },
+    {
+      "id": 19,
+      "type": "improvement",
+	  "colorIndex" : 4,
+	  "quarterTurns": 2,
+      "title": ["NEW YORK", "AVENUE"]
+    },
+    {
+      "id": 20,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": ["FREE"],
+      "image": "free_parking.png",
+      "lowerText": ["PARKING"]
+    },
+    {
+      "id": 21,
+      "type": "improvement",
+	  "colorIndex" : 5,
+	  "quarterTurns": 3,
+      "title": ["KENTUCKY", "AVENUE"]
+    },
+    {
+      "id": 22,
+      "type": "chance",
+	  "quarterTurns": 3,
+      "title": ["CHANCE"],
+      "image": "chance-2.png"
+    },
+    {
+      "id": 23,
+      "type": "improvement",
+	  "colorIndex" : 5,
+	  "quarterTurns": 3,
+      "title": ["INDIANA", "AVENUE"]
+    },
+    {
+      "id": 24,
+      "type": "improvement",
+	  "colorIndex" : 5,
+	  "quarterTurns": 3,
+      "title": ["ILLINOIS", "AVENUE"]
+    },
+    {
+      "id": 25,
+      "type": "railroad",
+	  "quarterTurns": 3,
+      "title": ["B. & O.", "RAILROAD"],
+      "image": "railroad.png"
+    },
+    {
+      "id": 26,
+      "type": "improvement",
+	  "colorIndex" : 6,
+	  "quarterTurns": 3,
+      "title": ["ATLANTIC", "AVENUE"]
+    },
+    {
+      "id": 27,
+      "type": "improvement",
+	  "colorIndex" : 5,
+	  "quarterTurns": 3,
+      "title": ["VENTNOR", "AVENUE"]
+    },
+    {
+      "id": 28,
+      "type": "utility",
+	  "quarterTurns": 3,
+      "title": ["WATER", "WORKS"]
+    },
+    {
+      "id": 29,
+      "type": "improvement",
+	  "colorIndex" : 5,
+	  "quarterTurns": 3,
+      "title": ["MARVIN", "GARDENS"]
+    },
+    {
+      "id": 30,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": ["GO TO"],
+      "image": "go_to_jail.png",
+      "lowerText": ["JAIL"]
+    },
+    {
+      "id": 31,
+      "type": "improvement",
+	  "colorIndex" : 6,
+	  "quarterTurns": 0,
+      "title": ["PACIFIC", "AVENUE"]
+    },
+    {
+      "id": 32,
+      "type": "improvement",
+	  "colorIndex" : 6,
+	  "quarterTurns": 0,
+      "title": ["NORTH", "CAROLINA", "AVENUE"]
+    },
+    {
+      "id": 33,
+      "type": "community",
+	  "quarterTurns": 0,
+      "title": ["COMMUNITY", "CHEST"],
+      "image": "community_chest.png"
+    },
+    {
+      "id": 34,
+      "type": "improvement",
+	  "colorIndex" : 6,
+	  "quarterTurns": 0,
+      "title": ["PENNSYLVANIA", "AVNEUE"]
+    },
+    {
+      "id": 35,
+      "type": "railroad",
+	  "quarterTurns": 0,
+      "title": ["SHORT", "LINE"],
+      "image": "railroad.png"
+    },
+    {
+      "id": 36,
+      "type": "chance",
+	  "quarterTurns": 0,
+      "title": ["CHANCE"],
+      "image": "chance-3.png"
+    },
+    {
+      "id": 37,
+      "type": "improvement",
+	  "colorIndex" : 7,
+	  "quarterTurns": 0,
+      "title": ["PARK", "PLACE"]
+    },
+    {
+      "id": 38,
+      "type": "tax",
+	  "quarterTurns": 0,
+      "title": ["LUXURY", "TAX"],
+      "image": "luxury_tax.png",
+      "payCommandText": "PAY"
+    },
+    {
+      "id": 39,
+      "type": "improvement",
+	  "colorIndex" : 7,
+	  "quarterTurns": 0,
+      "title": ["BOARDWALK"]
+    }
+  ]
 }
