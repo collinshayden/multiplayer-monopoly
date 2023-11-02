@@ -21,7 +21,7 @@ class TileData {
   Map<String, dynamic> toJson() => _$TileDataToJson(this);
 
   void applyJson(Map<String, dynamic> json) {
-    
+
   }
     // empty method
 
@@ -153,5 +153,29 @@ class TaxTileData extends TileData {
     title = json["title"] ?? title;
     imagePath = json["imagePath"] ?? imagePath;
     payCommandText = json["payCommandText"] ?? payCommandText;
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class RailroadTileData extends TileData {
+  String title;
+  String imagePath;
+
+  RailroadTileData({
+    required super.id,
+    required this.title,
+    required this.imagePath,
+  });
+
+  // auto generated factory constructor
+  factory RailroadTileData.fromJson(Map<String, dynamic> json) =>
+      _$RailroadTileDataFromJson(json);
+
+  // auto generated factory constructor
+  Map<String, dynamic> toJson() => _$RailroadTileDataToJson(this);
+
+  void applyJson(Map<String, dynamic> json) {
+    title = json["title"] ?? title;
+    imagePath = json["imagePath"] ?? imagePath;
   }
 }

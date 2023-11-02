@@ -88,3 +88,17 @@ Map<String, dynamic> _$TaxTileDataToJson(TaxTileData instance) =>
       'imagePath': instance.imagePath,
       'payCommandText': instance.payCommandText,
     };
+
+RailroadTileData _$RailroadTileDataFromJson(Map<String, dynamic> json) =>
+    RailroadTileData(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      imagePath: json['imagePath'] as String,
+    );
+
+Map<String, dynamic> _$RailroadTileDataToJson(RailroadTileData instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'imagePath': instance.imagePath,
+    };
