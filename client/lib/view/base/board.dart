@@ -131,7 +131,7 @@ class CustomLayout extends StatelessWidget {
   CustomLayout({super.key}) {
     tiles[0] = CornerTile(id: 0, title: "Go", quarterTurns: 0);
     for (int id = 1; id < 10; id++) {
-      tiles[id] = PropertyTile(
+      tiles[id] = ImprovableTile(
           id: id,
           color: Colors.red,
           title: "id: $id",
@@ -140,7 +140,7 @@ class CustomLayout extends StatelessWidget {
     }
     tiles[10] = CornerTile(id: 10, title: "Jail", quarterTurns: 0);
     for (int id = 11; id < 20; id++) {
-      tiles[id] = PropertyTile(
+      tiles[id] = ImprovableTile(
           id: id,
           color: Colors.red,
           title: "id: $id",
@@ -149,7 +149,7 @@ class CustomLayout extends StatelessWidget {
     }
     tiles[20] = CornerTile(id: 20, title: "Free Parking", quarterTurns: 0);
     for (int id = 21; id < 30; id++) {
-      tiles[id] = PropertyTile(
+      tiles[id] = ImprovableTile(
           id: id,
           color: Colors.red,
           title: "id: $id",
@@ -158,7 +158,7 @@ class CustomLayout extends StatelessWidget {
     }
     tiles[30] = CornerTile(id: 30, title: "Go to Jail", quarterTurns: 0);
     for (int id = 31; id < 40; id++) {
-      tiles[id] = PropertyTile(
+      tiles[id] = ImprovableTile(
           id: id,
           color: Colors.red,
           title: "id: $id",

@@ -5,7 +5,7 @@ Author:         Jordan Bourdeau, Hayden Collins
 """
 
 from .constants import STARTING_MONEY, START_LOCATION
-from .types import PlayerStatus
+from .types import AssetGroups, PlayerStatus
 
 
 class Player:
@@ -57,6 +57,14 @@ class Player:
         for asset in self.assets:
             asset_values += asset.liquid_value
         return self.money + asset_values
+
+    def group_share(self, group: AssetGroups) -> list:
+        """
+        Description:    Method used to retrieve all AssetTile objects from a specific group.
+        :param group:   The group to retrieve.
+        :return:        List of group share AssetTile objects.
+        """
+        return [asset for asset in self.assets if asset.group == group]
 
     def update(self, update) -> PlayerStatus:
         """

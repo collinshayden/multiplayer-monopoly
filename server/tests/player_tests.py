@@ -39,7 +39,8 @@ class MyTestCase(unittest.TestCase):
     def test_calculate_net_worth(self):
         player: Player = self.make_player()
         self.assertEqual(STARTING_MONEY, player.net_worth)
-        property: AssetTile = AssetTile(id=0, owner=player, price=200, group=AssetGroups.ORANGE)
+        property: AssetTile = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
+        property.owner = player
         player.assets.append(property)
         self.assertEqual(STARTING_MONEY + 100, player.net_worth)
         property.is_mortgaged = True

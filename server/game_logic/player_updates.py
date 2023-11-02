@@ -6,11 +6,11 @@ Date:           10/30/23
 
 from .asset_tile import AssetTile
 from .types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
-from .constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MIN_DIE, NUM_TILES, START_LOCATION, GROUP_SIZE,
-                        RENTS)
+from .constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE, NUM_TILES,
+                        START_LOCATION, GROUP_SIZE, RENTS)
 from .player import Player, PlayerStatus
 from .asset_tile import AssetTile
-from .property_tile import PropertyTile
+from .improvable_tile import ImprovableTile
 from .railroad_tile import RailroadTile
 from .utility_tile import UtilityTile
 
@@ -167,7 +167,7 @@ class BuyUpdate(PlayerUpdate):
         self.tile.owner = player
         player.money -= self.tile.price
         # List of tiles in the same group as the tile being bought
-        group_share: list[AssetTile] = [asset for asset in player.assets if asset.group == self.tile.group]
+        group_share: list[AssetTile] = player.group_share(self.tile.group)
         # Depending on the group, update all the matched group share property statuses accordingly
         match self.tile.group:
             case AssetGroups.RAILROAD:
@@ -187,13 +187,13 @@ class BuyUpdate(PlayerUpdate):
 
 
 class ImprovementUpdate(PlayerUpdate):
-    def __init__(self, property: AssetTile, delta: int):
+    def __init__(self, asset: AssetTile, delta: int):
         """
         Description:        Update to change the number of improvements a property has.
-        :param property:    The property to improve/degrade.
+        :param asset:       The property to improve/degrade.
         :param delta:       Delta for the number of improvements to buy/sell.
         """
-        self.asset: AssetTile = property
+        self.asset: AssetTile = asset
         self.delta: int = delta
 
     def update(self, player: Player):
@@ -202,7 +202,59 @@ class ImprovementUpdate(PlayerUpdate):
         :param player:  Player who is changing the number of improvements on a tile.
         :return:        None.
         """
-        pass
+        # Must be a tile which allows improvements to be built.
+        if not isinstance(self.asset, ImprovableTile):
+            return
+        # Tile must be owned by the player.
+        elif self.asset not in player.assets:
+            return
+        # Must be non-zero and within the max/min ranges.
+        elif self.delta == 0 or not -MAX_NUM_IMPROVEMENTS <= self.delta <= MAX_NUM_IMPROVEMENTS:
+            return
+        # Cannot sell more properties than what are currently owned (use -1 to get absolute number of improvements)
+        elif self.delta < -(self.asset.status - 1):
+            return
+        # Evil enumeration integer conversion hacking with IntEnum.
+        elif self.asset.status < PropertyStatus.MONOPOLY:
+            return
+        group_share: list[AssetTile] = player.group_share(self.asset.group)
+        # 2 cases:
+        # 1. Player is looking to increase the number of improvements.
+        if self.delta > 0:
+            money_delta: int = self.asset.improvement_cost
+            total_improvements: int = self.delta
+            # Don't allow an upgrade which would make one property >= 2 improvements ahead
+            for asset in group_share:
+                # Force-upgrade other properties to be >= 1 less than target upgrade
+                if asset is not self.asset:
+                    total_improvements += max(self.asset.status + self.delta - asset.status - 1, 0)
+            # Player does not have the funds necessary
+            if player.money < money_delta * total_improvements:
+                return
+            else:
+                # Upgrade all properties to the same minimum level
+                for asset in group_share:
+                    num_improvements: int = (self.asset.status + self.delta) - (asset.status + 1)
+                    # Upgrade the target property to the target status
+                    player.update(MoneyUpdate(-(money_delta * num_improvements)))
+                    asset.status += num_improvements
+                # Perform the final upgrade on the target property
+                player.update(MoneyUpdate(-money_delta))
+                self.asset.status += 1
+
+        # 2. Player is looking to decrease the number of improvements.
+        elif self.delta < 0:
+            # Make the downgrade to the target property first
+            money_delta: int = int(self.asset.improvement_cost / 2)
+            num_downgrades: int = -self.delta
+            self.asset.status = PropertyStatus(self.asset.status + self.delta)
+            player.update(MoneyUpdate(num_downgrades * money_delta))
+            # For every other property, if it is within 0 to 1 greater than the target property, do nothing.
+            # If it is > 1 improvement than the target property, downgrade it by the delta.
+            for asset in group_share:
+                num_downgrades = 0 if 0 <= (asset.status - self.asset.status) <= 1 else -self.delta
+                asset.status = PropertyStatus(asset.status - num_downgrades)
+                player.update(MoneyUpdate(num_downgrades * money_delta))
 
 
 class MortgageUpdate(PlayerUpdate):

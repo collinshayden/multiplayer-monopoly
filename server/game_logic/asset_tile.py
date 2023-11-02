@@ -4,7 +4,7 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .constants import RENTS
+from .constants import IMPROVEMENT_MAP, RENTS
 from .player import Player
 from .tile import Tile
 from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
@@ -14,21 +14,19 @@ from typing import Union
 
 class AssetTile(Tile):
 
-    def __init__(self, id: int, owner: Player, price: int, group: AssetGroups) -> None:
+    def __init__(self, id: int, price: int, group: AssetGroups) -> None:
         """
         Description:            Class representing a tile which can be bought.
-        :param owner:           Player who owns a tile.
+        :param id:              Tile ID
         :param price:           Price to buy the tile.
-        :param is_mortgaged:     Boolean for if a tile has been mortgaged.
-        :param mortage_price:   The amount of moneu which can be received when mortaged.
-        :param group:           The group which the BuyableTile is a part of.
+        :param group:           The group which the AssetTile is a part of.
         """
         super().__init__(id=id)
-        self.owner: Player = owner
         self.price: int = price
         self.group: AssetGroups = group
 
         # Default values here
+        self.owner: Player = None
         self.is_mortgaged: bool = False
         self.mortage_price: int = int(price / 2)
 

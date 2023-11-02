@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/24/23
 """
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class CardType(Enum):
@@ -47,7 +47,7 @@ class PlayerStatus(Enum):
     INVALID = 3
 
 
-class PropertyStatus(Enum):
+class PropertyStatus(IntEnum):
     """
     Description:    Enumeration of potential rents for properties
     NO_MONOPOLY:    base rent

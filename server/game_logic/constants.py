@@ -20,14 +20,21 @@ MIN_ROLL: int = 2 * MIN_DIE
 MAX_ROLL: int = 2 * MAX_DIE
 
 # Other constants
-NUM_RAILROADS: int = 4
 STARTING_MONEY: int = 1500
+MAX_NUM_IMPROVEMENTS: int = 5
+
+# Jail Constants
 JAIL_TURNS: int = 3
 JAIL_LOCATION: int = 10
 JAIL_COST: int = -50
-PLAYER_ID_LENGTH: int = 16
+
+# Player related constants
 MIN_NUM_PLAYERS: int = 2
 MAX_NUM_PLAYERS: int = 8
+PLAYER_ID_LENGTH: int = 16
+
+# Property Constants
+NUM_RAILROADS: int = 4
 
 # Lookup table for the number of properties in an asset group
 GROUP_SIZE: dict[AssetGroups: int] = {
@@ -41,6 +48,18 @@ GROUP_SIZE: dict[AssetGroups: int] = {
     AssetGroups.YELLOW: 3,
     AssetGroups.GREEN: 3,
     AssetGroups.DARK_BLUE: 2
+}
+
+# Lookup table for the improvement costs of various groups
+IMPROVEMENT_MAP: dict[AssetGroups: int] = {
+    AssetGroups.BROWN: 50,
+    AssetGroups.LIGHT_BLUE: 50,
+    AssetGroups.PINK: 100,
+    AssetGroups.ORANGE: 100,
+    AssetGroups.RED: 150,
+    AssetGroups.YELLOW: 150,
+    AssetGroups.GREEN: 200,
+    AssetGroups.DARK_BLUE: 200
 }
 
 # TODO add railroads
