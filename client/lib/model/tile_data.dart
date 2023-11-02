@@ -34,6 +34,7 @@ class ImprovableTileData extends TileData {
   int? owner;
   int improvements = 0;
   int colorIndex;
+  int price;
   String title;
 
 
@@ -43,6 +44,7 @@ class ImprovableTileData extends TileData {
     required this.owner,
     required this.improvements,
     required this.colorIndex,
+    required this.price,
     required this.title,
   });
 
@@ -174,12 +176,14 @@ class TaxTileData extends TileData {
 class RailroadTileData extends TileData {
   String title;
   String imagePath;
+  int price;
 
   RailroadTileData({
     required super.id,
     required super.quarterTurns,
     required this.title,
     required this.imagePath,
+    required this.price,
   });
 
   // auto generated factory constructor
@@ -199,12 +203,14 @@ class RailroadTileData extends TileData {
 class UtilityTileData extends TileData {
   String title;
   String imagePath;
+  int price;
 
   UtilityTileData({
     required super.id,
     required super.quarterTurns,
     required this.title,
     required this.imagePath,
+    required this.price,
   });
 
   // auto generated factory constructor

@@ -23,6 +23,7 @@ ImprovableTileData _$ImprovableTileDataFromJson(Map<String, dynamic> json) =>
       owner: json['owner'] as int?,
       improvements: json['improvements'] as int,
       colorIndex: json['colorIndex'] as int,
+      price: json['price'] as int,
       title: json['title'] as String,
     );
 
@@ -33,6 +34,7 @@ Map<String, dynamic> _$ImprovableTileDataToJson(ImprovableTileData instance) =>
       'owner': instance.owner,
       'improvements': instance.improvements,
       'colorIndex': instance.colorIndex,
+      'price': instance.price,
       'title': instance.title,
     };
 
@@ -113,6 +115,7 @@ RailroadTileData _$RailroadTileDataFromJson(Map<String, dynamic> json) =>
       quarterTurns: json['quarterTurns'] as int,
       title: json['title'] as String,
       imagePath: json['imagePath'] as String,
+      price: json['price'] as int,
     );
 
 Map<String, dynamic> _$RailroadTileDataToJson(RailroadTileData instance) =>
@@ -121,6 +124,7 @@ Map<String, dynamic> _$RailroadTileDataToJson(RailroadTileData instance) =>
       'quarterTurns': instance.quarterTurns,
       'title': instance.title,
       'imagePath': instance.imagePath,
+      'price': instance.price,
     };
 
 UtilityTileData _$UtilityTileDataFromJson(Map<String, dynamic> json) =>
@@ -129,6 +133,7 @@ UtilityTileData _$UtilityTileDataFromJson(Map<String, dynamic> json) =>
       quarterTurns: json['quarterTurns'] as int,
       title: json['title'] as String,
       imagePath: json['imagePath'] as String,
+      price: json['price'] as int,
     );
 
 Map<String, dynamic> _$UtilityTileDataToJson(UtilityTileData instance) =>
@@ -137,4 +142,5 @@ Map<String, dynamic> _$UtilityTileDataToJson(UtilityTileData instance) =>
       'quarterTurns': instance.quarterTurns,
       'title': instance.title,
       'imagePath': instance.imagePath,
+      'price': instance.price,
     };

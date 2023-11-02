@@ -28,6 +28,7 @@
       "type": "improvement",
 	  "colorIndex" : 0,
 	  "quarterTurns": 1,
+	  "price" : 60,
       "title": ["MEDITER-", "RANEAN", "AVENUE"]
     },
     {
@@ -42,6 +43,7 @@
       "type": "improvement",
 	  "colorIndex" : 0,
 	  "quarterTurns": 1,
+	  "price" : 60,
       "title": ["BALTIC", "AVENUE"]
     },
     {
@@ -64,6 +66,7 @@
       "type": "improvement",
 	  "colorIndex" : 1,
 	  "quarterTurns": 1,
+	  "price" : 100,
       "title": ["ORIENTAL", "AVENUE"]
     },
     {
@@ -78,6 +81,7 @@
       "type": "improvement",
 	  "colorIndex" : 1,
 	  "quarterTurns": 1,
+	  "price" : 100,
       "title": ["VERMONT", "AVENUE"]
     },
     {
@@ -85,6 +89,7 @@
       "type": "improvement",
 	  "colorIndex" : 1,
 	  "quarterTurns": 1,
+	  "price" : 120,
       "title": ["CONNECTICUT", "AVENUE"]
     },
     {
@@ -101,6 +106,7 @@
       "type": "improvement",
 	  "colorIndex" : 3,
 	  "quarterTurns": 2,
+	  "price" : 140,
       "title": ["ST. CHARLES", "PLACE"]
     },
     {
@@ -114,6 +120,7 @@
       "type": "improvement",
 	  "colorIndex" : 3,
 	  "quarterTurns": 2,
+	  "price" : 140,
       "title": ["STATES", "AVENUE"]
     },
     {
@@ -121,6 +128,7 @@
       "type": "improvement",
 	  "colorIndex" : 3,
 	  "quarterTurns": 2,
+	  "price" : 160,
       "title": ["VIRGINIA", "AVENUE"]
     },
     {
@@ -135,6 +143,7 @@
       "type": "improvement",
 	  "colorIndex" : 4,
 	  "quarterTurns": 2,
+	  "price" : 180,
       "title": ["ST. JAMES", "PLACE"]
     },
     {
@@ -149,6 +158,7 @@
       "type": "improvement",
 	  "colorIndex" : 4,
 	  "quarterTurns": 2,
+	  "price" : 180,
       "title": ["TENNESSEE", "AVENUE"]
     },
     {
@@ -156,6 +166,7 @@
       "type": "improvement",
 	  "colorIndex" : 4,
 	  "quarterTurns": 2,
+	  "price" : 200,
       "title": ["NEW YORK", "AVENUE"]
     },
     {
@@ -171,6 +182,7 @@
       "type": "improvement",
 	  "colorIndex" : 5,
 	  "quarterTurns": 3,
+	  "price" : 220,
       "title": ["KENTUCKY", "AVENUE"]
     },
     {
@@ -185,6 +197,7 @@
       "type": "improvement",
 	  "colorIndex" : 5,
 	  "quarterTurns": 3,
+	  "price" : 220,
       "title": ["INDIANA", "AVENUE"]
     },
     {
@@ -192,6 +205,7 @@
       "type": "improvement",
 	  "colorIndex" : 5,
 	  "quarterTurns": 3,
+	  "price" : 240,
       "title": ["ILLINOIS", "AVENUE"]
     },
     {
@@ -206,6 +220,7 @@
       "type": "improvement",
 	  "colorIndex" : 6,
 	  "quarterTurns": 3,
+	  "price" : 260,
       "title": ["ATLANTIC", "AVENUE"]
     },
     {
@@ -213,6 +228,7 @@
       "type": "improvement",
 	  "colorIndex" : 5,
 	  "quarterTurns": 3,
+	  "price" : 260,
       "title": ["VENTNOR", "AVENUE"]
     },
     {
@@ -226,6 +242,7 @@
       "type": "improvement",
 	  "colorIndex" : 5,
 	  "quarterTurns": 3,
+	  "price" : 280,
       "title": ["MARVIN", "GARDENS"]
     },
     {
@@ -241,6 +258,7 @@
       "type": "improvement",
 	  "colorIndex" : 6,
 	  "quarterTurns": 0,
+	  "price" : 300,
       "title": ["PACIFIC", "AVENUE"]
     },
     {
@@ -248,6 +266,7 @@
       "type": "improvement",
 	  "colorIndex" : 6,
 	  "quarterTurns": 0,
+	  "price" : 300,
       "title": ["NORTH", "CAROLINA", "AVENUE"]
     },
     {
@@ -262,6 +281,7 @@
       "type": "improvement",
 	  "colorIndex" : 6,
 	  "quarterTurns": 0,
+	  "price" : 320,
       "title": ["PENNSYLVANIA", "AVNEUE"]
     },
     {
@@ -283,6 +303,7 @@
       "type": "improvement",
 	  "colorIndex" : 7,
 	  "quarterTurns": 0,
+	  "price" : 350,
       "title": ["PARK", "PLACE"]
     },
     {
@@ -298,6 +319,7 @@
       "type": "improvement",
 	  "colorIndex" : 7,
 	  "quarterTurns": 0,
+	  "price" : 400,
       "title": ["BOARDWALK"]
     }
   ]
