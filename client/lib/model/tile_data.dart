@@ -8,9 +8,11 @@ part 'tile_data.g.dart';
 @JsonSerializable(explicitToJson: true)
 class TileData {
   final int id;
+  final int quarterTurns;
 
   const TileData({
     required this.id,
+    required this.quarterTurns,
   });
 
   // auto generated factory constructor
@@ -31,12 +33,16 @@ class TileData {
 class ImprovableTileData extends TileData {
   int? owner;
   int improvements = 0;
+  int colorIndex;
   String title;
+
 
   ImprovableTileData({
     required super.id,
+    required super.quarterTurns,
     required this.owner,
     required this.improvements,
+    required this.colorIndex,
     required this.title,
   });
 
@@ -64,6 +70,7 @@ class CornerTileData extends TileData {
 
   CornerTileData({
     required super.id,
+    required super.quarterTurns,
     required this.upperText,
     required this.imagePath1,
     this.lowerText,
@@ -92,6 +99,7 @@ class CommunityTileData extends TileData {
 
   CommunityTileData({
     required super.id,
+    required super.quarterTurns,
     required this.title,
     required this.imagePath,
   });
@@ -116,6 +124,7 @@ class ChanceTileData extends TileData {
 
   ChanceTileData({
     required super.id,
+    required super.quarterTurns,
     required this.title,
     required this.imagePath,
   });
@@ -141,6 +150,7 @@ class TaxTileData extends TileData {
 
   TaxTileData({
     required super.id,
+    required super.quarterTurns,
     required this.title,
     required this.imagePath,
     required this.payCommandText,
@@ -167,6 +177,7 @@ class RailroadTileData extends TileData {
 
   RailroadTileData({
     required super.id,
+    required super.quarterTurns,
     required this.title,
     required this.imagePath,
   });
@@ -191,6 +202,7 @@ class UtilityTileData extends TileData {
 
   UtilityTileData({
     required super.id,
+    required super.quarterTurns,
     required this.title,
     required this.imagePath,
   });
