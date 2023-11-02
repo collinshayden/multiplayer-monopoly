@@ -7,10 +7,10 @@ part 'game_data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class GameData {
-  final int activePlayerId;
-  final Map<int, PlayerData> players;
-  final List<int> lastRoll;
-  final Map<int, TileData> tiles;
+  int activePlayerId;
+  Map<int, PlayerData> players;
+  List<int> lastRoll;
+  Map<int, TileData> tiles;
 
   GameData({
     required this.activePlayerId,
@@ -29,4 +29,16 @@ class GameData {
 
   // auto generated toJson method.
   Map<String, dynamic> toJson() => _$GameDataToJson(this);
+
+  void applyJson(Map<String, dynamic> json) {
+    activePlayerId = json["activePlayerId"] ?? activePlayerId;
+    lastRoll = json["lastRoll"] ?? lastRoll;
+
+    for (int i = 0; i < players.length; i++) {
+      players[i]?.applyJson(json["players"]["$i"]);
+    }
+    for (int i = 0; i < tiles.length; i++) {
+      tiles[i]?.applyJson(json["tiles"]["$i"]);
+    }
+  }
 }

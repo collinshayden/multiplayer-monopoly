@@ -20,4 +20,9 @@ class TileData {
 
   // auto generated factory constructor
   Map<String, dynamic> toJson() => _$TileDataToJson(this);
+
+  void applyJson(Map<String, dynamic> json) {
+    owner = json["owner"] ?? owner;
+    improvements = json["improvements"] ?? improvements; // TODO += or = operator? Depends if json["improvements"] is sending a delta or updated value
+  }
 }
