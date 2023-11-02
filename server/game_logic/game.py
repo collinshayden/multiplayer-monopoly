@@ -4,12 +4,12 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from server.game_logic.card import Card
-from server.game_logic.constants import JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
-from server.game_logic.player import Player
-from server.game_logic.player_updates import LeaveJailUpdate, MoneyUpdate, RollUpdate
-from server.game_logic.tile import Tile
-from server.game_logic.types import CardType, JailMethod, PlayerStatus
+from .card import Card
+from .constants import JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
+from .player import Player
+from .player_updates import LeaveJailUpdate, MoneyUpdate, RollUpdate
+from .tile import Tile
+from .types import CardType, JailMethod, PlayerStatus
 
 import random
 import secrets

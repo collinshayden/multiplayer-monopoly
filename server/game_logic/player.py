@@ -4,13 +4,13 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from server.game_logic.constants import STARTING_MONEY, START_LOCATION
-from server.game_logic.types import AssetGroups, PlayerStatus
+from .constants import STARTING_MONEY, START_LOCATION
+from .types import AssetGroups, PlayerStatus
 
 
 class Player:
     def __init__(self, player_id: str, username: str) -> None:
-        from server.game_logic.asset_tile import AssetTile
+        from .asset_tile import AssetTile
         """
         Description:            Class representing a Player.
         :param player_id:       Unique 16-character ID generated from Game class
@@ -20,7 +20,7 @@ class Player:
         self.username: str = username
 
         # State variables
-        self.assets: list = []
+        self.assets: list[AssetTile] = []
         self.money: int = STARTING_MONEY
         self.location: int = START_LOCATION
         self.doubles_streak: int = 0

@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/15/2023
 """
 
-from server.game_logic.types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
+from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
 # Secret key
 SECRET_KEY: str = "replace"
@@ -21,7 +21,6 @@ MAX_ROLL: int = 2 * MAX_DIE
 
 # Other constants
 STARTING_MONEY: int = 1500
-GO_MONEY: int = 200
 MAX_NUM_IMPROVEMENTS: int = 5
 
 # Jail Constants
