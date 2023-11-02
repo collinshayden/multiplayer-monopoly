@@ -58,12 +58,16 @@ class ImprovableTileData extends TileData {
 class CornerTileData extends TileData {
   String upperText;
   String imagePath1;
+  String? lowerText;
+  String? visitingText;
   String? imagePath2;
 
   CornerTileData({
     required super.id,
     required this.upperText,
     required this.imagePath1,
+    this.lowerText,
+    this.visitingText,
     this.imagePath2,
   });
 
@@ -173,6 +177,30 @@ class RailroadTileData extends TileData {
 
   // auto generated factory constructor
   Map<String, dynamic> toJson() => _$RailroadTileDataToJson(this);
+
+  void applyJson(Map<String, dynamic> json) {
+    title = json["title"] ?? title;
+    imagePath = json["imagePath"] ?? imagePath;
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UtilityTileData extends TileData {
+  String title;
+  String imagePath;
+
+  UtilityTileData({
+    required super.id,
+    required this.title,
+    required this.imagePath,
+  });
+
+  // auto generated factory constructor
+  factory UtilityTileData.fromJson(Map<String, dynamic> json) =>
+      _$UtilityTileDataFromJson(json);
+
+  // auto generated factory constructor
+  Map<String, dynamic> toJson() => _$UtilityTileDataToJson(this);
 
   void applyJson(Map<String, dynamic> json) {
     title = json["title"] ?? title;

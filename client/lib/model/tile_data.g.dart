@@ -35,6 +35,8 @@ CornerTileData _$CornerTileDataFromJson(Map<String, dynamic> json) =>
       id: json['id'] as int,
       upperText: json['upperText'] as String,
       imagePath1: json['imagePath1'] as String,
+      lowerText: json['lowerText'] as String?,
+      visitingText: json['visitingText'] as String?,
       imagePath2: json['imagePath2'] as String?,
     );
 
@@ -43,6 +45,8 @@ Map<String, dynamic> _$CornerTileDataToJson(CornerTileData instance) =>
       'id': instance.id,
       'upperText': instance.upperText,
       'imagePath1': instance.imagePath1,
+      'lowerText': instance.lowerText,
+      'visitingText': instance.visitingText,
       'imagePath2': instance.imagePath2,
     };
 
@@ -97,6 +101,20 @@ RailroadTileData _$RailroadTileDataFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$RailroadTileDataToJson(RailroadTileData instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'imagePath': instance.imagePath,
+    };
+
+UtilityTileData _$UtilityTileDataFromJson(Map<String, dynamic> json) =>
+    UtilityTileData(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      imagePath: json['imagePath'] as String,
+    );
+
+Map<String, dynamic> _$UtilityTileDataToJson(UtilityTileData instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
