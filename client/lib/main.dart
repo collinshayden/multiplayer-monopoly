@@ -30,14 +30,16 @@ class _MonopolyAppState extends State<MonopolyApp> {
           child: Stack(
             children: [
               CubitTest(),
-              const Board(),
+              Board(),
               Center(
                 child: SizedBox.fromSize(
                   size: const Size(100.0, 50.0),
                   child: Column(
                     children: [
+                      Align(),
                       TextButton(
                         onPressed: () {
+                          BlocProvider.of<GameCubit>(context).state;
                           print('Rolling dice!');
                         },
                         child: const Text('Roll Dice!'),

@@ -1,6 +1,5 @@
 import 'player_data.dart';
 import 'tile_data.dart';
-
 import "package:json_annotation/json_annotation.dart";
 
 part 'game_data.g.dart';
@@ -23,10 +22,10 @@ class GameData {
   factory GameData.initial() =>
       GameData(activePlayerId: 0, players: {}, lastRoll: [], tiles: {});
 
-  // auto generated factory constructor
+  // References generated factory constructor.
   factory GameData.fromJson(Map<String, dynamic> json) =>
       _$GameDataFromJson(json);
 
-  // auto generated toJson method.
+  // References generated toJson output.
   Map<String, dynamic> toJson() => _$GameDataToJson(this);
 }

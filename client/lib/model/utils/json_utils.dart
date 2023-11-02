@@ -6,3 +6,5 @@ Future<Map<String, dynamic>> readJson() async {
   final json = jsonDecode(file);
   return json;
 }
+
+typedef Json = Map<String, dynamic>;

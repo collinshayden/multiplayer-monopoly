@@ -1,16 +1,17 @@
 {
-	"monetaryUnit": {"name": "dollar", "symbol": "$"},
-	"propertyColorsHex": [
-		"#955436",
-		"#AAE0FC",
-		"#DC3897",
-		"#F7941D",
-		"#ED1B24",
-		"#FEF102",
-		"#1FB25A",
-		"#0171BB"
+	"monetaryUnitName": "dollar",
+	"monetaryUnitSymbol": "$",
+	"propertyColorsARGB": [
+		"#FF955436",
+		"#FFAAE0FC",
+		"#FFDC3897",
+		"#FFF7941D",
+		"#FFED1B24",
+		"#FFFEF102",
+		"#FF1FB25A",
+		"#FF0171BB"
 	],
-	"tileConfig": [
+	"tiles": [
 		{
 			"_comment": "This tile configuration must contain exactly 40 items (not counting `_comment`) representing tiles, where each item must provide an `id` value and certain fields according to its position on the board. The `id` is unique and its value is an integer in the range [0, 39]."
 		},

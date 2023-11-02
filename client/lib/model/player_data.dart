@@ -20,6 +20,6 @@ class PlayerData {
   factory PlayerData.fromJson(Map<String, dynamic> json) =>
       _$PlayerDataFromJson(json);
 
-  // Generated toJson method.
+  // Generated JSON output method.
   Map<String, dynamic> toJson() => _$PlayerDataToJson(this);
 }
