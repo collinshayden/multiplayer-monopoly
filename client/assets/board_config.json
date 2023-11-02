@@ -17,6 +17,7 @@
 		},
 		{
 			"id": 0,
+			"type" : "corner",
 			"upperText": [
 				"COLLECT",
 				"SALARY",
@@ -27,6 +28,7 @@
 		},
 		{
 			"id": 1,
+			"type" : "improvement",
 			"title": [
 				"MEDITER-",
 				"RANEAN",
@@ -35,6 +37,7 @@
 		},
 		{
 			"id": 2,
+			"type" : "community",
 			"title": [
 				"COMMUNITY",
 				"CHEST"
@@ -43,6 +46,7 @@
 		},
 		{
 			"id": 3,
+			"type" : "improvement",
 			"title": [
 				"BALTIC",
 				"AVENUE"
@@ -50,6 +54,7 @@
 		},
 		{
 			"id": 4,
+			"type" : "tax",
 			"title": [
 				"INCOME",
 				"TAX"
@@ -59,6 +64,7 @@
 		},
 		{
 			"id": 5,
+			"type" : "railroad",
 			"title": [
 				"READING",
 				"RAILROAD"
@@ -67,6 +73,7 @@
 		},
 		{
 			"id": 6,
+			"type" : "improvement",
 			"title": [
 				"ORIENTAL",
 				"AVENUE"
@@ -74,6 +81,7 @@
 		},
 		{
 			"id": 7,
+			"type" : "chance",
 			"title": [
 				"CHANCE"
 			],
@@ -81,6 +89,7 @@
 		},
 		{
 			"id": 8,
+			"type" : "improvement",
 			"title": [
 				"VERMONT",
 				"AVENUE"
@@ -88,6 +97,7 @@
 		},
 		{
 			"id": 9,
+			"type" : "improvement",
 			"title": [
 				"CONNECTICUT",
 				"AVENUE"
@@ -95,6 +105,7 @@
 		},
 		{
 			"id": 10,
+			"type" : "corner",
 			"upperText": ["IN"],
 			"image": "jail.png",
 			"lowerText": ["JAIL"],
@@ -102,6 +113,7 @@
 		},
 		{
 			"id": 11,
+			"type" : "improvement",
 			"title": [
 				"ST. CHARLES",
 				"PLACE"
@@ -109,6 +121,7 @@
 		},
 		{
 			"id": 12,
+			"type" : "utility",
 			"title": [
 				"ELECTRIC",
 				"COMPANY"
@@ -116,6 +129,7 @@
 		},
 		{
 			"id": 13,
+			"type" : "improvement",
 			"title": [
 				"STATES",
 				"AVENUE"
@@ -123,6 +137,7 @@
 		},
 		{
 			"id": 14,
+			"type" : "improvement",
 			"title": [
 				"VIRGINIA",
 				"AVENUE"
@@ -130,6 +145,7 @@
 		},
 		{
 			"id": 15,
+			"type" : "railroad",
 			"title": [
 				"PENNSYLVANIA",
 				"RAILROAD"
@@ -138,6 +154,7 @@
 		},
 		{
 			"id": 16,
+			"type" : "improvement",
 			"title": [
 				"ST. JAMES",
 				"PLACE"
@@ -145,6 +162,7 @@
 		},
 		{
 			"id": 17,
+			"type" : "community",
 			"title": [
 				"COMMUNITY",
 				"CHEST"
@@ -153,6 +171,7 @@
 		},
 		{
 			"id": 18,
+			"type" : "improvement",
 			"title": [
 				"TENNESSEE",
 				"AVENUE"
@@ -160,6 +179,7 @@
 		},
 		{
 			"id": 19,
+			"type" : "improvement",
 			"title": [
 				"NEW YORK",
 				"AVENUE"
@@ -167,12 +187,14 @@
 		},
 		{
 			"id": 20,
+			"type" : "corner",
 			"upperText": ["FREE"],
 			"image": "free_parking.png",
 			"lowerText": ["PARKING"]
 		},
 		{
 			"id": 21,
+			"type" : "improvement",
 			"title": [
 				"KENTUCKY",
 				"AVENUE"
@@ -180,6 +202,7 @@
 		},
 		{
 			"id": 22,
+			"type" : "chance",
 			"title": [
 				"CHANCE"
 			],
@@ -187,6 +210,7 @@
 		},
 		{
 			"id": 23,
+			"type" : "improvement",
 			"title": [
 				"INDIANA",
 				"AVENUE"
@@ -194,6 +218,7 @@
 		},
 		{
 			"id": 24,
+			"type" : "improvement",
 			"title": [
 				"ILLINOIS",
 				"AVENUE"
@@ -201,6 +226,7 @@
 		},
 		{
 			"id": 25,
+			"type" : "railroad",
 			"title": [
 				"B. & O.",
 				"RAILROAD"
@@ -209,6 +235,7 @@
 		},
 		{
 			"id": 26,
+			"type" : "improvement",
 			"title": [
 				"ATLANTIC",
 				"AVENUE"
@@ -216,6 +243,7 @@
 		},
 		{
 			"id": 27,
+			"type" : "improvement",
 			"title": [
 				"VENTNOR",
 				"AVENUE"
@@ -223,6 +251,7 @@
 		},
 		{
 			"id": 28,
+			"type" : "utility",
 			"title": [
 				"WATER",
 				"WORKS"
@@ -230,6 +259,7 @@
 		},
 		{
 			"id": 29,
+			"type" : "improvement",
 			"title": [
 				"MARVIN",
 				"GARDENS"
@@ -237,12 +267,14 @@
 		},
 		{
 			"id": 30,
+			"type" : "corner",
 			"upperText": ["GO TO"],
 			"image": "go_to_jail.png",
 			"lowerText": ["JAIL"]
 		},
 		{
 			"id": 31,
+			"type" : "improvement",
 			"title": [
 				"PACIFIC",
 				"AVENUE"
@@ -250,6 +282,7 @@
 		},
 		{
 			"id": 32,
+			"type" : "improvement",
 			"title": [
 				"NORTH",
 				"CAROLINA",
@@ -258,6 +291,7 @@
 		},
 		{
 			"id": 33,
+			"type" : "community",
 			"title": [
 				"COMMUNITY",
 				"CHEST"
@@ -266,6 +300,7 @@
 		},
 		{
 			"id": 34,
+			"type" : "improvement",
 			"title": [
 				"PENNSYLVANIA",
 				"AVNEUE"
@@ -273,6 +308,7 @@
 		},
 		{
 			"id": 35,
+			"type" : "railroad",
 			"title": [
 				"SHORT",
 				"LINE"
@@ -281,6 +317,7 @@
 		},
 		{
 			"id": 36,
+			"type" : "chance",
 			"title": [
 				"CHANCE"
 			],
@@ -288,6 +325,7 @@
 		},
 		{
 			"id": 37,
+			"type" : "improvement",
 			"title": [
 				"PARK",
 				"PLACE"
@@ -295,6 +333,7 @@
 		},
 		{
 			"id": 38,
+			"type" : "tax",
 			"title": [
 				"LUXURY",
 				"TAX"
@@ -304,6 +343,7 @@
 		},
 		{
 			"id": 39,
+			"type" : "improvement",
 			"title": [
 				"BOARDWALK"
 			]
