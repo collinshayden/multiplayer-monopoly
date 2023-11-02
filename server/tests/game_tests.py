@@ -97,6 +97,7 @@ class MyTestCase(unittest.TestCase):
     def test_get_out_of_jail(self):
         game: Game = Game()
 
+
     def test_reset(self):
         game: Game = Game()
         # Register 8 players
@@ -144,9 +145,6 @@ class MyTestCase(unittest.TestCase):
         self.assertFalse(game._update_money(deltas))
         for id in ids:
             self.assertEqual(STARTING_MONEY + 200, game.players[id].money)
-
-    def test_match_tile(self):
-        game: Game = Game()
 
     def test_next_player(self):
         game: Game = Game()

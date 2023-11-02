@@ -8,6 +8,7 @@ from ..game_logic.asset_tile import AssetTile
 from ..game_logic.constants import JAIL_LOCATION, JAIL_TURNS, STARTING_MONEY
 from ..game_logic.player import Player, PlayerStatus
 from ..game_logic.player_updates import *
+from ..game_logic.types import AssetGroups
 
 import unittest
 
@@ -19,6 +20,207 @@ class MyTestCase(unittest.TestCase):
         username: str = "Test"
         player: Player = Player(player_id=id, username=username)
         return player
+
+    def test_buy_update(self):
+        player: Player = self.make_player()
+        # These assets correspond to the oranges on the original Monopoly board
+        st_james: AssetTile = AssetTile(id=16, price=180, group=AssetGroups.ORANGE)
+        ten_ave: AssetTile = AssetTile(id=18, price=180, group=AssetGroups.ORANGE)
+        ny_ave: AssetTile = AssetTile(id=19, price=200, group=AssetGroups.ORANGE)
+        assets: list[AssetTile] = [st_james, ten_ave, ny_ave]
+        # Properties are unowned, so they currently have a rent of 0
+        for asset in assets:
+            self.assertEqual(0, asset.rent)
+
+        # Pre-Monopoly rents
+        for asset in assets[:2]:
+            starting_money: int = player.money
+            self.assertIsNone(asset.owner)
+            # Verify buying an asset will update the asset's owner and decrement the player's money.
+            player.update(BuyUpdate(asset))
+            self.assertEqual(player, asset.owner)
+            self.assertEqual(starting_money - asset.price, player.money)
+            self.assertIn(asset, player.assets)
+            self.assertEqual(14, asset.rent)
+        player.update(BuyUpdate(ny_ave))
+        for asset in assets:
+            self.assertEqual(PropertyStatus.MONOPOLY, asset.status)
+        # Post-Monopoly rents
+        self.assertEqual(14 * 2, st_james.rent)
+        self.assertEqual(14 * 2, ten_ave.rent)
+        self.assertEqual(16 * 2, ny_ave.rent)
+
+        # Test with utility tiles
+        electric_company: AssetTile = AssetTile(id=12, price=150, group=AssetGroups.UTILITY)
+        water_works: AssetTile = AssetTile(id=28, price=150, group=AssetGroups.UTILITY)
+        # Buy electric company
+        starting_money = player.money
+        player.update(BuyUpdate(electric_company))
+        self.assertEqual(player, electric_company.owner)
+        self.assertEqual(starting_money - electric_company.price, player.money)
+        self.assertIn(electric_company, player.assets)
+        self.assertEqual(UtilityStatus.NO_MONOPOLY, electric_company.status)
+        self.assertEqual(4, electric_company.rent)  # Utility rent multiplier is stored as rent
+        # Buy Water Works
+        starting_money = player.money
+        player.update(BuyUpdate(water_works))
+        self.assertEqual(player, water_works.owner)
+        self.assertEqual(starting_money - water_works.price, player.money)
+        self.assertIn(water_works, player.assets)
+        self.assertEqual(UtilityStatus.MONOPOLY, water_works.status)
+        self.assertEqual(UtilityStatus.MONOPOLY, electric_company.status)
+        self.assertEqual(10, water_works.rent)  # Utility rent multiplier is stored as rent
+        self.assertEqual(10, electric_company.rent)  # Utility rent multiplier is stored as rent
+
+        # Test with railroad tiles
+        reading: AssetTile = AssetTile(id=5, price=200, group=AssetGroups.RAILROAD)
+        pensylvania: AssetTile = AssetTile(id=15, price=200, group=AssetGroups.RAILROAD)
+        bno: AssetTile = AssetTile(id=25, price=200, group=AssetGroups.RAILROAD)
+        short_line: AssetTile = AssetTile(id=35, price=200, group=AssetGroups.RAILROAD)
+        # Player needs some more money to buy these tiles
+        player.money = STARTING_MONEY
+        for idx, railroad in enumerate([reading, pensylvania, bno, short_line]):
+            self.assertEqual(RailroadStatus.UNOWNED, railroad.status)
+            self.assertEqual(0, railroad.rent)
+            self.assertIsNone(railroad.owner)
+            starting_money = player.money
+            player.update(BuyUpdate(railroad))
+            self.assertEqual(player, railroad.owner)
+            self.assertEqual(starting_money - railroad.price, player.money)
+            self.assertIn(railroad, player.assets)
+            self.assertEqual(RailroadStatus(idx + 1), railroad.status)
+            self.assertEqual(25 * 2**idx, railroad.rent)
+
+    def test_improvement_update(self):
+        player: Player = self.make_player()
+        # Improvable tiles
+        st_james: ImprovableTile = ImprovableTile(id=16, price=180, group=AssetGroups.ORANGE)
+        ten_ave: ImprovableTile = ImprovableTile(id=18, price=180, group=AssetGroups.ORANGE)
+        ny_ave: ImprovableTile = ImprovableTile(id=19, price=200, group=AssetGroups.ORANGE)
+        # Non-improvable tile monopolies
+        reading: AssetTile = AssetTile(id=5, price=200, group=AssetGroups.RAILROAD)
+        pensylvania: AssetTile = AssetTile(id=15, price=200, group=AssetGroups.RAILROAD)
+        bno: AssetTile = AssetTile(id=25, price=200, group=AssetGroups.RAILROAD)
+        short_line: AssetTile = AssetTile(id=35, price=200, group=AssetGroups.RAILROAD)
+
+        electric_company: AssetTile = AssetTile(id=12, price=150, group=AssetGroups.UTILITY)
+        water_works: AssetTile = AssetTile(id=28, price=150, group=AssetGroups.UTILITY)
+
+        # Try updating tiles the player doesn't own. Nothing happens.
+        for idx, asset in enumerate([st_james, ten_ave,
+                                     reading, pensylvania, bno, short_line,
+                                     electric_company, water_works]):
+            # self.assertEqual(STARTING_MONEY, player.money)
+            self.assertEqual(idx, len(player.assets))
+            self.assertIsNone(asset.owner)
+            player.update(ImprovementUpdate(asset, 1))
+            if isinstance(asset, ImprovableTile):
+                self.assertEqual(PropertyStatus.NO_MONOPOLY, asset.status)
+            self.assertEqual(STARTING_MONEY, player.money)
+            self.assertEqual(idx, len(player.assets))
+            self.assertIsNone(asset.owner)
+            # Give the player ownership and verify they still cannot improve
+            player.update(BuyUpdate(asset))
+            player.money += asset.price
+
+        # Have the player "buy" the property (so it will update status accordingly).
+        player.update(BuyUpdate(ny_ave))
+        player.money += ny_ave.price
+
+        # Verify the player cannot perform any out-of-bounds or 0 updates to number of improvements
+        monopoly: list[ImprovableTile] = [st_james, ten_ave, ny_ave]
+        for delta in [-6, -5, -1, 0, 6, 7]:
+            for asset in monopoly:
+                player.update(ImprovementUpdate(ny_ave, delta))
+                self.assertEqual(STARTING_MONEY, player.money)
+                self.assertEqual(PropertyStatus.MONOPOLY, asset.status)
+
+        improvement_cost: int = 100     # For quick reference in this section
+        # Verify 1 improvement can be made on a property, and it doesn't change the others
+        player.update(ImprovementUpdate(ny_ave, 1))
+        self.assertEqual(STARTING_MONEY - improvement_cost, player.money)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, ny_ave.status)
+        self.assertEqual(PropertyStatus.MONOPOLY, st_james.status)
+        self.assertEqual(PropertyStatus.MONOPOLY, ten_ave.status)
+
+        # Verify trying to make a second improvement on a property will also upgrade the others by 1
+        player.update(ImprovementUpdate(ny_ave, 1))
+        self.assertEqual(STARTING_MONEY - 4 * improvement_cost, player.money)
+        self.assertEqual(PropertyStatus.TWO_IMPROVEMENTS, ny_ave.status)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, st_james.status)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, ten_ave.status)
+
+        # Verify the player cannot buy a hotel since it would cost too much money to upgrade everything
+        player.money = 800
+        player.update(ImprovementUpdate(ny_ave, 3))
+        self.assertEqual(800, player.money)
+        self.assertEqual(PropertyStatus.TWO_IMPROVEMENTS, ny_ave.status)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, st_james.status)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, ten_ave.status)
+        # Reset player money
+        player.money = STARTING_MONEY
+
+        # Verify trying to sell one of the properties with 1 upgrade causes the one with 2 to sell an improvement
+        player.update(ImprovementUpdate(st_james, -1))
+        # Player sold 2 houses worth 100 each and get 50% back, so they recoup the original cost of 1 house
+        self.assertEqual(STARTING_MONEY + improvement_cost, player.money)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, ny_ave.status)
+        self.assertEqual(PropertyStatus.MONOPOLY, st_james.status)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, ten_ave.status)
+
+        # Verify all improvements can be sold, and that 1/2 the improvement cost is regained for each one sold.
+        player.update(ImprovementUpdate(ny_ave, -1))
+        self.assertEqual(PropertyStatus.MONOPOLY, ny_ave.status)
+        self.assertEqual(PropertyStatus.MONOPOLY, st_james.status)
+        self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, ten_ave.status)
+        player.update(ImprovementUpdate(ten_ave, -1))
+        for asset in [ny_ave, st_james, ten_ave]:
+            self.assertEqual(PropertyStatus.MONOPOLY, asset.status)
+        # Sell 2 more houses => recoup the price of another original house
+        self.assertEqual(STARTING_MONEY + 2 * improvement_cost, player.money)
+
+        # Verify buying 5 improvements on one property causes the other to be upgraded to 4.
+        total_cost: int = (5 + 4 + 4) * improvement_cost
+        player.money = total_cost
+        player.update(ImprovementUpdate(ny_ave, 5))
+        self.assertEqual(0, player.money)
+        self.assertEqual(PropertyStatus.FIVE_IMPROVEMENTS, ny_ave.status)
+        self.assertEqual(PropertyStatus.FOUR_IMPROVEMENTS, st_james.status)
+        self.assertEqual(PropertyStatus.FOUR_IMPROVEMENTS, ten_ave.status)
+
+
+        # Verify selling 5 improvements causes the other to be downgraded to 1 each.
+
+    def test_mortgage_update(self):
+        # Make the player and given them an AssetTile
+        player: Player = self.make_player()
+        asset: AssetTile = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
+        asset.owner = player
+        player.assets.append(asset)
+
+        self.assertFalse(asset.is_mortgaged)
+        self.assertEqual(STARTING_MONEY, player.money)
+        self.assertEqual(STARTING_MONEY + 100, player.net_worth)
+
+        # Verify setting flag to False doesn't change anything
+        player.update(MortgageUpdate(asset, False))
+        self.assertFalse(asset.is_mortgaged)
+        self.assertEqual(STARTING_MONEY, player.money)
+        self.assertEqual(STARTING_MONEY + 100, player.net_worth)
+
+        # Set flag to True and verify player's money increases and property becomes mortgaged.
+        for _ in range(2):  # Run 2 times to verify nothing happens to already mortgaged property
+            player.update(MortgageUpdate(asset, True))
+            self.assertTrue(asset.is_mortgaged)
+            self.assertEqual(STARTING_MONEY + 100, player.money)
+            self.assertEqual(STARTING_MONEY + 100, player.net_worth)
+
+        # Verify unmortgaging a property takes 110% of the original mortgage price
+        for _ in range(2):  # Run 2 times to verify nothing happens to already unmortgaged property
+            player.update(MortgageUpdate(asset, False))
+            self.assertFalse(asset.is_mortgaged)
+            self.assertEqual(STARTING_MONEY - 10, player.money)
+            self.assertEqual(STARTING_MONEY + 90, player.net_worth)
 
     def test_move_forward(self):
         player: Player = self.make_player()
@@ -147,30 +349,62 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(player.in_jail)
         self.assertEqual(JAIL_TURNS, player.turns_in_jail)
 
-    def test_get_out_of_jail(self):
+    def test_leave_jail(self):
+        def send_to_jail(player: Player):
+            # Helper method to send a player to jail
+            player.turns_in_jail = 3
+            player.location = JAIL_LOCATION
+            self.assertEqual(JAIL_LOCATION, player.location)
+            self.assertTrue(player.in_jail)
+            self.assertEqual(JAIL_TURNS, player.turns_in_jail)
+
+        def verify_free(player: Player, location: int):
+            # Helper method to make perform checks that a player was freed from ail
+            self.assertEqual(location, player.location)
+            self.assertFalse(player.in_jail)
+            self.assertEqual(0, player.turns_in_jail)
+
+        def verify_in_jail(player: Player):
+            # Helper method to make perform checks that a player was freed from ail
+            self.assertEqual(JAIL_LOCATION, player.location)
+            self.assertTrue(player.in_jail)
+            self.assertEqual(3, player.turns_in_jail)
+
         player: Player = self.make_player()
-        self.assertEqual(0, player.location)
-        self.assertFalse(player.in_jail)
-        self.assertEqual(0, player.turns_in_jail)
-        # Test when the player is not in jail
-        leave_jail: LeaveJailUpdate = LeaveJailUpdate()
-        player.update(leave_jail)
-        self.assertEqual(0, player.location)
-        self.assertFalse(player.in_jail)
-        self.assertEqual(0, player.turns_in_jail)
+        verify_free(player, START_LOCATION)
+        methods: list[JailMethod] = [JailMethod.MONEY, JailMethod.DOUBLES, JailMethod.CARD, JailMethod.INVALID]
+        # Verify nothing changes when trying the different methods
+        for method in methods:
+            player.update(LeaveJailUpdate(method))
+            verify_free(player, START_LOCATION)
 
-        # Send player to jail
-        player.turns_in_jail = 3
-        player.location = JAIL_LOCATION
-        self.assertEqual(JAIL_LOCATION, player.location)
-        self.assertTrue(player.in_jail)
-        self.assertEqual(JAIL_TURNS, player.turns_in_jail)
+        # Send them to jail. Free them with doubles. Should be freed but still in jail (roll is handled separately)
+        send_to_jail(player)
+        player.update(LeaveJailUpdate(JailMethod.DOUBLES))
+        verify_free(player, JAIL_LOCATION)
 
-        # Free player form jail. Does not move them but will update their status.
-        player.update(leave_jail)
-        self.assertEqual(JAIL_LOCATION, player.location)
-        self.assertFalse(player.in_jail)
-        self.assertEqual(0, player.turns_in_jail)
+        # Send them to jail. Using a card shouldn't work until they have one.
+        send_to_jail(player)
+        player.update(LeaveJailUpdate(JailMethod.CARD))
+        verify_in_jail(player)
+        player.jail_cards = 1
+        player.update(LeaveJailUpdate(JailMethod.CARD))
+        verify_free(player, JAIL_LOCATION)
+        self.assertEqual(0, player.jail_cards)
+
+        # Send them to jail. Free them with money. Verify it subtracts money from their balance.
+        send_to_jail(player)
+        self.assertEqual(STARTING_MONEY, player.money)
+        player.update(LeaveJailUpdate(JailMethod.MONEY))
+        # JAIL_COST is negative
+        self.assertEqual(STARTING_MONEY + JAIL_COST, player.money)
+        verify_free(player, JAIL_LOCATION)
+
+        # Send them to jail. Free them with an invalid method and with other parameter types.
+        send_to_jail(player)
+        for method in [JailMethod.INVALID, 0, "foo", 3.5, []]:
+            player.update(LeaveJailUpdate(method))
+            verify_in_jail(player)
 
     def test_update_money(self):
         player: Player = self.make_player()
@@ -194,8 +428,9 @@ class MyTestCase(unittest.TestCase):
 
         # Redo this but give the player a faux-property so they can enter the IN_THE_HOLE state.
         player: Player = self.make_player()
-        property: AssetTile = AssetTile(player, 200, False, 100, None)
-        player.properties.append(property)
+        asset: AssetTile = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
+        asset.owner = player
+        player.assets.append(asset)
         self.assertEqual(STARTING_MONEY, player.money)
         money = MoneyUpdate(-(STARTING_MONEY + 1))
         player.update(money)

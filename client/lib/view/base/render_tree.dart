@@ -51,11 +51,11 @@ class BuyableTile extends SideTile {
   BuyableTile(super.side, super.titleText, this.purchasePrice);
 }
 
-class PropertyTile extends BuyableTile {
+class ImprovableTile extends BuyableTile {
   double colorBarFractionalInset = 0.250;
   Color color;
 
-  PropertyTile(
+  ImprovableTile(
     super.side,
     super.purchasePrice,
     super.titleText,

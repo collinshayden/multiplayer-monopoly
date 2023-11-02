@@ -7,6 +7,7 @@ Author:         Jordan Bourdeau, Hayden Collins
 from .asset_tile import AssetTile
 from .player import Player
 from .types import AssetGroups
+from .constants import RENTS
 
 
 class UtilityTile(AssetTile):
@@ -17,24 +18,8 @@ class UtilityTile(AssetTile):
         :returns:       None.
         """
         super().__init__(id, owner, price, is_mortaged, mortage_price, AssetGroups.UTILITY)
-
-    def compute_rent(self, dice_roll: int = None) -> int:
-        """
-        Description:        Method used to compute rent based on a dice roll.
-        :param dice_roll:   Integer value for the sum of the die roll.
-        :return:            Computed rent cost.
-        """
-        if self.compute_group_ownership():
-            return dice_roll * 10
-        else:
-            return dice_roll * 4
-
-    def compute_group_ownership(self) -> bool:
-        """
-        Description:    Method to compute whether both utility tiles are owned.
-        :return:        True/False if all utility tiles are owned.
-        """
-        pass
+        rent_map = RENTS[id]
+        rent_multiplier = 4
 
     def to_dict(self) -> dict:
         """
@@ -46,5 +31,7 @@ class UtilityTile(AssetTile):
                         "owner": self.owner,
                         "price": self.price,
                         "isMortgaged": self.is_mortaged,
-                        "mortgagePrice": self.mortgage_price}
+                        "mortgagePrice": self.mortgage_price,
+                        "rentMap": self.rent_map,
+                        "rentMultiplier": self.rent_multiplier}
         return utility_dict

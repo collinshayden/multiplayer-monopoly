@@ -13,4 +13,12 @@ class Tile:
         :param id:      An integer identifier for each tile.
         :returns:       None.
         """
-        pass
+        self.id: int = id
+
+    def on_land(self, roll: int, player):
+        """
+        Description:    Tile method to be called when a tile gets landed on.
+        :param roll:
+        :param player:
+        :return:
+        """

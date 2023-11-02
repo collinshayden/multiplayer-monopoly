@@ -20,7 +20,7 @@ game: Game = Game()
 # TODO: Add authentication based off player ID for requests
 
 
-@app.route("/game", methods=["GET"])
+@app.route("/game/state", methods=["GET"])
 def index():
     """
     Description:    Base endpoint which returns JSON formatted with the game state.
@@ -46,9 +46,10 @@ def start_game():
         player_id: str = ""
 
     success: bool = game.roll_dice(player_id=player_id)
-    state: dict = game.to_dict()
-    state["event"] = "startGame"
-    state["success"] = success
+    state: dict = {
+        "event": "startGame",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -74,10 +75,11 @@ def register_player():
         3) If the player is not created, the method will return None.
     """
     player_id: str = game.register_player(username)
-    state: dict = game.to_dict()
-    state["event"] = "registerPlayer"
-    state["playerId"] = player_id
-    state["success"] = player_id is ""
+    state: dict = {
+        "event": "registerPlayer",
+        "playerId": player_id,
+        "success": player_id == "",
+    }
     return jsonify(state)
 
 
@@ -103,9 +105,10 @@ def roll_dice():
         5) If the player rolled their third pair of doubles, move them to the jail tile and end their turn.
     """
     success: bool = game.roll_dice(player_id=player_id)
-    state: dict = game.to_dict()
-    state["event"] = "dieRoll"
-    state["success"] = success
+    state: dict = {
+        "event": "dieRoll",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -141,9 +144,10 @@ def draw_card():
     Once this has been completed, the appropriate deterministic action will be taken by the game.
     """
     success: bool = game.draw_card(player_id=player_id, card_type=card_type)
-    state: dict = game.to_dict()
-    state["event"] = "cardDraw"
-    state["success"] = success
+    state: dict = {
+        "event": "cardDraw",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -157,7 +161,7 @@ def buy_property():
     global game
     try:
         player_id: str = request.args.get("playerId").lower()
-        property: str = request.args.get("property").lower()
+        tile_id: int = request.args.get("tileId").lower()
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
@@ -171,10 +175,11 @@ def buy_property():
         4) Does the player have the funds to purchase the property?
     If the answers are all yes, the game will give ownership of the tile to the player and subtract their funds.
     """
-    success: bool = game.buy_property(player_id=player_id, property=property)
-    state: dict = game.to_dict()
-    state["event"] = "transaction"
-    state["success"] = success
+    success: bool = game.buy_property(player_id=player_id, tile_id=tile_id)
+    state: dict = {
+        "event": "transaction",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -205,10 +210,11 @@ def improvements():
         6) Does the player have the funds to buy all the improvements?
     If the answers are all yes, the game will add an improvement to the property and subtract player funds.
     """
-    success: bool = game.buy_improvement(player_id=player_id, property=property, amount=amount)
-    state: dict = game.to_dict()
-    state["event"] = "transaction"
-    state["success"] = success
+    success: bool = game.improvements(player_id=player_id, property=property, amount=amount)
+    state: dict = {
+        "event": "transaction",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -222,10 +228,12 @@ def mortgage():
     try:
         player_id: str = request.args.get("playerId").lower()
         property: str = request.args.get("property").lower()
+        mortgage: bool = True if request.args.get("mortgage").lower() == "true" else False
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
         property: str = ""
+        mortgage: bool = False
 
     """
     Checks the following:
@@ -235,41 +243,11 @@ def mortgage():
         4) Is the property not currently mortgaged?
     If the answers are all yes, the game will mortgage the property and add player funds.
     """
-    success: bool = game.mortgage(player_id=player_id, property=property)
-    state: dict = game.to_dict()
-    state["event"] = "transaction"
-    state["success"] = success
-    return jsonify(state)
-
-
-@app.route("/game/unmortgage")
-def unmortgage():
-    """
-    Description:    Endpoint for unmortgaging a property which is mortgaged.
-    :return:        Returns json-formatted data with the game state.
-    """
-    global game
-    try:
-        player_id: str = request.args.get("playerId").lower()
-        property: str = request.args.get("property").lower()
-    # No query parameters passed in
-    except AttributeError as e:
-        player_id: str = ""
-        property: str = ""
-
-    """
-    Checks the following:
-        1) Does the player ID correspond to a valid, active player?
-        2) Is the property valid?
-        3) Does the player own the property?
-        4) Is the property currently mortgaged?
-        5) Does the player have the funds to unmortgage the property?
-    If the answers are all yes, the game will unmortgage the property and subtract player funds.
-    """
-    success: bool = game.unmortgage(player_id=player_id, property=property)
-    state: dict = game.to_dict()
-    state["event"] = "transaction"
-    state["success"] = success
+    success: bool = game.mortgage(player_id=player_id, property=property, mortgage=mortgage)
+    state: dict = {
+        "event": "transaction",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -308,9 +286,10 @@ def get_out_of_jail():
     If the answers are all yes, the game will free the player from jail.
     """
     success: bool = game.get_out_of_jail(player_id=player_id, method=method)
-    state: dict = game.to_dict()
-    state["event"] = "getOutOfJail"
-    state["success"] = success
+    state: dict = {
+        "event": "getOutOfJail",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -333,9 +312,10 @@ def end_turn():
     If so, end the player's turn.
     """
     success: bool = game.end_turn(player_id=player_id)
-    state: dict = game.to_dict()
-    state["event"] = "endTurn"
-    state["success"] = success
+    state: dict = {
+        "event": "endTurn",
+        "success": success
+    }
     return jsonify(state)
 
 
@@ -350,7 +330,7 @@ def reset():
         player_id: str = request.args.get("playerId").lower()
     # No query parameters passed in
     except AttributeError as e:
-        pass
+        player_id: str = ""
 
     """
     Checks the following:
@@ -358,8 +338,9 @@ def reset():
     If the request was from a valid and active player, then it will reset the game.
     """
     success: bool = game.reset(player_id=player_id)
-    state: dict = game.to_dict()
-    state["success"] = success
+    state: dict = {
+        "success": success
+    }
     return jsonify(state)
 
 

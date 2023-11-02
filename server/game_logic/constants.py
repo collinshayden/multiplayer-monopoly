@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/15/2023
 """
 
-from .types import AssetGroups, PropertyStatus, RailroadStatus
+from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
 # Secret key
 SECRET_KEY: str = "replace"
@@ -21,11 +21,20 @@ MAX_ROLL: int = 2 * MAX_DIE
 
 # Other constants
 STARTING_MONEY: int = 1500
+MAX_NUM_IMPROVEMENTS: int = 5
+
+# Jail Constants
 JAIL_TURNS: int = 3
 JAIL_LOCATION: int = 10
-PLAYER_ID_LENGTH: int = 16
+JAIL_COST: int = -50
+
+# Player related constants
 MIN_NUM_PLAYERS: int = 2
 MAX_NUM_PLAYERS: int = 8
+PLAYER_ID_LENGTH: int = 16
+
+# Property Constants
+NUM_RAILROADS: int = 4
 
 # Lookup table for the number of properties in an asset group
 GROUP_SIZE: dict[AssetGroups: int] = {
@@ -41,6 +50,18 @@ GROUP_SIZE: dict[AssetGroups: int] = {
     AssetGroups.DARK_BLUE: 2
 }
 
+# Lookup table for the improvement costs of various groups
+IMPROVEMENT_MAP: dict[AssetGroups: int] = {
+    AssetGroups.BROWN: 50,
+    AssetGroups.LIGHT_BLUE: 50,
+    AssetGroups.PINK: 100,
+    AssetGroups.ORANGE: 100,
+    AssetGroups.RED: 150,
+    AssetGroups.YELLOW: 150,
+    AssetGroups.GREEN: 200,
+    AssetGroups.DARK_BLUE: 200
+}
+
 # TODO add railroads
 """
 Dictionary of dictionaries for rent amounts based on improvements. 
@@ -48,6 +69,7 @@ Dictionary of dictionaries for rent amounts based on improvements.
 source: https://www.falstad.com/monopoly.html
 """
 RENTS: dict[int: dict[PropertyStatus: int]] = {
+    # Browns
     1: {
         PropertyStatus.NO_MONOPOLY: 2,
         PropertyStatus.MONOPOLY: 4,
@@ -66,6 +88,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 320,
         PropertyStatus.FIVE_IMPROVEMENTS: 450,
     },
+    # Light blues
     6: {
         PropertyStatus.NO_MONOPOLY: 6,
         PropertyStatus.MONOPOLY: 12,
@@ -84,7 +107,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 400,
         PropertyStatus.FIVE_IMPROVEMENTS: 550,
     },
-     9: {
+    9: {
         PropertyStatus.NO_MONOPOLY: 8,
         PropertyStatus.MONOPOLY: 16,
         PropertyStatus.ONE_IMPROVEMENT: 40,
@@ -93,6 +116,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 450,
         PropertyStatus.FIVE_IMPROVEMENTS: 600,
     },
+    # Pinks
     11: {
         PropertyStatus.NO_MONOPOLY: 10,
         PropertyStatus.MONOPOLY: 20,
@@ -120,6 +144,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 700,
         PropertyStatus.FIVE_IMPROVEMENTS: 900,
     },
+    # Oranges
     16: {
         PropertyStatus.NO_MONOPOLY: 14,
         PropertyStatus.MONOPOLY: 28,
@@ -147,6 +172,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 800,
         PropertyStatus.FIVE_IMPROVEMENTS: 1000,
     },
+    # Reds
     21: {
         PropertyStatus.NO_MONOPOLY: 18,
         PropertyStatus.MONOPOLY: 36,
@@ -174,6 +200,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 925,
         PropertyStatus.FIVE_IMPROVEMENTS: 1100,
     },
+    # Yellows
     26: {
         PropertyStatus.NO_MONOPOLY: 22,
         PropertyStatus.MONOPOLY: 44,
@@ -201,6 +228,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 1025,
         PropertyStatus.FIVE_IMPROVEMENTS: 1200,
     },
+    # Greens
     31: {
         PropertyStatus.NO_MONOPOLY: 26,
         PropertyStatus.MONOPOLY: 52,
@@ -228,6 +256,7 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
         PropertyStatus.FOUR_IMPROVEMENTS: 1200,
         PropertyStatus.FIVE_IMPROVEMENTS: 1400,
     },
+    # Blues
     37: {
         PropertyStatus.NO_MONOPOLY: 35,
         PropertyStatus.MONOPOLY: 70,
@@ -252,7 +281,14 @@ RENTS: dict[int: dict[PropertyStatus: int]] = {
 for tile_idx in [5, 15, 25, 35]:
     RENTS[tile_idx] = {
         RailroadStatus.ONE_OWNED: 25,
-        RailroadStatus.TWO_OWNED: 25,
+        RailroadStatus.TWO_OWNED: 50,
         RailroadStatus.THREE_OWNED: 100,
         RailroadStatus.FOUR_OWNED: 200,
+    }
+
+# Add in utilities
+for tile_idx in [12, 28]:
+    RENTS[tile_idx] = {
+        UtilityStatus.NO_MONOPOLY: 4,
+        UtilityStatus.MONOPOLY: 10
     }

@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/24/23
 """
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class CardType(Enum):
@@ -44,10 +44,10 @@ class PlayerStatus(Enum):
     GOOD = 0
     BANKRUPT = 1
     IN_THE_HOLE = 2
-    INVALID = 4
+    INVALID = 3
 
 
-class PropertyStatus(Enum):
+class PropertyStatus(IntEnum):
     """
     Description:    Enumeration of potential rents for properties
     NO_MONOPOLY:    base rent
@@ -68,10 +68,20 @@ class RailroadStatus(Enum):
     Description:    Enumeration for the number of owned railroads.
     #_OWNED:        Corresponds to the number of railroad tiles owned.
     """
-    ONE_OWNED = 0
-    TWO_OWNED = 1
-    THREE_OWNED = 2
+    UNOWNED = 0
+    ONE_OWNED = 1
+    TWO_OWNED = 2
+    THREE_OWNED = 3
     FOUR_OWNED = 4
+
+
+class UtilityStatus(Enum):
+    """
+    Description:    Enumeration for the number of owned utilities.
+    #_OWNED:        Corresponds to the number of utility tiles owned
+    """
+    NO_MONOPOLY = 0
+    MONOPOLY = 1
 
 
 class AssetGroups(Enum):

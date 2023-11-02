@@ -5,9 +5,9 @@ Author:         Jordan Bourdeau, Hayden Collins
 """
 
 from .card import Card
-from .constants import MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
+from .constants import JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
 from .player import Player
-from .player_updates import MoneyUpdate, RollUpdate
+from .player_updates import LeaveJailUpdate, MoneyUpdate, RollUpdate
 from .tile import Tile
 from .types import CardType, JailMethod, PlayerStatus
 
@@ -98,14 +98,27 @@ class Game:
         """
         if player_id != self.active_player_id:
             return False
-        # TODO: Fill in body
+
+        # TODO: Implement surrounding functionality and uncomment this.
+        # Check that the tile they are on is a valid chance/community chest tile
+        tile: Tile = self.tiles[self.players[player_id]]
+        # match card_type:
+        #     case CardType.CHANCE:
+        #         if not isinstance(tile, Chance):
+        #             return False
+        #     case CardType.COMMUNITY_CHEST:
+        #         if not isinstance(tile, CommunityChest):
+        #             return False
+
+        # TODO: Implement a "deck mechanism" here
+
         return True
 
-    def buy_property(self, player_id: str, property: str) -> bool:
+    def buy_property(self, player_id: str, tile_id: int) -> bool:
         """
         Description:        Method used for the active player to buy a property.
         :param player_id:   ID of the player making the request.
-        :param property:    String representation of the property.
+        :param tile_id:     Integer ID for the tile being bought.
         :return:            True if the request succeeds. False otherwise.
         """
         if player_id != self.active_player_id:
@@ -113,12 +126,12 @@ class Game:
         # TODO: Fill in body
         return True
 
-    def buy_improvements(self, player_id: str, property: str, amount: int) -> bool:
+    def improvements(self, player_id: str, tile_id: int, amount: int) -> bool:
         """
         Description:        Method used to buy improvements to a property.
         :param player_id:   ID of the player making the request.
-        :param property:    String representation of the property.
-        :param amount:      Number of improvements to buy.
+        :param tile_id:     Integer ID for the tile being bought.
+        :param amount:      Number of improvements to buy/sell.
         :return:            True if the request succeeds. False otherwise.
         """
         if player_id != self.active_player_id:
@@ -126,36 +139,12 @@ class Game:
         # TODO: Fill in body
         return True
 
-    def sell_improvements(self, player_id: str, property: str, amount: int) -> bool:
-        """
-        Description:        Method used to sell improvements on a property.
-        :param player_id:   ID of the player making the request.
-        :param property:    String representation of the property.
-        :param amount:      Number of improvements to sell.
-        :return:            True if the request succeeds. False otherwise.
-        """
-        if player_id != self.active_player_id:
-            return False
-        # TODO: Fill in body
-        return True
-
-    def mortgage(self, player_id: str, property: str) -> bool:
+    def mortgage(self, player_id: str, tile_id: int, mortgage: bool) -> bool:
         """
         Description:        Method for the active player to mortgage a property.
         :param player_id:   ID of the player making the request.
-        :param property:    String representation of the property.
-        :return:            True if the request succeeds. False otherwise.
-        """
-        if player_id != self.active_player_id:
-            return False
-        # TODO: Fill in body
-        return True
-
-    def unmortgage(self, player_id: str, property: str) -> bool:
-        """
-        Description:        Method for the active player to pay off a mortgage.
-        :param player_id:   ID of the player making the request.
-        :param property:    String representation of the property.
+        :param tile_id:     Integer ID for the tile being bought.
+        :param mortgage:    Boolean flag for if the player is mortgaging/unmortgaging (T = mortgage and vice versa).
         :return:            True if the request succeeds. False otherwise.
         """
         if player_id != self.active_player_id:
@@ -172,7 +161,8 @@ class Game:
         """
         if player_id != self.active_player_id:
             return False
-        # TODO: Fill in body
+        player: Player = self.players[player_id]
+        player.update(LeaveJailUpdate(method))
         return True
 
     def end_turn(self, player_id: str) -> bool:
@@ -183,7 +173,7 @@ class Game:
         """
         if player_id != self.active_player_id:
             return False
-        # TODO: Fill in body
+        self._next_player()
         return True
 
     def reset(self, player_id: str) -> bool:
@@ -198,7 +188,7 @@ class Game:
         self.__init__()
         return True
 
-    """ Helper Methods """
+    """ Private Helper Methods """
 
     def _update_money(self, deltas: dict) -> bool:
         """
@@ -216,16 +206,6 @@ class Game:
         for player, delta in player_deltas:
             player.update(MoneyUpdate(delta))
         return True
-
-    # TODO: Implement this.
-    def _match_tile(self, tile: str) -> Tile:
-        """
-        Description:    Private method to match string representations of a tile passed through JSON to the actual
-                        object stored in the game state.
-        :param tile:    String representation of the tile used in HTTP request.
-        :return:        Tile object matched from the string.
-        """
-        pass
 
     def _next_player(self) -> bool:
         """

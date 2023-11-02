@@ -5,8 +5,14 @@ Date:           10/30/23
 """
 
 from .asset_tile import AssetTile
-from .constants import JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MIN_DIE, NUM_TILES, START_LOCATION
+from .types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
+from .constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE, NUM_TILES,
+                        START_LOCATION, GROUP_SIZE, RENTS)
 from .player import Player, PlayerStatus
+from .asset_tile import AssetTile
+from .improvable_tile import ImprovableTile
+from .railroad_tile import RailroadTile
+from .utility_tile import UtilityTile
 
 
 class PlayerUpdate:
@@ -23,7 +29,7 @@ class PlayerUpdate:
         raise NotImplementedError()
 
 
-class MoneyUpdate:
+class MoneyUpdate(PlayerUpdate):
     def __init__(self, amount: int):
         """
         Description:    Object responsible
@@ -51,7 +57,7 @@ class MoneyUpdate:
             player.status = PlayerStatus.GOOD
 
 
-class GoToJailUpdate:
+class GoToJailUpdate(PlayerUpdate):
     def __init__(self):
         """
         Description:
@@ -71,23 +77,41 @@ class GoToJailUpdate:
         player.turns_in_jail = JAIL_TURNS
 
 
-class LeaveJailUpdate:
-    def __init__(self):
+class LeaveJailUpdate(PlayerUpdate):
+    def __init__(self, method: JailMethod):
         """
         Description:    Object for sending a user to jail.
         """
-        pass
+        self.method: JailMethod = method
 
     def update(self, player: Player):
         """
         Description:    Method for freeing a user from jail.
         :return:        None.
         """
-        if player.turns_in_jail > 0:
-            player.turns_in_jail = 0
+        # Do nothing if the player isn't in jail
+        if player.turns_in_jail == 0:
+            return
+        # User rolled doubles and just gets out
+        if self.method == JailMethod.DOUBLES:
+            pass
+        # User is paying to get out. Update money then set them free
+        elif self.method == JailMethod.MONEY:
+            player.update(MoneyUpdate(JAIL_COST))
+        # User is using a get out of jail card. Decrement their number of jail cards (if they have 1+)
+        elif self.method == JailMethod.CARD:
+            if player.jail_cards > 0:
+                player.jail_cards -= 1
+            else:
+                return
+        # Invalid state. Return immediately. Should not be able to get here
+        else:
+            return
+        # All valid methods will get here after any other associated state has been handled
+        player.turns_in_jail = 0
 
 
-class RollUpdate:
+class RollUpdate(PlayerUpdate):
     def __init__(self, die1: int, die2: int):
         """
         Description:    Object for performing a dice roll.
@@ -104,7 +128,7 @@ class RollUpdate:
             return
         # Get the player out of jail and increment doubles streak
         elif self.die1 == self.die2 and player.in_jail:
-            player.update(LeaveJailUpdate())
+            player.update(LeaveJailUpdate(JailMethod.DOUBLES))
         # Player is in jail but doesn't roll double. Decrement turns in jail.
         elif player.in_jail:
             player.turns_in_jail -= 1
@@ -122,42 +146,153 @@ class RollUpdate:
         player.update(MoveUpdate(self.die1 + self.die2))
 
 
-class PropertyUpdate:
-    def __init__(self):
+class BuyUpdate(PlayerUpdate):
+    def __init__(self, tile: AssetTile):
         """
-        Description:
+        Description:    Object for a player buying a tile.
+        :param tile:    The AssetTile object being bought.
         """
-        pass
+        self.tile: AssetTile = tile
 
     def update(self, player: Player):
-        pass
+        """
+        Description:    Method for updating the player and tile states when a property is purchased.
+        :param player:  Player purchasing a property.
+        :return:        None.
+        """
+        # Can't buy a property that is already owned
+        if self.tile in player.assets:
+            return
+        player.assets.append(self.tile)
+        self.tile.owner = player
+        player.money -= self.tile.price
+        # List of tiles in the same group as the tile being bought
+        group_share: list[AssetTile] = player.group_share(self.tile.group)
+        # Depending on the group, update all the matched group share property statuses accordingly
+        match self.tile.group:
+            case AssetGroups.RAILROAD:
+                for asset in group_share:
+                    # Sort of cursed way to convert from integer to enum representation
+                    if len(group_share) < len(RailroadStatus):
+                        asset.status = RailroadStatus(len(group_share))
+            case AssetGroups.UTILITY:
+                for asset in group_share:
+                    if len(group_share) == GROUP_SIZE[AssetGroups.UTILITY]:
+                        asset.status = UtilityStatus.MONOPOLY
+            # Match any other property group
+            case _:
+                for asset in group_share:
+                    if len(group_share) == GROUP_SIZE[self.tile.group]:
+                        asset.status = PropertyStatus.MONOPOLY
 
 
-class MortgageUpdate:
-    def __init__(self, property: AssetTile):
+class ImprovementUpdate(PlayerUpdate):
+    def __init__(self, asset: AssetTile, delta: int):
+        """
+        Description:        Update to change the number of improvements a property has.
+        :param asset:       The property to improve/degrade.
+        :param delta:       Delta for the number of improvements to buy/sell.
+        """
+        self.asset: AssetTile = asset
+        self.delta: int = delta
+
+    def update(self, player: Player):
+        """
+        Description:    Method for updating the property and player status when improving/degrading a property.
+        :param player:  Player who is changing the number of improvements on a tile.
+        :return:        None.
+        """
+        # Must be a tile which allows improvements to be built.
+        if not isinstance(self.asset, ImprovableTile):
+            return
+        # Tile must be owned by the player.
+        elif self.asset not in player.assets:
+            return
+        # Must be non-zero and within the max/min ranges.
+        elif self.delta == 0 or not -MAX_NUM_IMPROVEMENTS <= self.delta <= MAX_NUM_IMPROVEMENTS:
+            return
+        # Cannot sell more properties than what are currently owned (use -1 to get absolute number of improvements)
+        elif self.delta < -(self.asset.status - 1):
+            return
+        # Evil enumeration integer conversion hacking with IntEnum.
+        elif self.asset.status < PropertyStatus.MONOPOLY:
+            return
+        group_share: list[AssetTile] = player.group_share(self.asset.group)
+        # 2 cases:
+        # 1. Player is looking to increase the number of improvements.
+        if self.delta > 0:
+            money_delta: int = self.asset.improvement_cost
+            total_improvements: int = self.delta
+            # Don't allow an upgrade which would make one property >= 2 improvements ahead
+            for asset in group_share:
+                # Force-upgrade other properties to be >= 1 less than target upgrade
+                if asset is not self.asset:
+                    total_improvements += max(self.asset.status + self.delta - asset.status - 1, 0)
+            # Player does not have the funds necessary
+            if player.money < money_delta * total_improvements:
+                return
+            else:
+                # Upgrade all properties to the same minimum level
+                for asset in group_share:
+                    num_improvements: int = (self.asset.status + self.delta) - (asset.status + 1)
+                    # Upgrade the target property to the target status
+                    player.update(MoneyUpdate(-(money_delta * num_improvements)))
+                    asset.status += num_improvements
+                # Perform the final upgrade on the target property
+                player.update(MoneyUpdate(-money_delta))
+                self.asset.status += 1
+
+        # 2. Player is looking to decrease the number of improvements.
+        elif self.delta < 0:
+            # Make the downgrade to the target property first
+            money_delta: int = int(self.asset.improvement_cost / 2)
+            num_downgrades: int = -self.delta
+            self.asset.status = PropertyStatus(self.asset.status + self.delta)
+            player.update(MoneyUpdate(num_downgrades * money_delta))
+            # For every other property, if it is within 0 to 1 greater than the target property, do nothing.
+            # If it is > 1 improvement than the target property, downgrade it by the delta.
+            for asset in group_share:
+                num_downgrades = 0 if 0 <= (asset.status - self.asset.status) <= 1 else -self.delta
+                asset.status = PropertyStatus(asset.status - num_downgrades)
+                player.update(MoneyUpdate(num_downgrades * money_delta))
+
+
+class MortgageUpdate(PlayerUpdate):
+    def __init__(self, property: AssetTile, mortgage: bool):
         """
         Description:        Update to mortgage a property owned by a player.
         :param property:    The property to mortgage.
+        :param mortage:     Bool for whether property is being mortgaged (True) or unmortgaged (False).
         """
-        self.property: AssetTile = property
+        self.asset: AssetTile = property
+        self.mortgage: bool = mortgage
 
     def update(self, player: Player):
-        pass
-
-
-class UnmortgageUpdate:
-    def __init__(self):
         """
-        Description:        Update to unmortgage a property owned by a player.
-        :param property:    The property to unmortgage.
+        Description:    Method for updating the property and player status when mortgaging/unmortgaging.
+        :param player:  Player who is mortgaging/unmortgaging.
+        :return:        None.
         """
-        self.property: AssetTile = property
 
-    def update(self, player: Player):
-        pass
+        # 1. Check the player owns the property
+        if self.asset not in player.assets:
+            return
 
+        # If the player is trying to mortgage the property, verify it can be mortgaged then mortgage it
+        if self.mortgage and not self.asset.is_mortgaged:
+            player.update(MoneyUpdate(self.asset.mortage_price))
+            self.asset.mortgage()
+        # If the player is trying to unmortgage the property, verify it is already mortgaged then unmortgage it.
+        elif not self.mortgage and self.asset.is_mortgaged:
+            player.update(MoneyUpdate(-int(self.asset.lift_mortage_cost)))
+            # Add additional check that they aren't bankrupt before unmortgaging it
+            if player.status != PlayerStatus.BANKRUPT:
+                self.asset.unmortgage()
+        # Undefined state. Do nothing.
+        else:
+            return
 
-class MoveUpdate:
+class MoveUpdate(PlayerUpdate):
     def __init__(self, spaces: int):
         """
         Description:    Object which is used to move a Player object relative to their current position.
@@ -174,7 +309,7 @@ class MoveUpdate:
         player.location = (player.location + self.spaces) % NUM_TILES
 
 
-class LocationUpdate:
+class LocationUpdate(PlayerUpdate):
     def __init__(self, destination: int):
         """
         Description:        Object used to move a Player object forward to a specific location.

@@ -16,11 +16,11 @@ abstract class SideTile extends Tile {
       super.key});
 }
 
-class PropertyTile extends SideTile {
+class ImprovableTile extends SideTile {
   final Color color;
   final int price;
 
-  const PropertyTile({
+  const ImprovableTile({
     required super.id,
     required super.quarterTurns,
     required super.title,
