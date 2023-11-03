@@ -1,26 +1,28 @@
+import 'package:client/model/tile_data.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 abstract class Tile extends StatelessWidget {
-  final int id;
-  final int quarterTurns;
-  const Tile({required this.id, required this.quarterTurns, super.key});
+  int id;
+  Tile({required this.id, super.key});
 }
 
 abstract class SideTile extends Tile {
-  final String title;
+  String title;
+  int quarterTurns;
 
-  const SideTile(
+  SideTile(
       {required super.id,
-      required super.quarterTurns,
+      required this.quarterTurns,
       required this.title,
       super.key});
 }
 
 class ImprovableTile extends SideTile {
-  final Color color;
-  final int price;
+  late int color;
+  late int price;
 
-  const ImprovableTile({
+  ImprovableTile({
     required super.id,
     required super.quarterTurns,
     required super.title,
@@ -29,6 +31,16 @@ class ImprovableTile extends SideTile {
     super.key,
   });
 
+  ImprovableTile.fromData(ImprovableTileData data) {
+    super.id = data.id;
+    super.quarterTurns = data.quarterTurns;
+    super.title = data.title;
+    color = data.color;
+    price = data.price;
+    super.key;
+  }
+  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,7 +48,7 @@ class ImprovableTile extends SideTile {
         child: Column(children: [
           Flexible(
             flex: 1,
-            child: Container(color: color),
+            child: Container(color: Color(color)),
           ),
           Flexible(
               flex: 3,
@@ -57,168 +69,164 @@ class ImprovableTile extends SideTile {
   }
 }
 
-class CornerTile extends Tile {
-  final String title;
+// class CornerTile extends Tile {
+//   final String title;
 
-  const CornerTile({
-    required super.id,
-    required super.quarterTurns,
-    required this.title,
-    
-    super.key,
-  });
+//   const CornerTile({
+//     required super.id,
+//     required super.quarterTurns,
+//     required this.title,
+//     super.key,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        color: Colors.grey,
-        child: Column(
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ));
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//         color: Colors.grey,
+//         child: Column(
+//           children: [
+//             Transform.rotate(
+//               angle: pi / 4,
+//               child: Text(
+//                 title,
+//               ),
+//             )
+//           ],
+//         ));
+//   }
+// }
 
-class ChanceTile extends Tile {
-  final Size size;
+// class ChanceTile extends Tile {
+//   final Size size;
 
-  const ChanceTile({
-    required super.id,
-    required super.quarterTurns,
-    required this.size,
-    
-    super.key,
-  });
+//   const ChanceTile({
+//     required super.id,
+//     required super.quarterTurns,
+//     required this.size,
+//     super.key,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  "Chance",
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )));
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//         width: size.width,
+//         height: size.height,
+//         child: Container(
+//             color: Colors.grey,
+//             child: Column(
+//               children: [
+//                 Text(
+//                   "Chance",
+//                   textAlign: TextAlign.center,
+//                 ),
+//               ],
+//             )));
+//   }
+// }
 
-class CommunityTile extends SideTile {
-  final Size size;
+// class CommunityTile extends SideTile {
+//   final Size size;
 
-  const CommunityTile({
-    required super.id,
-    required super.quarterTurns,
-    required super.title,
-    required this.size,
-    
-    super.key,
-  });
+//   const CommunityTile({
+//     required super.id,
+//     required super.quarterTurns,
+//     required super.title,
+//     required this.size,
+//     super.key,
+//   });
 
-// TODO fix text wrapping (issue with widget size?)
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  "Community Chest",
-                  textAlign: TextAlign.center,
-                ),
-                Spacer(),
-                Text(
-                  "Follow\n Instructions on Top Card",
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )));
-  }
-}
+// // TODO fix text wrapping (issue with widget size?)
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//         width: size.width,
+//         height: size.height,
+//         child: Container(
+//             color: Colors.grey,
+//             child: Column(
+//               children: [
+//                 Text(
+//                   "Community Chest",
+//                   textAlign: TextAlign.center,
+//                 ),
+//                 Spacer(),
+//                 Text(
+//                   "Follow\n Instructions on Top Card",
+//                   textAlign: TextAlign.center,
+//                 ),
+//               ],
+//             )));
+//   }
+// }
 
-class TaxTile extends SideTile {
-  final Size size;
-  final int payment;
+// class TaxTile extends SideTile {
+//   final Size size;
+//   final int payment;
 
-  const TaxTile({
-    required super.id,
-    required super.title,
-    required super.quarterTurns,
-    required this.size,
-    required this.payment,
-    
-    super.key,
-  });
+//   const TaxTile({
+//     required super.id,
+//     required super.title,
+//     required super.quarterTurns,
+//     required this.size,
+//     required this.payment,
+//     super.key,
+//   });
 
-// TODO fix text wrapping (issue with widget size?)
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                ),
-                Spacer(),
-                Padding(
-                    padding: EdgeInsets.only(bottom: size.height / 10),
-                    child: Text('Pay: $payment'))
-              ],
-            )));
-  }
-}
+// // TODO fix text wrapping (issue with widget size?)
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//         width: size.width,
+//         height: size.height,
+//         child: Container(
+//             color: Colors.grey,
+//             child: Column(
+//               children: [
+//                 Text(
+//                   title,
+//                   textAlign: TextAlign.center,
+//                 ),
+//                 Spacer(),
+//                 Padding(
+//                     padding: EdgeInsets.only(bottom: size.height / 10),
+//                     child: Text('Pay: $payment'))
+//               ],
+//             )));
+//   }
+// }
 
-class UtilityTile extends SideTile {
-  final Size size;
-  final int price;
+// class UtilityTile extends SideTile {
+//   final Size size;
+//   final int price;
 
-  const UtilityTile({
-    required super.id,
-    required super.title,
-    required super.quarterTurns,
-    required this.size,
-    
-    required this.price,
-    
-    super.key,
-  });
+//   const UtilityTile({
+//     required super.id,
+//     required super.title,
+//     required super.quarterTurns,
+//     required this.size,
+//     required this.price,
+//     super.key,
+//   });
 
-// TODO fix text wrapping (issue with widget size?)
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                ),
-                Spacer(),
-                Padding(
-                    padding: EdgeInsets.only(bottom: size.height / 10),
-                    child: Text('Price: $price'))
-              ],
-            )));
-  }
-}
+// // TODO fix text wrapping (issue with widget size?)
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//         width: size.width,
+//         height: size.height,
+//         child: Container(
+//             color: Colors.grey,
+//             child: Column(
+//               children: [
+//                 Text(
+//                   title,
+//                   textAlign: TextAlign.center,
+//                 ),
+//                 Spacer(),
+//                 Padding(
+//                     padding: EdgeInsets.only(bottom: size.height / 10),
+//                     child: Text('Price: $price'))
+//               ],
+//             )));
+//   }
+// }
