@@ -43,7 +43,7 @@ Map<String, dynamic> parseLocalConfig(Map<String, dynamic> json) {
             id: tile["id"],
             quarterTurns: tile["quarterTurns"],
             upperText: tile["upperText"],
-            imagePath1: tile["imagePath1"]);
+            imagePath: tile["imagePath1"]);
       case "improvement":
         tileData[i] = ImprovableTileData(
             id: tile["id"],

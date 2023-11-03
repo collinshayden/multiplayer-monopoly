@@ -1,34 +1,20 @@
+import 'package:client/model/player_data.dart';
+import 'package:client/model/tile_data.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
-abstract class Tile extends StatelessWidget {
-  final int id;
-  final int quarterTurns;
-  const Tile({required this.id, required this.quarterTurns, super.key});
-}
-
-abstract class SideTile extends Tile {
-  final String title;
-
-  const SideTile(
-      {required super.id,
-      required super.quarterTurns,
-      required this.title,
-      super.key});
-}
-
-class ImprovableTile extends SideTile {
-  final Color color;
-  final int price;
-
+class ImprovableTile extends StatefulWidget {
+  final ImprovableTileData data;
   const ImprovableTile({
-    required super.id,
-    required super.quarterTurns,
-    required super.title,
-    required this.color,
-    required this.price,
+    required this.data,
     super.key,
   });
 
+  @override
+  State<ImprovableTile> createState() => _ImprovableTileState();
+}
+
+class _ImprovableTileState extends State<ImprovableTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,7 +22,7 @@ class ImprovableTile extends SideTile {
         child: Column(children: [
           Flexible(
             flex: 1,
-            child: Container(color: color),
+            child: Container(color: Colors.red),
           ),
           Flexible(
               flex: 3,
@@ -44,12 +30,13 @@ class ImprovableTile extends SideTile {
                 children: [
                   Expanded(
                       child: Text(
-                    title,
+                    widget.data.title!,
                     textAlign: TextAlign.center,
                   )),
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
-                    child: Text('Price: $price', textAlign: TextAlign.center),
+                    child: Text('Price: ${widget.data.price}',
+                        textAlign: TextAlign.center),
                   )
                 ],
               ))
@@ -57,168 +44,156 @@ class ImprovableTile extends SideTile {
   }
 }
 
-class CornerTile extends Tile {
-  final String title;
-
+class CornerTile extends StatefulWidget {
+  final CornerTileData data;
   const CornerTile({
-    required super.id,
-    required super.quarterTurns,
-    required this.title,
-    
+    required this.data,
     super.key,
   });
 
+  @override
+  State<CornerTile> createState() => _CornerTileState();
+}
+
+class _CornerTileState extends State<CornerTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
         color: Colors.grey,
         child: Column(
           children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
           ],
         ));
   }
 }
 
-class ChanceTile extends Tile {
-  final Size size;
-
+class ChanceTile extends StatefulWidget {
+  final ChanceTileData data;
   const ChanceTile({
-    required super.id,
-    required super.quarterTurns,
-    required this.size,
-    
+    required this.data,
     super.key,
   });
 
   @override
+  State<ChanceTile> createState() => _ChanceTileState();
+}
+
+class _ChanceTileState extends State<ChanceTile> {
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  "Chance",
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )));
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
   }
 }
 
-class CommunityTile extends SideTile {
-  final Size size;
-
+class CommunityTile extends StatefulWidget {
+  final CommunityTileData data;
   const CommunityTile({
-    required super.id,
-    required super.quarterTurns,
-    required super.title,
-    required this.size,
-    
+    required this.data,
     super.key,
   });
 
-// TODO fix text wrapping (issue with widget size?)
+  @override
+  State<CommunityTile> createState() => _CommunityTileState();
+}
+
+class _CommunityTileState extends State<CommunityTile> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  "Community Chest",
-                  textAlign: TextAlign.center,
-                ),
-                Spacer(),
-                Text(
-                  "Follow\n Instructions on Top Card",
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )));
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
   }
 }
 
-class TaxTile extends SideTile {
-  final Size size;
-  final int payment;
+class TaxTile extends StatefulWidget {
+  final TaxTileData data;
+  const TaxTile({required this.data, super.key});
 
-  const TaxTile({
-    required super.id,
-    required super.title,
-    required super.quarterTurns,
-    required this.size,
-    required this.payment,
-    
-    super.key,
-  });
+  @override
+  State<TaxTile> createState() => _TaxTileState();
+}
 
-// TODO fix text wrapping (issue with widget size?)
+class _TaxTileState extends State<TaxTile> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                ),
-                Spacer(),
-                Padding(
-                    padding: EdgeInsets.only(bottom: size.height / 10),
-                    child: Text('Pay: $payment'))
-              ],
-            )));
+    return const Placeholder();
   }
 }
 
-class UtilityTile extends SideTile {
-  final Size size;
-  final int price;
+class UtilityTile extends StatefulWidget {
+  final UtilityTileData data;
+  const UtilityTile({required this.data, super.key});
 
-  const UtilityTile({
-    required super.id,
-    required super.title,
-    required super.quarterTurns,
-    required this.size,
-    
-    required this.price,
-    
-    super.key,
-  });
+  @override
+  State<UtilityTile> createState() => _UtilityTileState();
+}
 
-// TODO fix text wrapping (issue with widget size?)
+class _UtilityTileState extends State<UtilityTile> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: Container(
-            color: Colors.grey,
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                ),
-                Spacer(),
-                Padding(
-                    padding: EdgeInsets.only(bottom: size.height / 10),
-                    child: Text('Price: $price'))
-              ],
-            )));
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
+  }
+}
+
+class RailroadTile extends StatefulWidget {
+  final RailroadTileData data;
+  const RailroadTile({required this.data, super.key});
+
+  @override
+  State<RailroadTile> createState() => _RailroadTileState();
+}
+
+class _RailroadTileState extends State<RailroadTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
   }
 }
