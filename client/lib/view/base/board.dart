@@ -187,6 +187,7 @@ class CustomLayout extends StatelessWidget {
           case LocalConfigSuccess:
             _buildBoard(context, state as LocalConfigSuccess);
         }
+        return Placeholder();
       },
     );
   }
