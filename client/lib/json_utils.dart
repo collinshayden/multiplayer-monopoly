@@ -16,8 +16,11 @@ Future<Json> loadJsonFromLocalAssets(String path) async {
   try {
     rawString = await rootBundle.loadString('$LOCAL_ASSET_DIR/$path');
   } catch (e) {
-    debugPrint(
-        'An error occurred while loading a local asset: $LOCAL_ASSET_DIR/$path');
+    assert(() {
+      debugPrint(
+          'An error occurred while loading a local asset: $LOCAL_ASSET_DIR/$path');
+      return true;
+    }());
   }
   Json json = jsonDecode(rawString);
   return json;
