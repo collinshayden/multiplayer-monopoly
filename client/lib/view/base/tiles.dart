@@ -1,46 +1,20 @@
+import 'package:client/model/player_data.dart';
 import 'package:client/model/tile_data.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-abstract class Tile extends StatelessWidget {
-  int id;
-  Tile({required this.id, super.key});
-}
-
-abstract class SideTile extends Tile {
-  String title;
-  int quarterTurns;
-
-  SideTile(
-      {required super.id,
-      required this.quarterTurns,
-      required this.title,
-      super.key});
-}
-
-class ImprovableTile extends SideTile {
-  late int color;
-  late int price;
-
-  ImprovableTile({
-    required super.id,
-    required super.quarterTurns,
-    required super.title,
-    required this.color,
-    required this.price,
+class ImprovableTile extends StatefulWidget {
+  final ImprovableTileData data;
+  const ImprovableTile({
+    required this.data,
     super.key,
   });
 
-  ImprovableTile.fromData(ImprovableTileData data) {
-    super.id = data.id;
-    super.quarterTurns = data.quarterTurns;
-    super.title = data.title;
-    color = data.color;
-    price = data.price;
-    super.key;
-  }
-  
+  @override
+  State<ImprovableTile> createState() => _ImprovableTileState();
+}
 
+class _ImprovableTileState extends State<ImprovableTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,7 +22,7 @@ class ImprovableTile extends SideTile {
         child: Column(children: [
           Flexible(
             flex: 1,
-            child: Container(color: Color(color)),
+            child: Container(color: Color(widget.data.color!)),
           ),
           Flexible(
               flex: 3,
@@ -56,12 +30,13 @@ class ImprovableTile extends SideTile {
                 children: [
                   Expanded(
                       child: Text(
-                    title,
+                    widget.data.title!,
                     textAlign: TextAlign.center,
                   )),
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
-                    child: Text('Price: $price', textAlign: TextAlign.center),
+                    child: Text('Price: ${widget.data.price}',
+                        textAlign: TextAlign.center),
                   )
                 ],
               ))
@@ -69,164 +44,156 @@ class ImprovableTile extends SideTile {
   }
 }
 
-// class CornerTile extends Tile {
-//   final String title;
+class CornerTile extends StatefulWidget {
+  final CornerTileData data;
+  const CornerTile({
+    required this.data,
+    super.key,
+  });
 
-//   const CornerTile({
-//     required super.id,
-//     required super.quarterTurns,
-//     required this.title,
-//     super.key,
-//   });
+  @override
+  State<CornerTile> createState() => _CornerTileState();
+}
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//         color: Colors.grey,
-//         child: Column(
-//           children: [
-//             Transform.rotate(
-//               angle: pi / 4,
-//               child: Text(
-//                 title,
-//               ),
-//             )
-//           ],
-//         ));
-//   }
-// }
+class _CornerTileState extends State<CornerTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
+  }
+}
 
-// class ChanceTile extends Tile {
-//   final Size size;
+class ChanceTile extends StatefulWidget {
+  final ChanceTileData data;
+  const ChanceTile({
+    required this.data,
+    super.key,
+  });
 
-//   const ChanceTile({
-//     required super.id,
-//     required super.quarterTurns,
-//     required this.size,
-//     super.key,
-//   });
+  @override
+  State<ChanceTile> createState() => _ChanceTileState();
+}
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//         width: size.width,
-//         height: size.height,
-//         child: Container(
-//             color: Colors.grey,
-//             child: Column(
-//               children: [
-//                 Text(
-//                   "Chance",
-//                   textAlign: TextAlign.center,
-//                 ),
-//               ],
-//             )));
-//   }
-// }
+class _ChanceTileState extends State<ChanceTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
+  }
+}
 
-// class CommunityTile extends SideTile {
-//   final Size size;
+class CommunityTile extends StatefulWidget {
+  final CommunityTileData data;
+  const CommunityTile({
+    required this.data,
+    super.key,
+  });
 
-//   const CommunityTile({
-//     required super.id,
-//     required super.quarterTurns,
-//     required super.title,
-//     required this.size,
-//     super.key,
-//   });
+  @override
+  State<CommunityTile> createState() => _CommunityTileState();
+}
 
-// // TODO fix text wrapping (issue with widget size?)
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//         width: size.width,
-//         height: size.height,
-//         child: Container(
-//             color: Colors.grey,
-//             child: Column(
-//               children: [
-//                 Text(
-//                   "Community Chest",
-//                   textAlign: TextAlign.center,
-//                 ),
-//                 Spacer(),
-//                 Text(
-//                   "Follow\n Instructions on Top Card",
-//                   textAlign: TextAlign.center,
-//                 ),
-//               ],
-//             )));
-//   }
-// }
+class _CommunityTileState extends State<CommunityTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
+  }
+}
 
-// class TaxTile extends SideTile {
-//   final Size size;
-//   final int payment;
+class TaxTile extends StatefulWidget {
+  final TaxTileData data;
+  const TaxTile({required this.data, super.key});
 
-//   const TaxTile({
-//     required super.id,
-//     required super.title,
-//     required super.quarterTurns,
-//     required this.size,
-//     required this.payment,
-//     super.key,
-//   });
+  @override
+  State<TaxTile> createState() => _TaxTileState();
+}
 
-// // TODO fix text wrapping (issue with widget size?)
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//         width: size.width,
-//         height: size.height,
-//         child: Container(
-//             color: Colors.grey,
-//             child: Column(
-//               children: [
-//                 Text(
-//                   title,
-//                   textAlign: TextAlign.center,
-//                 ),
-//                 Spacer(),
-//                 Padding(
-//                     padding: EdgeInsets.only(bottom: size.height / 10),
-//                     child: Text('Pay: $payment'))
-//               ],
-//             )));
-//   }
-// }
+class _TaxTileState extends State<TaxTile> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
 
-// class UtilityTile extends SideTile {
-//   final Size size;
-//   final int price;
+class UtilityTile extends StatefulWidget {
+  final UtilityTileData data;
+  const UtilityTile({required this.data, super.key});
 
-//   const UtilityTile({
-//     required super.id,
-//     required super.title,
-//     required super.quarterTurns,
-//     required this.size,
-//     required this.price,
-//     super.key,
-//   });
+  @override
+  State<UtilityTile> createState() => _UtilityTileState();
+}
 
-// // TODO fix text wrapping (issue with widget size?)
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//         width: size.width,
-//         height: size.height,
-//         child: Container(
-//             color: Colors.grey,
-//             child: Column(
-//               children: [
-//                 Text(
-//                   title,
-//                   textAlign: TextAlign.center,
-//                 ),
-//                 Spacer(),
-//                 Padding(
-//                     padding: EdgeInsets.only(bottom: size.height / 10),
-//                     child: Text('Price: $price'))
-//               ],
-//             )));
-//   }
-// }
+class _UtilityTileState extends State<UtilityTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
+  }
+}
+
+class RailroadTile extends StatefulWidget {
+  final RailroadTileData data;
+  const RailroadTile({required this.data, super.key});
+
+  @override
+  State<RailroadTile> createState() => _RailroadTileState();
+}
+
+class _RailroadTileState extends State<RailroadTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.grey,
+        child: Column(
+          children: [
+            Transform.rotate(
+              angle: pi / 4,
+              child: Text(
+                widget.data.title!,
+              ),
+            )
+          ],
+        ));
+  }
+}
