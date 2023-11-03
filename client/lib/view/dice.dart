@@ -72,8 +72,14 @@ class SingleDiePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Rect background = Offset.zero & size;
-    canvas.drawRect(background, Paint()..color = Colors.white);
+    final background = RRect.fromRectAndRadius(
+      Offset.zero & size,
+      Radius.circular(size.width / 10),
+    );
+    canvas.drawRRect(
+      background,
+      Paint()..color = Colors.white,
+    );
     _paintDots(canvas, size, value);
   }
 
