@@ -1,5 +1,23 @@
 import 'package:flutter/material.dart';
 
+class Dice extends StatelessWidget {
+  const Dice({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.grey,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [SingleDie(value: 1), SingleDie(value: 6)],
+        ),
+      ),
+    );
+  }
+}
+
 class SingleDie extends StatelessWidget {
   SingleDie({super.key, required this.value})
       : assert(0 <= value && value <= 6);
@@ -10,7 +28,7 @@ class SingleDie extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
         painter: SingleDiePainter(value: value),
-        child: Container(width: 450, height: 450));
+        child: const AspectRatio(aspectRatio: 1 / 1));
   }
 }
 
@@ -92,7 +110,9 @@ void main() {
     MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.red[200],
-        body: Center(child: SingleDie(value: 6)),
+        body: Center(
+          child: SizedBox(width: 400, height: 200, child: Dice()),
+        ),
       ),
     ),
   );
