@@ -63,7 +63,7 @@ class PropertyStatus(IntEnum):
     FIVE_IMPROVEMENTS = 6
 
 
-class RailroadStatus(Enum):
+class RailroadStatus(IntEnum):
     """
     Description:    Enumeration for the number of owned railroads.
     #_OWNED:        Corresponds to the number of railroad tiles owned.

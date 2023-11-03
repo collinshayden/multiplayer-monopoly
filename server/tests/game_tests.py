@@ -11,7 +11,7 @@ from server.game_logic.types import PlayerStatus
 import unittest
 
 
-class MyTestCase(unittest.TestCase):
+class GameTests(unittest.TestCase):
 
     """ Test Exposed API Methods """
 

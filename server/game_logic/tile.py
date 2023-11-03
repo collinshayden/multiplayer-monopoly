@@ -9,13 +9,14 @@ from server.game_logic.player import Player
 
 class Tile:
 
-    def __init__(self, id: int) -> None:
+    def __init__(self, id: int, name: str) -> None:
         """
         Description:             Class representing a Tile on the board.
         :param id:               An integer identifier for each tile.
         :returns:                None.
         """
-        self.id = id
+        self.id: int = id
+        self.name: str = name
 
     def land(self, player: Player, roll: int = None) -> dict:
         """
@@ -25,3 +26,10 @@ class Tile:
         :return:        Dictionary mapping player IDs to PlayerUpdate objects.
         """
         return {}
+
+    def to_dict(self) -> dict:
+        state: dict = {
+            "id": self.id,
+            "name": self.name
+        }
+        return state

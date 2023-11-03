@@ -17,11 +17,11 @@ class GoTile(Tile):
         Description:    Class representing the Go tile.
         :returns:       None.
         """
-        pass
+        super().__init__(0, "Go")
 
-    def land(self, player: Player, roll: int = None) -> MoneyUpdate:
+    def land(self, player: Player, roll: int = None) -> dict[str: MoneyUpdate]:
         """
         Description:    Method for paying the character for landing on Go.
         :returns:       The MoneyUpdate object giving the Player $200.
         """
-        return MoneyUpdate(GO_MONEY)
+        return {player.player_id: MoneyUpdate(GO_MONEY)}

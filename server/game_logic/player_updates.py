@@ -227,15 +227,14 @@ class ImprovementUpdate(PlayerUpdate):
             if player.money < money_delta * total_improvements:
                 return
             else:
+                self.asset.status += self.delta
+                player.update(MoneyUpdate(-money_delta * self.delta))
                 # Upgrade all properties to the same minimum level
                 for asset in group_share:
-                    num_improvements: int = (self.asset.status + self.delta) - (asset.status + 1)
+                    num_improvements: int = max(self.asset.status - asset.status - 1, 0)
                     # Upgrade the target property to the target status
                     player.update(MoneyUpdate(-(money_delta * num_improvements)))
                     asset.status += num_improvements
-                # Perform the final upgrade on the target property
-                player.update(MoneyUpdate(-money_delta))
-                self.asset.status += 1
 
         # 2. Player is looking to decrease the number of improvements.
         elif self.delta < 0:
@@ -247,7 +246,8 @@ class ImprovementUpdate(PlayerUpdate):
             # For every other property, if it is within 0 to 1 greater than the target property, do nothing.
             # If it is > 1 improvement than the target property, downgrade it by the delta.
             for asset in group_share:
-                num_downgrades = 0 if 0 <= (asset.status - self.asset.status) <= 1 else -self.delta
+                difference: int = abs(asset.status - self.asset.status)
+                num_downgrades = 0 if difference <= 1 else difference - 1
                 asset.status = PropertyStatus(asset.status - num_downgrades)
                 player.update(MoneyUpdate(num_downgrades * money_delta))
 
