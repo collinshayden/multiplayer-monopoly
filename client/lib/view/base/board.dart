@@ -132,7 +132,7 @@ class _CustomLayoutDelegate extends MultiChildLayoutDelegate {
 }
 
 class CustomLayout extends StatelessWidget {
-  final Map<int, Widget> tiles = {};
+  // final Map<int, Widget> tiles = {};
 
   /// Constructor populates tiles with local board configuration
   CustomLayout({super.key}) {
@@ -189,7 +189,9 @@ class CustomLayout extends StatelessWidget {
             );
           case LocalConfigSuccess:
             _buildBoard(context, state as LocalConfigSuccess);
+          
         }
+        return Placeholder();
       },
     );
   }
@@ -211,10 +213,7 @@ class CustomLayout extends StatelessWidget {
             child: GestureDetector(
               onTap: () => print('Tapped Tile $id'),
               // child: Transform.rotate(angle: tiles[id]!.angle, child: tiles[id]),
-              child: RotatedBox(
-                quarterTurns: tiles[id],
-                child: tiles[id],
-              ),
+              child: Placeholder(),
             ),
           ),
       ],

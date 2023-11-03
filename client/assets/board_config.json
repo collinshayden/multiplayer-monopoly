@@ -58,6 +58,7 @@
       "id": 5,
       "type": "railroad",
 	  "quarterTurns": 1,
+	  "price" : 200,
       "title": ["READING", "RAILROAD"],
       "image": "railroad.png"
     },
@@ -113,6 +114,7 @@
       "id": 12,
       "type": "utility",
 	  "quarterTurns": 2,
+	  "price" : 150,
       "title": ["ELECTRIC", "COMPANY"]
     },
     {
@@ -135,6 +137,7 @@
       "id": 15,
       "type": "railroad",
 	  "quarterTurns": 2,
+	  "price" : 200,
       "title": ["PENNSYLVANIA", "RAILROAD"],
       "image": "railroad.png"
     },
@@ -212,6 +215,7 @@
       "id": 25,
       "type": "railroad",
 	  "quarterTurns": 3,
+	  "price" : 200,
       "title": ["B. & O.", "RAILROAD"],
       "image": "railroad.png"
     },
@@ -235,6 +239,7 @@
       "id": 28,
       "type": "utility",
 	  "quarterTurns": 3,
+	  "price" : 150,
       "title": ["WATER", "WORKS"]
     },
     {
@@ -288,6 +293,7 @@
       "id": 35,
       "type": "railroad",
 	  "quarterTurns": 0,
+	  "price" : 200,
       "title": ["SHORT", "LINE"],
       "image": "railroad.png"
     },

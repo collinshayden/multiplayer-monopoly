@@ -22,7 +22,7 @@ class _ImprovableTileState extends State<ImprovableTile> {
         child: Column(children: [
           Flexible(
             flex: 1,
-            child: Container(color: Color(widget.data.color!)),
+            child: Container(color: Colors.red),
           ),
           Flexible(
               flex: 3,
