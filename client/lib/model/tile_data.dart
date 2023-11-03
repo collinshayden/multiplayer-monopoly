@@ -1,6 +1,7 @@
 import "dart:ui";
 
 import "package:client/view/base/tiles.dart";
+import 'package:client/model/player_data.dart';
 import "package:json_annotation/json_annotation.dart";
 
 part 'tile_data.g.dart';
@@ -8,11 +9,35 @@ part 'tile_data.g.dart';
 @JsonSerializable(explicitToJson: true)
 class TileData {
   final int id;
-  final int quarterTurns;
+  int? quarterTurns;
+  int? color;
+  int? price;
+  int? payment;
+  int? improvements;
+  PlayerData? owner;
+  String? title;
+  String? upperText;
+  String? lowerText;
+  String? imagePath;
+  String? imagePath2;
+  String? visitingText;
+  String? payCommandText;
 
-  const TileData({
+  TileData({
     required this.id,
-    required this.quarterTurns,
+    this.quarterTurns,
+    this.title,
+    this.color,
+    this.price,
+    this.payment,
+    this.owner,
+    this.improvements,
+    this.upperText,
+    this.lowerText,
+    this.imagePath,
+    this.imagePath2,
+    this.visitingText,
+    this.payCommandText,
   });
 
   // auto generated factory constructor
@@ -22,30 +47,23 @@ class TileData {
   // auto generated factory constructor
   Map<String, dynamic> toJson() => _$TileDataToJson(this);
 
-  void applyJson(Map<String, dynamic> json) {
+  void applyJson(Map<String, dynamic> json) {}
+  // empty method
 
-  }
-    // empty method
-
+  @override
+  external Type get runtimeType;
 }
 
 @JsonSerializable(explicitToJson: true)
 class ImprovableTileData extends TileData {
-  int? owner;
-  int improvements = 0;
-  int colorIndex;
-  int price;
-  String title;
-
-
   ImprovableTileData({
     required super.id,
     required super.quarterTurns,
-    required this.owner,
-    required this.improvements,
-    required this.colorIndex,
-    required this.price,
-    required this.title,
+    required super.owner,
+    required super.improvements,
+    required super.color,
+    required super.price,
+    required super.title,
   });
 
   // auto generated factory constructor
@@ -64,20 +82,14 @@ class ImprovableTileData extends TileData {
 
 @JsonSerializable(explicitToJson: true)
 class CornerTileData extends TileData {
-  String upperText;
-  String imagePath1;
-  String? lowerText;
-  String? visitingText;
-  String? imagePath2;
-
   CornerTileData({
     required super.id,
     required super.quarterTurns,
-    required this.upperText,
-    required this.imagePath1,
-    this.lowerText,
-    this.visitingText,
-    this.imagePath2,
+    required super.upperText,
+    required super.imagePath,
+    super.lowerText,
+    super.visitingText,
+    super.imagePath2,
   });
 
   // auto generated factory constructor
@@ -89,21 +101,18 @@ class CornerTileData extends TileData {
 
   void applyJson(Map<String, dynamic> json) {
     upperText = json["upperText"] ?? upperText;
-    imagePath1 = json["imagePath1"] ?? imagePath1;
+    imagePath = json["imagePath1"] ?? imagePath;
     imagePath2 = json["imagePath2"] ?? imagePath2;
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class CommunityTileData extends TileData {
-  String title;
-  String imagePath;
-
   CommunityTileData({
     required super.id,
     required super.quarterTurns,
-    required this.title,
-    required this.imagePath,
+    required super.title,
+    required super.imagePath,
   });
 
   // auto generated factory constructor
@@ -121,14 +130,11 @@ class CommunityTileData extends TileData {
 
 @JsonSerializable(explicitToJson: true)
 class ChanceTileData extends TileData {
-  String title;
-  String imagePath;
-
   ChanceTileData({
     required super.id,
     required super.quarterTurns,
-    required this.title,
-    required this.imagePath,
+    required super.title,
+    required super.imagePath,
   });
 
   // auto generated factory constructor
@@ -146,16 +152,12 @@ class ChanceTileData extends TileData {
 
 @JsonSerializable(explicitToJson: true)
 class TaxTileData extends TileData {
-  String title;
-  String imagePath;
-  String payCommandText;
-
   TaxTileData({
     required super.id,
     required super.quarterTurns,
-    required this.title,
-    required this.imagePath,
-    required this.payCommandText,
+    required super.title,
+    required super.imagePath,
+    required super.payCommandText,
   });
 
   // auto generated factory constructor
@@ -174,16 +176,12 @@ class TaxTileData extends TileData {
 
 @JsonSerializable(explicitToJson: true)
 class RailroadTileData extends TileData {
-  String title;
-  String imagePath;
-  int price;
-
   RailroadTileData({
     required super.id,
     required super.quarterTurns,
-    required this.title,
-    required this.imagePath,
-    required this.price,
+    required super.title,
+    required super.imagePath,
+    required super.price,
   });
 
   // auto generated factory constructor
@@ -201,16 +199,12 @@ class RailroadTileData extends TileData {
 
 @JsonSerializable(explicitToJson: true)
 class UtilityTileData extends TileData {
-  String title;
-  String imagePath;
-  int price;
-
   UtilityTileData({
     required super.id,
     required super.quarterTurns,
-    required this.title,
-    required this.imagePath,
-    required this.price,
+    required super.title,
+    required super.imagePath,
+    required super.price,
   });
 
   // auto generated factory constructor

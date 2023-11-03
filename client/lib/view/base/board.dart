@@ -1,5 +1,8 @@
 import 'dart:math';
 
+import 'package:client/model/tile_data.dart';
+// import 'package:client/view/base/render_tree.dart';
+// import 'package:client/view/base/render_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:client/view/base/tiles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -129,46 +132,46 @@ class _CustomLayoutDelegate extends MultiChildLayoutDelegate {
 }
 
 class CustomLayout extends StatelessWidget {
-  final Map<int, Tile> tiles = {};
+  // final Map<int, Widget> tiles = {};
 
   /// Constructor populates tiles with local board configuration
   CustomLayout({super.key}) {
-    tiles[0] = CornerTile(id: 0, title: "Go", quarterTurns: 0);
-    for (int id = 1; id < 10; id++) {
-      tiles[id] = ImprovableTile(
-          id: id,
-          color: Colors.red,
-          title: "id: $id",
-          price: id * 15,
-          quarterTurns: 1);
-    }
-    tiles[10] = CornerTile(id: 10, title: "Jail", quarterTurns: 0);
-    for (int id = 11; id < 20; id++) {
-      tiles[id] = ImprovableTile(
-          id: id,
-          color: Colors.red,
-          title: "id: $id",
-          price: id * 15,
-          quarterTurns: 2);
-    }
-    tiles[20] = CornerTile(id: 20, title: "Free Parking", quarterTurns: 0);
-    for (int id = 21; id < 30; id++) {
-      tiles[id] = ImprovableTile(
-          id: id,
-          color: Colors.red,
-          title: "id: $id",
-          price: id * 15,
-          quarterTurns: 3);
-    }
-    tiles[30] = CornerTile(id: 30, title: "Go to Jail", quarterTurns: 0);
-    for (int id = 31; id < 40; id++) {
-      tiles[id] = ImprovableTile(
-          id: id,
-          color: Colors.red,
-          title: "id: $id",
-          price: id * 15,
-          quarterTurns: 0);
-    }
+    // tiles[0] = CornerTile(id: 0, title: "Go", quarterTurns: 0);
+    // for (int id = 1; id < 10; id++) {
+    //   tiles[id] = ImprovableTile(
+    //       id: id,
+    //       color: Colors.red,
+    //       title: "id: $id",
+    //       price: id * 15,
+    //       quarterTurns: 1);
+    // }
+    // tiles[10] = CornerTile(id: 10, title: "Jail", quarterTurns: 0);
+    // for (int id = 11; id < 20; id++) {
+    //   tiles[id] = ImprovableTile(
+    //       id: id,
+    //       color: Colors.red,
+    //       title: "id: $id",
+    //       price: id * 15,
+    //       quarterTurns: 2);
+    // }
+    // tiles[20] = CornerTile(id: 20, title: "Free Parking", quarterTurns: 0);
+    // for (int id = 21; id < 30; id++) {
+    //   tiles[id] = ImprovableTile(
+    //       id: id,
+    //       color: Colors.red,
+    //       title: "id: $id",
+    //       price: id * 15,
+    //       quarterTurns: 3);
+    // }
+    // tiles[30] = CornerTile(id: 30, title: "Go to Jail", quarterTurns: 0);
+    // for (int id = 31; id < 40; id++) {
+    //   tiles[id] = ImprovableTile(
+    //       id: id,
+    //       color: Colors.red,
+    //       title: "id: $id",
+    //       price: id * 15,
+    //       quarterTurns: 0);
+    // }
   }
 
   static final List<int> _ids = range(40);
@@ -186,6 +189,7 @@ class CustomLayout extends StatelessWidget {
             );
           case LocalConfigSuccess:
             _buildBoard(context, state as LocalConfigSuccess);
+          
         }
         return Placeholder();
       },
@@ -194,6 +198,10 @@ class CustomLayout extends StatelessWidget {
 
   Widget _buildBoard(BuildContext context, LocalConfigSuccess state) {
     Map<String, dynamic> boardJson = state.boardJson;
+    Map<int, Widget> tiles = createTiles(tileData: boardJson["tileData"]);
+
+    List<String> propertyColorsARGB = boardJson["propertyColorsARGB"];
+
     return CustomMultiChildLayout(
       delegate: _CustomLayoutDelegate(ids: _ids),
       children: <Widget>[
@@ -205,10 +213,7 @@ class CustomLayout extends StatelessWidget {
             child: GestureDetector(
               onTap: () => print('Tapped Tile $id'),
               // child: Transform.rotate(angle: tiles[id]!.angle, child: tiles[id]),
-              child: RotatedBox(
-                quarterTurns: tiles[id]!.quarterTurns,
-                child: tiles[id],
-              ),
+              child: Placeholder(),
             ),
           ),
       ],
@@ -227,4 +232,36 @@ class PlaceholderTile extends StatelessWidget {
       child: Placeholder(),
     );
   }
+}
+
+
+Map<int, Widget> createTiles({required Map<int, TileData> tileData}) {
+  Map<int, Widget> tiles = {};
+  for (int i = 0; i < tileData.length; i++) {
+    TileData data = tileData[i]!;
+    switch (data.runtimeType) {
+      case ImprovableTileData:
+        data = data as ImprovableTileData;
+        tiles[i] = ImprovableTile(data: data);
+      case CornerTileData:
+        data = data as CornerTileData;
+        tiles[i] = CornerTile(data: data);
+      case CommunityTileData:
+        data = data as CommunityTileData;
+        tiles[i] = CommunityTile(data: data);
+      case ChanceTileData:
+        data = data as ChanceTileData;
+        tiles[i] = ChanceTile(data: data);
+      case RailroadTileData:
+        data = data as RailroadTileData;
+        tiles[i] = RailroadTile(data: data);
+      case UtilityTile:
+        data = data as UtilityTileData;
+        tiles[i] = UtilityTile(data: data);
+      case TaxTile:
+        data = data as TaxTileData;
+        tiles[i] = TaxTile(data: data);
+    }
+  }
+  return tiles;
 }
