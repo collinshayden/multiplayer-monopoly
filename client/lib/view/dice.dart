@@ -8,7 +8,9 @@ class SingleDie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: SingleDiePainter(value: value));
+    return CustomPaint(
+        painter: SingleDiePainter(value: value),
+        child: Container(width: 450, height: 450));
   }
 }
 
@@ -16,42 +18,76 @@ class SingleDiePainter extends CustomPainter {
   SingleDiePainter({required this.value});
 
   final int value;
-  static const Map<int, List<FractionalOffset>> dotLocations = {
+  static const dotSpacing =
+      0.5; // Fractional distance from center to the respective x and y coordinates.
+  static const dotRadius = 0.083;
+  static const Map<int, List<Alignment>> dotAlignments = {
     0: [],
     1: [
-      FractionalOffset(0.5, 0.5),
+      Alignment(0.0, 0.0),
     ],
     2: [
-      FractionalOffset(0.27, 0.27),
-      FractionalOffset(1 - 0.27, 1 - 0.27),
+      Alignment(-dotSpacing, -dotSpacing),
+      Alignment(dotSpacing, dotSpacing),
     ],
     3: [
-      FractionalOffset(0.27, 0.27),
-      FractionalOffset(0.5, 0.5),
-      FractionalOffset(1 - 0.27, 1 - 0.27),
+      Alignment(-dotSpacing, -dotSpacing),
+      Alignment(0.0, 0.0),
+      Alignment(dotSpacing, dotSpacing),
     ],
     4: [
-      FractionalOffset(0.27, 0.27),
-      FractionalOffset(1 - 0.27, 0.27),
-      FractionalOffset(0.27, 1 - 0.27),
-      FractionalOffset(1 - 0.27, 1 - 0.27),
+      Alignment(-dotSpacing, -dotSpacing),
+      Alignment(dotSpacing, -dotSpacing),
+      Alignment(-dotSpacing, dotSpacing),
+      Alignment(dotSpacing, dotSpacing),
     ],
     5: [
-      FractionalOffset(0.27, 0.27),
-      FractionalOffset(1 - 0.27, 0.27),
-      FractionalOffset(0.5, 0.5),
-      FractionalOffset(0.27, 1 - 0.27),
-      FractionalOffset(1 - 0.27, 1 - 0.27),
+      Alignment(-dotSpacing, -dotSpacing),
+      Alignment(dotSpacing, -dotSpacing),
+      Alignment(0.0, 0.0),
+      Alignment(-dotSpacing, dotSpacing),
+      Alignment(dotSpacing, dotSpacing),
     ],
-    6: [],
+    6: [
+      Alignment(-dotSpacing, -dotSpacing),
+      Alignment(dotSpacing, -dotSpacing),
+      Alignment(-dotSpacing, 0.0),
+      Alignment(dotSpacing, 0.0),
+      Alignment(-dotSpacing, dotSpacing),
+      Alignment(dotSpacing, dotSpacing),
+    ],
   };
+
+  void _paintDots(Canvas canvas, Size size, int value) {
+    dotAlignments[value]!.forEach(
+      (Alignment dotAlignment) {
+        canvas.drawCircle(
+          dotAlignment.alongSize(size),
+          dotRadius * size.width,
+          Paint()..color = Colors.black,
+        );
+      },
+    );
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     final Rect background = Offset.zero & size;
-    canvas.drawRect(background, Paint());
+    canvas.drawRect(background, Paint()..color = Colors.white);
+    _paintDots(canvas, size, value);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.red[200],
+        body: Center(child: SingleDie(value: 6)),
+      ),
+    ),
+  );
 }
