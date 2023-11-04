@@ -2,9 +2,9 @@ import "dart:ui";
 
 import "package:client/view/base/tiles.dart";
 import 'package:client/model/player_data.dart';
-import "package:json_annotation/json_annotation.dart";
+// import "package:json_annotation/json_annotation.dart";
 
-part 'tile_data.g.dart';
+// part 'tile_data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class TileData {

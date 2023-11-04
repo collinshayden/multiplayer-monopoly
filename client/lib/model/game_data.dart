@@ -1,43 +1,37 @@
 import 'player_data.dart';
 import 'tile_data.dart';
-import "package:json_annotation/json_annotation.dart";
+import 'roll_data.dart';
+import 'package:client/json_utils.dart';
 
-part 'game_data.g.dart';
+// part 'game_data.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+// @JsonSerializable(explicitToJson: true)
 class GameData {
-  int activePlayerId;
+  /// Constructs an empty GameData object.
+  GameData()
+      : lastRoll = RollData(),
+        players = {},
+        tiles = {};
+
+  int? activePlayerId;
+  RollData? lastRoll;
   Map<int, PlayerData> players;
-  List<int> lastRoll;
   Map<int, TileData> tiles;
 
-  GameData({
-    required this.activePlayerId,
-    required this.players,
-    required this.lastRoll,
-    required this.tiles,
-  });
+  /// Deserialises JSON data received from the server to update this [GameData] instance's fields.
+  void deserialiseAttributes(Json json) {
+    // Game-scoped data
+    activePlayerId = json['activePlayerId'] ?? activePlayerId;
+    lastRoll!.updateJson(json['lastRoll'] ?? {});
 
-  // default constuctor
-  factory GameData.initial() =>
-      GameData(activePlayerId: 0, players: {}, lastRoll: [], tiles: {});
-
-  // References generated factory constructor.
-  factory GameData.fromJson(Map<String, dynamic> json) =>
-      _$GameDataFromJson(json);
-
-  // References generated toJson output.
-  Map<String, dynamic> toJson() => _$GameDataToJson(this);
-
-  void applyJson(Map<String, dynamic> json) {
-    activePlayerId = json["activePlayerId"] ?? activePlayerId;
-    lastRoll = json["lastRoll"] ?? lastRoll;
-
+    // Player-scoped data
     for (int i = 0; i < players.length; i++) {
-      players[i]?.applyJson(json["players"]["$i"]);
+      players[i]?.applyJson(json['players']['$i']);
     }
+
+    // Tile-scoped data
     for (int i = 0; i < tiles.length; i++) {
-      tiles[i]?.applyJson(json["tiles"]["$i"]);
+      tiles[i]?.applyJson(json['tiles']['$i']);
     }
   }
 }

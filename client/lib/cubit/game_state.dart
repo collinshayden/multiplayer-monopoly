@@ -27,11 +27,11 @@ class LocalConfigFailure extends GameState {
 }
 
 /// Establish a connection with the server.
-class EndpointLoading extends GameState {}
+class RemoteConfigLoading extends GameState {}
 
-class EndpointSuccess extends GameState {}
+class RemoteConfigSuccess extends GameState {}
 
-class EndpointFailure extends GameState {}
+class RemoteConfigFailure extends GameState {}
 
 /// Attempt to register a new player with an active session.
 class JoinGameLoading extends GameState {}

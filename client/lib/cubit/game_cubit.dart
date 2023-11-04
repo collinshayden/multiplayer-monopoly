@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'package:client/cubit/file_service.dart';
 import 'package:client/cubit/endpoint_service.dart';
 import 'package:client/model/tile_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 part 'game_state.dart';
 
 typedef Json = Map<String, dynamic>;
@@ -16,15 +16,24 @@ class GameCubit extends Cubit<GameState> {
 
   void loadLocalConfig() async {
     emit(LocalConfigLoading());
+    await Future.delayed(Duration(seconds: 1)); // TODO: Remove
+
     try {
-      localBoardConfig =
-          jsonDecode(await fileService.readFile('board_config.json'));
+      localBoardConfig = await fileService.loadLocalBoardConfig();
     } catch (e) {
       emit(LocalConfigFailure(e));
-    } finally {}
-    await Future.delayed(Duration(seconds: 3)); // TODO: Remove
-    
+    }
+
     emit(LocalConfigSuccess(boardJson: parseLocalConfig(localBoardConfig)));
+  }
+
+  void joinGame({required String displayName}) async {
+    emit(JoinGameLoading());
+    try {
+      endpointService.registerPlayer(displayName: displayName);
+    } catch (e) {
+      emit(JoinGameFailure());
+    }
   }
 
   void loadRemoteConfig() async {}
@@ -89,6 +98,9 @@ Map<String, dynamic> parseLocalConfig(Map<String, dynamic> json) {
     }
   }
 
-  Map<String, dynamic> rtnval = {"tileData" : tileData, "propertyColorsARGB" : propertyColorsARGB};
-  return rtnval;  
+  Map<String, dynamic> rtnval = {
+    "tileData": tileData,
+    "propertyColorsARGB": propertyColorsARGB
+  };
+  return rtnval;
 }

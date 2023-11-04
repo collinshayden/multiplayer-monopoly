@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../constants.dart';
+import '../json_utils.dart';
 
 /// Retrieves files from the root bundle created by the framework for the
 /// application.
@@ -14,16 +15,10 @@ class FileService {
   // Instantiate singleton
   static final FileService _instance = FileService._internal();
 
-  /// Reads json in from a path within the assets folder.
-  Future<Map<String, dynamic>> readJson(String assetPath) async {
-    final file = await readFile(assetPath);
-    final json = jsonDecode(file);
-    return json;
-  }
-
-  /// Reads a file in as a string.
-  Future<String> readFile(String assetPath) async {
-    final file = await rootBundle.loadString('$LOCAL_ASSET_DIR$assetPath');
-    return file;
+  /// Reads JSON in from a path within the assets folder.
+  Future<Json> loadLocalBoardConfig() async {
+    Future<Json> localBoardConfig =
+        loadJson('$LOCAL_ASSET_DIR/board_config.json');
+    return localBoardConfig;
   }
 }

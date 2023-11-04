@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:client/model/tile_data.dart';
-// import 'package:client/view/base/render_tree.dart';
-// import 'package:client/view/base/render_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:client/view/base/tiles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -189,7 +187,6 @@ class CustomLayout extends StatelessWidget {
             );
           case LocalConfigSuccess:
             _buildBoard(context, state as LocalConfigSuccess);
-          
         }
         return Placeholder();
       },
@@ -233,7 +230,6 @@ class PlaceholderTile extends StatelessWidget {
     );
   }
 }
-
 
 Map<int, Widget> createTiles({required Map<int, TileData> tileData}) {
   Map<int, Widget> tiles = {};
