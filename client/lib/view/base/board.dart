@@ -194,10 +194,10 @@ class CustomLayout extends StatelessWidget {
   }
 
   Widget _buildBoard(BuildContext context, LocalConfigSuccess state) {
-    Map<String, dynamic> boardJson = state.boardJson;
-    Map<int, Widget> tiles = createTiles(tileData: boardJson["tileData"]);
+    // Map<String, dynamic> boardJson = state.boardJson;
+    // Map<int, Widget> tiles = createTiles(tileData: boardJson["tileData"]);
 
-    List<String> propertyColorsARGB = boardJson["propertyColorsARGB"];
+    // List<String> propertyColorsARGB = boardJson["propertyColorsARGB"];
 
     return CustomMultiChildLayout(
       delegate: _CustomLayoutDelegate(ids: _ids),
