@@ -12,6 +12,7 @@ class GameCubit extends Cubit<GameState> {
 
   // Initialise game
   final game = Game();
+  
 
   // Initialise services
   final fileService = FileService();
@@ -24,11 +25,12 @@ class GameCubit extends Cubit<GameState> {
     late Json? localTileConfig;
     try {
       localTileConfig = await fileService.getLocalTileConfig();
+      game.withJson(localTileConfig);
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
 
-    emit(LocalConfigSuccess());
+    emit(LocalConfigSuccess(game));
   }
 
   void joinGame({required String displayName}) async {
@@ -40,5 +42,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void loadRemoteConfig() async {}
+  void loadRemoteConfig() async {
+    
+  }
 }
