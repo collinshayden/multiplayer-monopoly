@@ -30,7 +30,7 @@ class GameCubit extends Cubit<GameState> {
       emit(LocalConfigFailure(e));
     }
 
-    emit(LocalConfigSuccess(game));
+    emit(LocalConfigSuccess(game: game));
   }
 
   void joinGame({required String displayName}) async {
