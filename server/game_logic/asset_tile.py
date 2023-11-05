@@ -100,9 +100,9 @@ class AssetTile(Tile):
     def to_dict(self) -> dict:
         state: dict = super().to_dict()
         state["price"] = self.price
-        state["group"] = self.group.name
-        state["status"] = self.status.name
-        state["owner"] = self.owner.id
+        state["group"] = str(self.group.name)
+        state["status"] = str(self.status.name)
+        state["owner"] = self.owner.id if self.owner is not None else None
         state["isMortgaged"] = self.is_mortgaged
         state["mortgagePrice"] = self.mortage_price
         state["rent"] = self.rent

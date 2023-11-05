@@ -4,9 +4,9 @@ Date:           10/06/23
 Author:         Jordan Bourdeau
 """
 
-from game_logic.constants import SECRET_KEY
-from game_logic.game import Game
-from game_logic.types import CardType, JailMethod
+from .game_logic.constants import SECRET_KEY
+from .game_logic.game import Game
+from .game_logic.types import CardType, JailMethod
 
 from flask import Flask, jsonify, request
 from random import randint
@@ -42,8 +42,9 @@ def start_game():
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
-
-    success: bool = game.roll_dice(player_id=player_id)
+    if player_id is None:
+        player_id: str = ""
+    success: bool = game.start_game(player_id=player_id)
     client_bindings: dict[str, Any] = {
         "event": "startGame",
         "success": success
@@ -63,8 +64,9 @@ def register_player():
         display_name: str = request.args.get("display_name")
     # No query parameters passed in
     except AttributeError as e:
-        return jsonify({"registered": False})
-
+        return jsonify({"event": "registerPlayer", "registered": False})
+    if display_name is None:
+        return jsonify({"event": "registerPlayer", "registered": False})
     """
     Checks that the total number of players is under the limit (8) then does the following:
         1) Creates a new player with a given username and adds it to the list of players.
@@ -93,6 +95,8 @@ def roll_dice():
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
+    if player_id is None:
+        player_id: str = ""
 
     """
     Does the following:
@@ -110,6 +114,7 @@ def roll_dice():
     return jsonify(client_bindings)
 
 
+# TODO: Implement test method for this once it is implemented in Game class.
 @app.route("/game/draw_card", methods=["GET"])
 def draw_card():
     """
@@ -123,6 +128,9 @@ def draw_card():
         card_arg: str = request.args.get("card_type").lower()
     # No query parameters passed in
     except AttributeError as e:
+        player_id: str = ""
+        card_arg: str = ""
+    if player_id is None or card_arg is None:
         player_id: str = ""
         card_arg: str = ""
 
@@ -143,7 +151,7 @@ def draw_card():
     """
     success: bool = game.draw_card(player_id=player_id, card_type=card_type)
     client_bindings: dict[str, Any] = {
-        "event": "cardDraw",
+        "event": "drawCard",
         "success": success
     }
     return jsonify(client_bindings)
@@ -161,7 +169,10 @@ def buy_property():
         player_id: str = request.args.get("player_id").lower()
         tile_id: int = int(request.args.get("tile_id"))
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, TypeError, ValueError) as e:
+        player_id: str = ""
+        tile_id: int = -1
+    if player_id is None or tile_id is None:
         player_id: str = ""
         tile_id: int = -1
 
@@ -174,7 +185,7 @@ def buy_property():
     """
     success: bool = game.buy_property(player_id=player_id, tile_id=tile_id)
     client_bindings: dict[str, Any] = {
-        "event": "transaction",
+        "event": "buyProperty",
         "success": success
     }
     return jsonify(client_bindings)
@@ -187,12 +198,18 @@ def set_improvements():
     :return:        Returns a JSON-serliazable status response.
     """
     global game
+    print(request.args)
     try:
         player_id: str = request.args.get("player_id").lower()
         tile_id: int = int(request.args.get("tile_id"))
         quantity: int = int(request.args.get("quantity"))
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, TypeError, ValueError) as e:
+        player_id: str = ""
+        tile_id: int = -1
+        quantity: int = 0
+    if player_id is None or tile_id is None or quantity is None:
+        print("3")
         player_id: str = ""
         tile_id: int = -1
         quantity: int = 0
@@ -209,7 +226,7 @@ def set_improvements():
     """
     success: bool = game.improvements(player_id=player_id, tile_id=tile_id, amount=quantity)
     client_bindings: dict[str, Any] = {
-        "event": "updateImprovements",
+        "event": "setImprovements",
         "success": success
     }
     return jsonify(client_bindings)
@@ -226,8 +243,12 @@ def set_mortgage():
         player_id: str = request.args.get("player_id").lower()
         tile_id: int = int(request.args.get("tile_id"))
         mortgage: bool = True if request.args.get("mortgage").lower() == "true" else False
-    # No query parameters passed in
-    except AttributeError as e:
+    # No query parameters passed in or invalid integer value for tile ID
+    except (AttributeError, TypeError, ValueError) as e:
+        player_id: str = ""
+        tile_id: int = -1
+        mortgage: bool = False
+    if player_id is None or tile_id is None:
         player_id: str = ""
         tile_id: int = -1
         mortgage: bool = False
@@ -242,7 +263,7 @@ def set_mortgage():
     """
     success: bool = game.mortgage(player_id=player_id, tile_id=tile_id, mortgage=mortgage)
     client_bindings: dict[str, Any] = {
-        "event": "transaction",
+        "event": "setMortgage",
         "success": success
     }
     return jsonify(client_bindings)
@@ -260,6 +281,9 @@ def get_out_of_jail():
         method_arg: str = request.args.get("method").lower()
     # No query parameters passed in
     except AttributeError as e:
+        player_id: str = ""
+        method_arg: str = ""
+    if player_id is None or method_arg is None:
         player_id: str = ""
         method_arg: str = ""
 
@@ -302,6 +326,8 @@ def end_turn():
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
+    if player_id is None:
+        player_id: str = ""
 
     """
     Checks the following:
@@ -328,6 +354,8 @@ def reset():
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
+    if player_id is None:
+        player_id: str = ""
 
     """
     Checks the following:
@@ -336,6 +364,7 @@ def reset():
     """
     success: bool = game.reset(player_id=player_id)
     client_bindings: dict[str, Any] = {
+        "event": "reset",
         "success": success
     }
     return jsonify(client_bindings)

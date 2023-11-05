@@ -108,7 +108,11 @@ class Game:
         :param card_type:   Type of card being drawn.
         :return:            True if the request succeeds. False otherwise.
         """
+        # Player ID isn't valid
         if not self._valid_player(player_id):
+            return False
+        # Card type isn't valid
+        if card_type == CardType.INVALID:
             return False
 
         # TODO: Implement surrounding functionality and uncomment this.
@@ -200,10 +204,16 @@ class Game:
         elif tile_id < START_LOCATION or tile_id >= NUM_TILES:
             return False
         tile: Tile = self.tiles[tile_id]
+        player: Player = self.players[player_id]
         # Only AssetTile objects can be mortgaged
         if not isinstance(tile, AssetTile):
             return False
-        player: Player = self.players[player_id]
+        # Tile must be owner
+        elif tile.owner is not player:
+            return False
+        # Tile mortgage status can't match what is passed in
+        elif tile.is_mortgaged == mortgage:
+            return False
         player.update(MortgageUpdate(tile, mortgage))
         return True
 
@@ -217,6 +227,12 @@ class Game:
         if not self._valid_player(player_id):
             return False
         player: Player = self.players[player_id]
+        # If the player is not in jail, return False
+        if not player.in_jail:
+            return False
+        # If the method is CARD but the player has no get out of jail cards return Fasle
+        elif method == JailMethod.CARD and player.jail_cards == 0:
+            return False
         player.update(LeaveJailUpdate(method))
         return True
 

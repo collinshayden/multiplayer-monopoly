@@ -54,9 +54,9 @@ class ImprovableTile(AssetTile):
             "price": self.price,
             "isMortgaged": self.is_mortgaged,
             "mortgagePrice": self.mortage_price,
-            "group": self.group,
+            "group": str(self.group),
+            "status": str(self.status.name),
             "rent": self.rent,
-            "status": self.status.name,
             "improvementCost": self.improvement_cost
         }
         return client_bindings
