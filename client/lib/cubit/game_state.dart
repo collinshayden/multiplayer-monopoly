@@ -15,9 +15,9 @@ class GameInitial extends GameState {}
 class LocalConfigLoading extends GameState {}
 
 class LocalConfigSuccess extends GameState {
-  LocalConfigSuccess([this.game]);
+  LocalConfigSuccess({required this.game});
 
-  final Game? game;
+  final Game game;
 }
 
 class LocalConfigFailure extends GameState {
