@@ -4,6 +4,7 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
+from typing import Any
 from .asset_tile import AssetTile
 from .player import Player
 from .types import AssetGroups
@@ -21,17 +22,18 @@ class UtilityTile(AssetTile):
         rent_map = RENTS[id]
         rent_multiplier = 4
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """
         Description:    Method used to return a dictionary representation of the class.
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        utility_dict = {"id": self.id,
-                        "owner": self.owner,
-                        "price": self.price,
-                        "isMortgaged": self.is_mortaged,
-                        "mortgagePrice": self.mortgage_price,
-                        "rentMap": self.rent_map,
-                        "rentMultiplier": self.rent_multiplier}
-        return utility_dict
+        client_bindings = {
+            "id": self.id,
+            "owner": self.owner,
+            "price": self.price,
+            "isMortgaged": self.is_mortaged,
+            "mortgagePrice": self.mortgage_price,
+            "rentMap": self.rent_map,
+            "rentMultiplier": self.rent_multiplier}
+        return client_bindings

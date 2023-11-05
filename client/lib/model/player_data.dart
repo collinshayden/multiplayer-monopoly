@@ -4,7 +4,7 @@
 
 // @JsonSerializable(explicitToJson: true)
 class Player {
-  int? id;
+  String? id;
   String? displayName;
   int? money;
   int? location;

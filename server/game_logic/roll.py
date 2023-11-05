@@ -11,6 +11,14 @@ class Roll:
       self.first: int = first
       self.second: int = second
 
+   @property
+   def is_doubles(self) -> bool:
+      return self.first == self.second
+   
+   @property
+   def total(self) -> int:
+      return self.first + self.second
+
    
    def to_dict(self) -> dict[str, Any]:
       """
@@ -18,8 +26,7 @@ class Roll:
 
       :return: Dictionary from strings to any other data type.
       """
-      client_bindings: dict[str, Any] = {
+      client_bindings = {
          "first": self.first,
-         "second": self.second
-         }
+         "second": self.second}
       return client_bindings

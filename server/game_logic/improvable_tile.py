@@ -4,6 +4,7 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
+from typing import Any
 from .asset_tile import AssetTile
 from .constants import IMPROVEMENT_MAP
 from .types import AssetGroups
@@ -29,13 +30,14 @@ class ImprovableTile(AssetTile):
         """
         return IMPROVEMENT_MAP[self.group]
         
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """
         Description:    Method used to return a dictionary representation of the class.
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        property_dict = {"id": self.id,
+        client_bindings = {
+            "id": self.id,
             "owner": self.owner,
             "price": self.price,
             "isMortgaged": self.is_mortgaged,
@@ -45,4 +47,4 @@ class ImprovableTile(AssetTile):
             "rent": self.rent,
             "improvements": self.improvements,
             "improvementCost": self.improvement_cost}
-        return property_dict
+        return client_bindings

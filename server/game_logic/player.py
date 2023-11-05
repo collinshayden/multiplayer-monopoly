@@ -4,20 +4,21 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
+from typing import Any
 from .constants import STARTING_MONEY, START_LOCATION
 from .types import AssetGroups, PlayerStatus
 
 
 class Player:
-    def __init__(self, player_id: str, username: str) -> None:
+    def __init__(self, id: str, display_name: str) -> None:
         from .asset_tile import AssetTile
         """
         Description:            Class representing a Player.
-        :param player_id:       Unique 16-character ID generated from Game class
-        :param username:    Display name/username
+        :param id:       Unique 16-character ID generated from Game class
+        :param display_name:    Display name visible to users.
         """
-        self.player_id: str = player_id
-        self.username: str = username
+        self.id: str = id
+        self.display_name: str = display_name
 
         # State variables
         self.assets: list[AssetTile] = []
@@ -75,17 +76,19 @@ class Player:
         update.update(self)
         return self.status
     
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """
         Description:    Method used to return a dictionary representation of the class.
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        player_dict = {"displayName": self.username,
-                       "money": self.money,
-                       "location": self.location,
-                       "doublesStreak": self.doubles_streak,
-                       "jailCards": self.jail_cards,
-                       "turnsInJail": self.turns_in_jail,
-                       "active": self.active}
-        return player_dict
+        client_bindings = {
+            "id": self.id,
+            "displayName": self.display_name,
+            "money": self.money,
+            "location": self.location,
+            "doublesStreak": self.doubles_streak,
+            "getOutOfJailFreeCards": self.jail_cards,
+            "turnsInJail": self.turns_in_jail,
+            "active": self.active}
+        return client_bindings

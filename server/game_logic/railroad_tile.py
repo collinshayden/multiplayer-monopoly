@@ -4,6 +4,7 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
+from typing import Any
 from .asset_tile import AssetTile
 from .player import Player
 from .types import AssetGroups, RailroadStatus
@@ -29,17 +30,17 @@ class RailroadTile(AssetTile):
     def update_rent(self) -> None:
         pass
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """
         Description:    Method used to return a dictionary representation of the class.
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        railroad_dict = {"id": self.id,
-                         "owner": self.owner,
-                         "price": self.price,
-                         "isMortgaged": self.is_mortgaged,
-                         "mortgagePrice": self.mortgage_price,
-                         "rentMap": self.rent_map,
-                         "rent": self.rent}
-        return railroad_dict
+        client_bindings = {
+            "id": self.id,
+            "owner": self.owner,"price": self.price,
+            "isMortgaged": self.is_mortgaged,
+            "mortgagePrice": self.mortgage_price,
+            "rentMap": self.rent_map,
+            "rent": self.rent}
+        return client_bindings

@@ -13,6 +13,7 @@ from .asset_tile import AssetTile
 from .improvable_tile import ImprovableTile
 from .railroad_tile import RailroadTile
 from .utility_tile import UtilityTile
+from .roll import Roll
 
 
 class PlayerUpdate:
@@ -112,38 +113,37 @@ class LeaveJailUpdate(PlayerUpdate):
 
 
 class RollUpdate(PlayerUpdate):
-    def __init__(self, die1: int, die2: int):
+    def __init__(self, roll: Roll):
         """
         Description:    Object for performing a dice roll.
         """
-        self.die1: int = die1
-        self.die2: int = die2
+        self.roll = roll
 
     def update(self, player: Player):
         # Check early return conditions (invalid die roll)
-        if not (MIN_DIE <= self.die1 <= MAX_DIE and MIN_DIE <= self.die2 <= MAX_DIE):
+        if not (MIN_DIE <= self.roll.first <= MAX_DIE and MIN_DIE <= self.roll.second <= MAX_DIE):
             return
         # Float values are passed in. Do nothing/
-        elif isinstance(self.die1, float) or isinstance(self.die2, float):
+        elif isinstance(self.roll.first, float) or isinstance(self.roll.second, float):
             return
         # Get the player out of jail and increment doubles streak
-        elif self.die1 == self.die2 and player.in_jail:
+        elif self.roll.is_doubles and player.in_jail:
             player.update(LeaveJailUpdate(JailMethod.DOUBLES))
         # Player is in jail but doesn't roll double. Decrement turns in jail.
         elif player.in_jail:
             player.turns_in_jail -= 1
             return  # Don't move them, exit early
         # Rolled double for the third time. Player goes straight to jail.
-        elif self.die1 == self.die2 and player.doubles_streak == 2:
+        elif self.roll.is_doubles and player.doubles_streak == 2:
             player.update(GoToJailUpdate())
             player.doubles_streak = 0
             return  # Don't move them, exit early
-        elif self.die1 == self.die2:
+        elif self.roll.is_doubles:
             player.doubles_streak += 1
         else:
             player.doubles_streak = 0
         # To get here means the player will be getting their movement
-        player.update(MoveUpdate(self.die1 + self.die2))
+        player.update(MoveUpdate(self.roll.total))
 
 
 class BuyUpdate(PlayerUpdate):
@@ -274,7 +274,7 @@ class MortgageUpdate(PlayerUpdate):
         :return:        None.
         """
 
-        # 1. Check the player owns the property
+        # Check the player owns the property
         if self.asset not in player.assets:
             return
 
