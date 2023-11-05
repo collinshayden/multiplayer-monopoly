@@ -22,6 +22,8 @@ MAX_ROLL: int = 2 * MAX_DIE
 # Other constants
 STARTING_MONEY: int = 1500
 GO_MONEY: int = 200
+INCOME_TAX: int = -200
+LUXURY_TAX: int = -75
 MAX_NUM_IMPROVEMENTS: int = 5
 
 # Jail Constants
@@ -295,3 +297,41 @@ for tile_idx in [12, 28]:
         UtilityStatus.NO_MONOPOLY: 4,
         UtilityStatus.MONOPOLY: 10
     }
+
+COMMUNITY_CHEST: dict[int: str] = {
+    1: "Advance to GO.",
+    2: "Bank error in your favor.  Collect $200.",
+    3: "Doctor's fees.  Pay $50.",
+    4: "From sale of stock you get $50.",
+    5: "Get out of Jail free.",
+    6: "Go to jail.  Go directly to Jail. Do not pass Go. Do not collect $200.",
+    7: "Grand Opera Night.  Collect $50 from every player for opening night seats.",
+    8: "Holiday fund matures.  Receive $100.",
+    9: "Income tax refund.  Collect $200.",
+    10: "It is your birthday.  Collect $10 from every player",
+    11: "Life insurance matures.  Collect $100",
+    12: "Hospital fees.  Pay $50.",
+    13: "School fees.  Pay $50",
+    14: "Receive $25 consultancy fee.",
+    15: "You are assessed for street repairs.  Pay $40 per house and $115 per hotel you own.",
+    16: "You have won second prize in a beauty contest.  Collect $10.",
+    17: "You inherit $100."
+}
+
+CHANCE: dict[int: str] = {
+    1: "Advance to GO.",
+    2: "Advance to Illinois Avenue.",
+    3: "Advance to St. Charles Place.",
+    4: "Advance to the nearest Utility.  If unowned, you may buy it from the Bank.  If owned, throw dice and pay owner a total of 10 times the amount owned.",
+    5: "Advance to the nearest Railroad.  If unowned, you may buy it from the Bank.  If owned, pay the owner twice the rent they would be otherwise owned.",
+    6: "Bank pays you dividend of $50.",
+    7: "Go back 3 spaces.",
+    8: "Get out of Jail free.",
+    9: "Go to Jail.  Go directly to Jail. Do not pass Go. Do not collect $200.",
+    10: "Make general repairs on all your property.  For each house, pay $25, for each hotel pay $100.",
+    11: "Take a trip to Reading Railroad.",
+    12: "Pay poor tax of $15.",
+    13: "Take a walk on the Boardwalk.",
+    14: "You have been elected Chairman of the Board.  Pay each player $50.",
+    15: "Your building loan matures.  Receive $150."
+}
