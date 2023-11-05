@@ -30,7 +30,7 @@ class _MonopolyAppState extends State<MonopolyApp> {
           child: Stack(
             children: [
               CubitTest(),
-              Board(),
+              // Board(),
               Center(
                 child: SizedBox.fromSize(
                   size: const Size(100.0, 50.0),
