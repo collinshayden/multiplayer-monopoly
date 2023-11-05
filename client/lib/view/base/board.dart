@@ -186,7 +186,7 @@ class CustomLayout extends StatelessWidget {
               child: Text('Failed to load local configuration!'),
             );
           case LocalConfigSuccess:
-            _buildBoard(context, state as LocalConfigSuccess);
+            return _buildBoard(context, state as LocalConfigSuccess);
         }
         return Placeholder();
       },
@@ -194,11 +194,7 @@ class CustomLayout extends StatelessWidget {
   }
 
   Widget _buildBoard(BuildContext context, LocalConfigSuccess state) {
-    // Map<String, dynamic> boardJson = state.boardJson;
-    // Map<int, Widget> tiles = createTiles(tileData: boardJson["tileData"]);
-
-    // List<String> propertyColorsARGB = boardJson["propertyColorsARGB"];
-
+    List<Widget> tiles = _buildLayoutChildren(context, state);
     return CustomMultiChildLayout(
       delegate: _CustomLayoutDelegate(ids: _ids),
       children: <Widget>[
@@ -210,7 +206,7 @@ class CustomLayout extends StatelessWidget {
             child: GestureDetector(
               onTap: () => print('Tapped Tile $id'),
               // child: Transform.rotate(angle: tiles[id]!.angle, child: tiles[id]),
-              child: Placeholder(),
+              child: tiles[id],
             ),
           ),
       ],
@@ -220,7 +216,10 @@ class CustomLayout extends StatelessWidget {
   List<Widget> _buildLayoutChildren(
       BuildContext context, LocalConfigSuccess state) {
     final List<Widget> children = [];
-    for (var tile in state.game.)
+    for (var tile in state.game.tiles.values) {
+      children.add(tile.createWidget());
+    }
+    return children;
   }
 }
 

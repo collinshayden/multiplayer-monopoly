@@ -71,33 +71,31 @@ class ImprovableTile extends Tile {
       _displayConfigurationComplete,
       'One or more parameters have not been fully defined for ${this.runtimeType}',
     );
-    return Container(
-      color: Colors.grey,
-      child: Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: Container(color: Colors.red),
-          ),
-          Flexible(
-            flex: 3,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Text(
-                    title ?? "Placeholder title",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: Text('Price: $price', textAlign: TextAlign.center),
-                )
-              ],
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Flexible(
+              flex: 1,
+              child: Container(color: Colors.red),
             ),
-          )
-        ],
-      ),
+            Flexible(
+                flex: 3,
+                child: Column(
+                  children: [
+                    Expanded(
+                        child: Text(
+                      title ?? "Placeholder title",
+                      textAlign: TextAlign.center,
+                    )),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Text('Price: $price', textAlign: TextAlign.center),
+                    )
+                  ],
+                ))
+          ])),
     );
   }
 }
@@ -126,23 +124,26 @@ class RailroadTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-          Flexible(
-            flex: 0,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Price: $price', textAlign: TextAlign.center),
-            ),
-          )
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+            Flexible(
+              flex: 0,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Text('Price: $price', textAlign: TextAlign.center),
+              ),
+            )
+          ])),
+    );
   }
 }
 
@@ -170,23 +171,26 @@ class UtilityTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-          Flexible(
-            flex: 0,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Price: $price', textAlign: TextAlign.center),
-            ),
-          )
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+            Flexible(
+              flex: 0,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Text('Price: $price', textAlign: TextAlign.center),
+              ),
+            )
+          ])),
+    );
   }
 }
 
@@ -211,16 +215,19 @@ class ChanceTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -245,16 +252,19 @@ class CommunityChestTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -282,21 +292,24 @@ class TaxTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              payCommandText ?? "Placeholder price",
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
               textAlign: TextAlign.center,
-            ),
-          )
-        ]));
+            )),
+            Flexible(
+              child: Text(
+                payCommandText ?? "Placeholder price",
+                textAlign: TextAlign.center,
+              ),
+            )
+          ])),
+    );
   }
 }
 
@@ -326,7 +339,19 @@ class GoTile extends Tile {
 
   @override
   Widget createWidget() {
-    return const Placeholder();
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -357,28 +382,31 @@ class JailTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            Flexible(
               child: Text(
-            upperText ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              lowerText ?? "Placeholder lower text",
-              textAlign: TextAlign.center,
+                lowerText ?? "Placeholder lower text",
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          Flexible(
-            child: Text(
-              visitingText ?? "Placeholder visiting text",
-              textAlign: TextAlign.center,
-            ),
-            // TODO image
-          )
-        ]));
+            Flexible(
+              child: Text(
+                visitingText ?? "Placeholder visiting text",
+                textAlign: TextAlign.center,
+              ),
+              // TODO image
+            )
+          ])),
+    );
   }
 }
 
@@ -406,22 +434,25 @@ class FreeParkingTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            upperText ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              lowerText ?? "Placeholder lower text",
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
               textAlign: TextAlign.center,
+            )),
+            Flexible(
+              child: Text(
+                lowerText ?? "Placeholder lower text",
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          // TODO image
-        ]));
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -449,21 +480,24 @@ class GoToJailTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            upperText ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              lowerText ?? "Placeholder lower text",
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
               textAlign: TextAlign.center,
+            )),
+            Flexible(
+              child: Text(
+                lowerText ?? "Placeholder lower text",
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          // TODO image
-        ]));
+            // TODO image
+          ])),
+    );
   }
 }
