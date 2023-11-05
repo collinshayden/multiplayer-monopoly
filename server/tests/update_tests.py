@@ -99,6 +99,17 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual("Test", tile.name)
         self.assertNotIn(tile, player.assets)
 
+        # Verify nothing happens if you try to buy a tile which is too expensive
+        starting_money = player.money
+        expensive: AssetTile = AssetTile(id=39, name="Super Boardwalk", price=4000, group=AssetGroups.DARK_BLUE)
+        self.assertIsNone(expensive.owner)
+        self.assertNotIn(expensive, player.assets)
+        self.assertEqual(starting_money, player.money)
+        player.update(BuyUpdate(expensive))
+        self.assertIsNone(expensive.owner)
+        self.assertNotIn(expensive, player.assets)
+        self.assertEqual(starting_money, player.money)
+
     def test_improvement_update(self):
         player: Player = self.make_player()
         # Improvable tiles

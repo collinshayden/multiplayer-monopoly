@@ -8,19 +8,19 @@ from .asset_tile import AssetTile
 from .player import Player
 from .roll import Roll
 from .types import AssetGroups
-from .constants import RENTS
+from .constants import UTILITY_COST
 
 from typing import Any
 
 
 class UtilityTile(AssetTile):
 
-    def __init__(self, id: int, name: str, price: int) -> None:
+    def __init__(self, id: int, name: str) -> None:
         """
         Description:    Class representing the two utility tiles.
         :returns:       None.
         """
-        super().__init__(id, name, price, AssetGroups.UTILITY)
+        super().__init__(id, name, UTILITY_COST, AssetGroups.UTILITY)
 
     def land(self, player: Player, roll: Roll = None) -> dict:
         """

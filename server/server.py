@@ -6,22 +6,20 @@ Author:         Jordan Bourdeau
 
 from game_logic.constants import SECRET_KEY
 from game_logic.game import Game
-from game_logic.player import Player
 from game_logic.types import CardType, JailMethod
 
 from flask import Flask, jsonify, request
 from random import randint
+from typing import Any
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
 game: Game = Game()
 
-# TODO: Add authentication based off player ID for requests
-
 
 @app.route("/game/state", methods=["GET"])
-def index():
+def state():
     """
     Description:    Base endpoint which returns JSON formatted with the game state.
                     No authentication required to receive the game state.
@@ -46,11 +44,11 @@ def start_game():
         player_id: str = ""
 
     success: bool = game.roll_dice(player_id=player_id)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "event": "startGame",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/register_player", methods=["GET"])
@@ -75,12 +73,12 @@ def register_player():
         3) If the player is not created, the method will return None.
     """
     player_id: str = game.register_player(display_name)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "event": "registerPlayer",
         "playerId": player_id,
         "success": player_id != "",
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/roll_dice", methods=["GET"])
@@ -105,11 +103,11 @@ def roll_dice():
         5) If the player rolled their third pair of doubles, move them to the jail tile and end their turn.
     """
     success: bool = game.roll_dice(player_id=player_id)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "event": "rollDice",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/draw_card", methods=["GET"])
@@ -144,11 +142,11 @@ def draw_card():
     Once this has been completed, the appropriate deterministic action will be taken by the game.
     """
     success: bool = game.draw_card(player_id=player_id, card_type=card_type)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "event": "cardDraw",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/buy_property")
@@ -170,17 +168,16 @@ def buy_property():
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?
-        2) Is the active player on the property which they are trying to purchase?
-        3) Is the property unowned?
-        4) Does the player have the funds to purchase the property?
+        2) Is the property unowned?
+        3) Does the player have the funds to purchase the property?
     If the answers are all yes, the game will give ownership of the tile to the player and subtract their funds.
     """
     success: bool = game.buy_property(player_id=player_id, tile_id=tile_id)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "event": "transaction",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/set_improvements")
@@ -210,12 +207,12 @@ def set_improvements():
         6) Does the player have the funds to buy improvements (if ?
     If the answers are all yes, the game will add an improvement to the property and subtract player funds.
     """
-    success: bool = game.set_improvements(player_id=player_id, tile_id=tile_id, quantity=quantity)
-    state: dict = {
+    success: bool = game.improvements(player_id=player_id, tile_id=tile_id, amount=quantity)
+    client_bindings: dict[str, Any] = {
         "event": "updateImprovements",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/set_mortgage")
@@ -243,12 +240,12 @@ def set_mortgage():
         4) Is the property not currently mortgaged?
     If the answers are all yes, the game will mortgage the property and add player funds.
     """
-    success: bool = game.set_mortgage(player_id=player_id, tile_id=tile_id, mortgage=mortgage)
-    state: dict = {
+    success: bool = game.mortgage(player_id=player_id, tile_id=tile_id, mortgage=mortgage)
+    client_bindings: dict[str, Any] = {
         "event": "transaction",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/get_out_of_jail")
@@ -286,11 +283,11 @@ def get_out_of_jail():
     If the answers are all yes, the game will free the player from jail.
     """
     success: bool = game.get_out_of_jail(player_id=player_id, method=method)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "event": "getOutOfJail",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/end_turn")
@@ -312,11 +309,11 @@ def end_turn():
     If so, end the player's turn.
     """
     success: bool = game.end_turn(player_id=player_id)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "event": "endTurn",
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 @app.route("/game/reset", methods=["GET"])
@@ -338,10 +335,10 @@ def reset():
     If the request was from a valid and active player, then it will reset the game.
     """
     success: bool = game.reset(player_id=player_id)
-    state: dict = {
+    client_bindings: dict[str, Any] = {
         "success": success
     }
-    return jsonify(state)
+    return jsonify(client_bindings)
 
 
 if __name__ == '__main__':

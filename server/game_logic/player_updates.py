@@ -165,7 +165,10 @@ class BuyUpdate(PlayerUpdate):
             return
         # Must be an AssetTile subclass
         elif not isinstance(self.tile, AssetTile):
-            return False
+            return
+        # Must have adequate funds to purchase the property
+        elif player.money < self.tile.price:
+            return
         player.assets.append(self.tile)
         self.tile.owner = player
         player.money -= self.tile.price

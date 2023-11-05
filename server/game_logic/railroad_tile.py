@@ -5,23 +5,19 @@ Author:         Jordan Bourdeau, Hayden Collins
 """
 
 from .asset_tile import AssetTile
-from .player import Player
 from .types import AssetGroups, RailroadStatus
-from .constants import RENTS
+from .constants import RAILROAD_COST
 
 from typing import Any
 
 
 class RailroadTile(AssetTile):
 
-    def __init__(self, id: int, name: str, price: int) -> None:
+    def __init__(self, id: int, name: str) -> None:
         """
         Description:    Class representing a railroad tile.
-        :param id:                  An integer identifier for each tile.
-        :param owner:               Player owning the tile.
-        :param price:               Price to purchase the property.
-        :param is_mortgaged:         Boolean for whether the property is mortgaged or not.
-        :param mortage_price:       The amount for mortgaging a property.
-        :returns:        None.
+        :param id:      An integer identifier for each tile.
+        :param name:    Railroad name
+        :returns:       None.
         """
-        super().__init__(id, name, price, AssetGroups.RAILROAD)
+        super().__init__(id, name, RAILROAD_COST, AssetGroups.RAILROAD)

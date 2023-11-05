@@ -36,6 +36,8 @@ PLAYER_ID_LENGTH: int = 16
 
 # Property Constants
 NUM_RAILROADS: int = 4
+UTILITY_COST: int = 150
+RAILROAD_COST: int = 200
 
 # Lookup table for the number of properties in an asset group
 GROUP_SIZE: dict[AssetGroups: int] = {

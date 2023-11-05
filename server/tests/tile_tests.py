@@ -152,19 +152,18 @@ class TileTests(unittest.TestCase):
         self.assertEqual(PropertyStatus.FOUR_IMPROVEMENTS, ten_ave.status)
         self.assertEqual(100, player1.money)
 
-        # player1.update(ImprovementUpdate(ten_ave, 1))
-        # self.assertEqual(PropertyStatus.FIVE_IMPROVEMENTS, ny_ave.status)
-        # self.assertEqual(PropertyStatus.FIVE_IMPROVEMENTS, st_james.status)
-        # self.assertEqual(PropertyStatus.FIVE_IMPROVEMENTS, ten_ave.status)
-        # self.assertEqual(0, player1.money)
-
+        player1.update(ImprovementUpdate(ten_ave, 1))
+        self.assertEqual(PropertyStatus.FIVE_IMPROVEMENTS, ny_ave.status)
+        self.assertEqual(PropertyStatus.FIVE_IMPROVEMENTS, st_james.status)
+        self.assertEqual(PropertyStatus.FIVE_IMPROVEMENTS, ten_ave.status)
+        self.assertEqual(0, player1.money)
 
     def test_railroad_tile(self):
         player1: Player = self.make_player1()
-        reading: RailroadTile = RailroadTile(id=5, name="Reading Railroad", price=200)
-        pennsylvania: RailroadTile = RailroadTile(id=15, name="Pennsylvania Railroad", price=200)
-        bno: RailroadTile = RailroadTile(id=25, name="B&O Railroad", price=200)
-        short_line: RailroadTile = RailroadTile(id=35, name="Short Line Railroad", price=200)
+        reading: RailroadTile = RailroadTile(id=5, name="Reading Railroad")
+        pennsylvania: RailroadTile = RailroadTile(id=15, name="Pennsylvania Railroad")
+        bno: RailroadTile = RailroadTile(id=25, name="B&O Railroad")
+        short_line: RailroadTile = RailroadTile(id=35, name="Short Line Railroad")
         railroads: list[RailroadTile] = [reading, pennsylvania, bno, short_line]
         # Make sure all railroads are initialized correctly
         for railroad in railroads:
@@ -184,8 +183,8 @@ class TileTests(unittest.TestCase):
 
     def test_utility_tile(self):
         player: Player = self.make_player1()
-        electric_company = UtilityTile(id=12, name="Electric Company", price=150)
-        water_works = UtilityTile(id=28, name="Water Works", price=150)
+        electric_company = UtilityTile(id=12, name="Electric Company")
+        water_works = UtilityTile(id=28, name="Water Works")
         utilities: list[UtilityTile] = [electric_company, water_works]
         for utility in utilities:
             self.assertIsNone(utility.owner)

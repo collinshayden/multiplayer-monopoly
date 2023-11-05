@@ -4,14 +4,24 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
+from .asset_tile import AssetTile
+from .improvable_tile import ImprovableTile
+from .go_tile import GoTile
+from .go_to_jail_tile import GoToJailTile
+from .railroad_tile import RailroadTile
+from .tile import Tile
+from .utility_tile import UtilityTile
 from .card import Card
 from .constants import (JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, NUM_TILES,
                                          PLAYER_ID_LENGTH, START_LOCATION)
 from .player import Player
-from .player_updates import BuyUpdate, LeaveJailUpdate, MoneyUpdate, PlayerUpdate, RollUpdate
+from .player_updates import (BuyUpdate, ImprovementUpdate, LeaveJailUpdate, MoneyUpdate, MortgageUpdate, PlayerUpdate,
+                             RollUpdate)
 from .roll import Roll
 from .tile import Tile
-from .types import CardType, JailMethod, PlayerStatus
+from .types import AssetGroups, CardType, JailMethod, PlayerStatus, PropertyStatus
+from .utility_tile import UtilityTile
+
 
 import random
 import secrets
@@ -25,14 +35,12 @@ class Game:
         Description:    Main class holding all the game state used for managing game logic.
         :returns:       None.
         """
-        self.last_roll: tuple[int, int] = None, None
         self.started: bool = False
         self.players: dict[str: Player] = {}
         self.turn_order: list[str] = []
         self.active_player_idx: int = -1
         self.active_player_id: str = ""
-        # TODO: Actually initialize this correctly. For now, just blank tiles.
-        self.tiles: list[Tile] = [Tile(id=idx, name=f"Tile{idx}") for idx in range(NUM_TILES)]
+        self.tiles: list[Tile] = self._make_board()
         self.community_deck: list[Card] = []
         self.chance_deck: list[Card] = []
 
@@ -92,6 +100,7 @@ class Game:
         self._apply_updates(updates)
         return player.status != PlayerStatus.INVALID
 
+    # TODO: Impelement this function and the corresponding test.
     def draw_card(self, player_id: str, card_type: CardType) -> bool:
         """
         Description:        Method for rolling the dice.
@@ -124,12 +133,27 @@ class Game:
         :param tile_id:     Integer ID for the tile being bought.
         :return:            True if the request succeeds. False otherwise.
         """
+        # Player must be vai\lid (active player)
         if not self._valid_player(player_id):
             return False
+        # Tile ID must be valid
         elif tile_id < START_LOCATION or tile_id >= NUM_TILES:
             return False
-        player: Player = self.players[player_id]
         tile: Tile = self.tiles[tile_id]
+        player: Player = self.players[player_id]
+        # Must be an AssetTile in order to buy it
+        if not isinstance(self.tiles[tile_id], AssetTile):
+            return False
+        # Tile cannot be already owned
+        if tile.owner is not None:
+            return False
+        # Only AssetTile objects can be purchased
+        elif not isinstance(tile, AssetTile):
+            return False
+        # Player must have the funds to purchase the tile
+        elif tile.price > player.money:
+            return False
+        # Player cannot
         player.update(BuyUpdate(tile))
         return True
 
@@ -147,8 +171,18 @@ class Game:
         # Invalid tile targeted for improvements.
         elif tile_id < START_LOCATION or tile_id >= NUM_TILES:
             return False
-        player: Player = self.players[player_id]
         tile: Tile = self.tiles[tile_id]
+        # Only ImprovableTile objects can be upgraded
+        if not isinstance(tile, ImprovableTile):
+            return False
+        # Property must be a monopoly
+        if tile.status < PropertyStatus.MONOPOLY:
+            return False
+        # Number of upgrades could not bring property status below MONOPOLY or above FIVE_IMPROVEMENTS
+        if (tile.status + amount) > PropertyStatus.FIVE_IMPROVEMENTS or (tile.status + amount) < PropertyStatus.MONOPOLY:
+            return False
+        player: Player = self.players[player_id]
+        player.update(ImprovementUpdate(tile, amount))
         return True
 
     def mortgage(self, player_id: str, tile_id: int, mortgage: bool) -> bool:
@@ -159,9 +193,18 @@ class Game:
         :param mortgage:    Boolean flag for if the player is mortgaging/unmortgaging (T = mortgage and vice versa).
         :return:            True if the request succeeds. False otherwise.
         """
+        # Player ID is not the valid, active player.
         if not self._valid_player(player_id):
             return False
-        # TODO: Fill in body
+        # Invalid tile targeted for improvements.
+        elif tile_id < START_LOCATION or tile_id >= NUM_TILES:
+            return False
+        tile: Tile = self.tiles[tile_id]
+        # Only AssetTile objects can be mortgaged
+        if not isinstance(tile, AssetTile):
+            return False
+        player: Player = self.players[player_id]
+        player.update(MortgageUpdate(tile, mortgage))
         return True
 
     def get_out_of_jail(self, player_id: str, method: JailMethod) -> bool:
@@ -201,19 +244,74 @@ class Game:
 
     """ Private Helper Methods """
 
-    def _apply_updates(self, deltas: dict[str, MoneyUpdate]) -> bool:
+    def _make_board(self) -> list[Tile]:
+        """
+        Description:    Method for creating the board tiles from scratch.
+        :return:        List of tiles corresponding to the Monopoly board.
+        """
+        # TODO: Incorporate chance/community chest tiles
+        # TODO: Incorporate tax tiles
+        tiles: list[Tile] = [
+            GoTile(),
+            ImprovableTile(1, "Mediterranean Avenue", 60, AssetGroups.BROWN),
+            Tile(2, "Community Chest"),
+            ImprovableTile(3, "Baltic Avenue", 60, AssetGroups.BROWN),
+            Tile(4, "Income Tax"),
+            RailroadTile(5, "Reading Railroad"),
+            ImprovableTile(6, "Oriental Avenue", 100, AssetGroups.LIGHT_BLUE),
+            Tile(7, "Chance"),
+            ImprovableTile(8, "Vermont Avenue", 100, AssetGroups.LIGHT_BLUE),
+            ImprovableTile(9, "Connecticut Avenue", 120, AssetGroups.LIGHT_BLUE),
+            Tile(10, "Jail"),
+            ImprovableTile(11, "St. Charles Place", 140, AssetGroups.PINK),
+            UtilityTile(12, "Electric Company"),
+            ImprovableTile(13, "States Avenue", 140, AssetGroups.PINK),
+            ImprovableTile(14, "Virginia Avenue", 160, AssetGroups.PINK),
+            RailroadTile(15, "Pennsylvania Railroad"),
+            ImprovableTile(16, "St. James Place", 180, AssetGroups.ORANGE),
+            Tile(17, "Community Chest"),
+            ImprovableTile(18, "Tennessee Avenue", 180, AssetGroups.ORANGE),
+            ImprovableTile(19, "New York Avenue", 200, AssetGroups.ORANGE),
+            Tile(20, "Free Parking"),
+            ImprovableTile(21, "Kentucky Avenue", 220, AssetGroups.RED),
+            Tile(22, "Chance"),
+            ImprovableTile(23, "Indiana Avenue", 220, AssetGroups.RED),
+            ImprovableTile(24, "Illinois Avenue", 240, AssetGroups.RED),
+            RailroadTile(25, "B & O Railroad"),
+            ImprovableTile(26, "Atlantic Avenue", 260, AssetGroups.YELLOW),
+            ImprovableTile(27, "Ventnor Avenue", 260, AssetGroups.YELLOW),
+            UtilityTile(28, "Water Works"),
+            ImprovableTile(29, "Marvin Gardens", 280, AssetGroups.YELLOW),
+            GoToJailTile(),
+            ImprovableTile(31, "Pacific Avenue", 300, AssetGroups.GREEN),
+            ImprovableTile(32, "North Carolina Avenue", 300, AssetGroups.GREEN),
+            Tile(33, "Community Chest"),
+            ImprovableTile(34, "Pennsylvania Avenue", 320, AssetGroups.GREEN),
+            RailroadTile(35, "Short Line Railroad"),
+            Tile(36, "Chance"),
+            ImprovableTile(37, "Park Place", 350, AssetGroups.DARK_BLUE),
+            Tile(38, "Luxury Tax"),
+            ImprovableTile(39, "Boardwalk", 400, AssetGroups.DARK_BLUE),
+        ]
+        return tiles
+
+    def _apply_updates(self, deltas: dict[str, PlayerUpdate]) -> bool:
         """
         Description:    Private method used to apply PlayerUpdates to marked player IDs.
         :param deltas:  Dictionary mapping player IDs to an update object.
         :return:        True if the method succeeds. False if there are any invalid keys.
         """
+        # Verify game has started
+        if not self.started:
+            return False
+        delta_ids: set[str] = set([key for key in deltas.keys()])
+        player_ids: set[str] = set([key for key in self.players.keys()])
+        # All players who updates are being applied to must be a subset of valid players
+        if not delta_ids.issubset(player_ids):
+            return False
+        # Apply all updates
         for id, update in deltas.items():
-            player: Player = self.players.get(id, None)
-            # Somehow got an invalid player ID. Return False.
-            if player is None:
-                return False
-            else:
-                player.update(update)
+            self.players[id].update(update)
         return True
 
     def _valid_player(self, player_id: str, require_active_player: bool = True,
@@ -267,9 +365,8 @@ class Game:
         :return:        Dictionary of class attributes.
         """
         return {
-            "die_1": self.last_roll[0],
-            "die_2": self.last_roll[1],
-            "started": True,
+            "started": self.started,
             "activePlayerId": self.active_player_id,
-            "players": [player.to_dict() for player in self.players.values()]
+            "players": [player.to_dict() for player in self.players.values()],
+            "tiles": [tile.to_dict() for tile in self.tiles]
         }
