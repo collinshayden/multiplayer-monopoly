@@ -159,7 +159,8 @@
       "title": [
         "ELECTRIC",
         "COMPANY"
-      ]
+      ],
+      "image" : "electric-company.png"
     },
     {
       "id": 13,
@@ -332,7 +333,8 @@
       "title": [
         "WATER",
         "WORKS"
-      ]
+      ],
+      "image" : "water-works.png"
     },
     {
       "id": 29,
