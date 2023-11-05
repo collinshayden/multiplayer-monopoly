@@ -216,6 +216,12 @@ class CustomLayout extends StatelessWidget {
       ],
     );
   }
+
+  List<Widget> _buildLayoutChildren(
+      BuildContext context, LocalConfigSuccess state) {
+    final List<Widget> children = [];
+    for (var tile in state.game.)
+  }
 }
 
 class PlaceholderTile extends StatelessWidget {

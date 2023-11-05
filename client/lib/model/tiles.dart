@@ -59,28 +59,33 @@ class ImprovableTile extends Tile {
   @override
   Widget createWidget() {
     return Container(
-        color: Colors.grey,
-        child: Column(children: [
+      color: Colors.grey,
+      child: Column(
+        children: [
           Flexible(
             flex: 1,
             child: Container(color: Colors.red),
           ),
           Flexible(
-              flex: 3,
-              child: Column(
-                children: [
-                  Expanded(
-                      child: Text(
+            flex: 3,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Text(
                     title ?? "Placeholder title",
                     textAlign: TextAlign.center,
-                  )),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Text('Price: $price', textAlign: TextAlign.center),
-                  )
-                ],
-              ))
-        ]));
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Text('Price: $price', textAlign: TextAlign.center),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -430,7 +435,7 @@ class GoToJailTile extends Tile {
   }
 
   @override
-    Widget createWidget() {
+  Widget createWidget() {
     return Container(
         color: Colors.grey,
         child: Column(children: [
