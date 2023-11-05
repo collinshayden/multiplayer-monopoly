@@ -4,45 +4,20 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from typing import Any
 from .asset_tile import AssetTile
-from .player import Player
 from .types import AssetGroups, RailroadStatus
-from .constants import RENTS
+from .constants import RAILROAD_COST
+
+from typing import Any
 
 
 class RailroadTile(AssetTile):
 
-    def __init__(self, id: int, owner: Player, price: int, is_mortgaged: bool, mortage_price: int) -> None:
+    def __init__(self, id: int, name: str) -> None:
         """
         Description:    Class representing a railroad tile.
-        :param id:                  An integer identifier for each tile.
-        :param owner:               Player owning the tile.
-        :param price:               Price to purchase the property.
-        :param is_mortgaged:         Boolean for whether the property is mortgaged or not.
-        :param mortage_price:       The amount for mortgaging a property.
-        :returns:        None.
+        :param id:      An integer identifier for each tile.
+        :param name:    Railroad name
+        :returns:       None.
         """
-        super().__init__(id, owner, price, is_mortgaged, mortage_price, AssetGroups.RAILROAD)
-        rent_map = RENTS[id]
-        self.rent: int = 25
-
-    def update_rent(self) -> None:
-        pass
-
-    def to_dict(self) -> dict[str, Any]:
-        """
-        Description:    Method used to return a dictionary representation of the class.
-                        Used for creating JSON representation of the game state.
-        :return:        Dictionary of class attributes.
-        """
-        client_bindings = {
-            "id": self.id,
-            "type": "railroad",
-            "owner": self.owner,
-            "price": self.price,
-            "isMortgaged": self.is_mortgaged,
-            "mortgagePrice": self.mortgage_price,
-            "rentMap": self.rent_map,
-            "rent": self.rent}
-        return client_bindings
+        super().__init__(id, name, RAILROAD_COST, AssetGroups.RAILROAD)

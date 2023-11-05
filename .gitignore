@@ -2,3 +2,4 @@
 api/
 .venv/
 __pycache__/
+.pytest*

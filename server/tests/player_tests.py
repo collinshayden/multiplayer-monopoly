@@ -4,15 +4,15 @@ Author:         Jordan Bourdeau
 Date:           10/24/23
 """
 
-from ..game_logic.asset_tile import AssetTile
-from ..game_logic.constants import JAIL_LOCATION, JAIL_TURNS, MAX_ROLL, MIN_ROLL, STARTING_MONEY
-from ..game_logic.player import Player
-from ..game_logic.types import AssetGroups, PlayerStatus
+from server.game_logic.asset_tile import AssetTile
+from server.game_logic.constants import JAIL_LOCATION, JAIL_TURNS, MAX_ROLL, MIN_ROLL, STARTING_MONEY
+from server.game_logic.player import Player
+from server.game_logic.types import AssetGroups, PlayerStatus
 
 import unittest
 
 
-class MyTestCase(unittest.TestCase):
+class PlayerTests(unittest.TestCase):
 
     def make_player(self) -> Player:
         id: str = "abcdefghi1234567"
@@ -39,7 +39,7 @@ class MyTestCase(unittest.TestCase):
     def test_calculate_net_worth(self):
         player: Player = self.make_player()
         self.assertEqual(STARTING_MONEY, player.net_worth)
-        property: AssetTile = AssetTile(id=0, price=200, group=AssetGroups.ORANGE)
+        property: AssetTile = AssetTile(id=0, name="Test", price=200, group=AssetGroups.ORANGE)
         property.owner = player
         player.assets.append(property)
         self.assertEqual(STARTING_MONEY + 100, player.net_worth)

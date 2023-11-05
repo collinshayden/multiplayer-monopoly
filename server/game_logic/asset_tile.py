@@ -14,14 +14,14 @@ from typing import Union
 
 class AssetTile(Tile):
 
-    def __init__(self, id: int, price: int, group: AssetGroups) -> None:
+    def __init__(self, id: int, name: str, price: int, group: AssetGroups) -> None:
         """
         Description:            Class representing a tile which can be bought.
         :param id:              Tile ID
         :param price:           Price to buy the tile.
         :param group:           The group which the AssetTile is a part of.
         """
-        super().__init__(id=id)
+        super().__init__(id, name)
         self.price: int = price
         self.group: AssetGroups = group
 
@@ -50,14 +50,13 @@ class AssetTile(Tile):
             return 0
         # Otherwise, look up the cost in the rent map based on the number in the owner's list of assets.
         else:
-            rent: dict = (RENTS.get(self.id, False))
+            rent: dict = (RENTS.get(self.id, None))
             if rent is not None:
                 rent = rent.get(self.status)
             return rent if rent is not None else -1
 
     @property
     def liquid_value(self) -> int:
-        # TODO overwrite in property subclass
         """
         Description:    Returns the value of the property
         :return:        int value representing how much money the property is worth
@@ -72,6 +71,24 @@ class AssetTile(Tile):
         """
         return round(self.mortage_price * 1.1)
 
+    def land(self, player: Player, roll: int = None) -> dict:
+        """
+        Description:    Method which will be overridden in subclasses.
+        :param player:  Player landing on the tile.
+        :param roll:    Roll from the player (only used in Utility tiles).
+        :return:        Dictionary mapping player IDs to PlayerUpdate objects.
+        """
+        # TODO: Handle the case where rent knocks a player out and the owner
+        # TODO: does not actually get the full rent sum.
+        from .player_updates import MoneyUpdate
+        if self.owner is player or self.owner is None:
+            return {}
+        else:
+            return {
+                player.id: MoneyUpdate(-self.rent),
+                self.owner.id: MoneyUpdate(self.rent)
+            }
+
     # Simple interface methods to mortgage/unmortgage the property
 
     def mortgage(self):
@@ -79,3 +96,14 @@ class AssetTile(Tile):
 
     def unmortgage(self):
         self.is_mortgaged = False
+
+    def to_dict(self) -> dict:
+        state: dict = super().to_dict()
+        state["price"] = self.price
+        state["group"] = self.group.name
+        state["status"] = self.status.name
+        state["owner"] = self.owner.id
+        state["isMortgaged"] = self.is_mortgaged
+        state["mortgagePrice"] = self.mortage_price
+        state["rent"] = self.rent
+        return state

@@ -21,6 +21,7 @@ MAX_ROLL: int = 2 * MAX_DIE
 
 # Other constants
 STARTING_MONEY: int = 1500
+GO_MONEY: int = 200
 MAX_NUM_IMPROVEMENTS: int = 5
 
 # Jail Constants
@@ -35,6 +36,8 @@ PLAYER_ID_LENGTH: int = 16
 
 # Property Constants
 NUM_RAILROADS: int = 4
+UTILITY_COST: int = 150
+RAILROAD_COST: int = 200
 
 # Lookup table for the number of properties in an asset group
 GROUP_SIZE: dict[AssetGroups: int] = {
