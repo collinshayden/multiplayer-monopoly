@@ -8,6 +8,7 @@ from server.game_logic.asset_tile import AssetTile
 from server.game_logic.constants import JAIL_LOCATION, JAIL_TURNS, STARTING_MONEY
 from server.game_logic.player import Player, PlayerStatus
 from server.game_logic.player_updates import *
+from server.game_logic.tile import Tile
 from server.game_logic.types import AssetGroups
 
 import unittest
@@ -90,6 +91,13 @@ class UpdateTests(unittest.TestCase):
             self.assertIn(railroad, player.assets)
             self.assertEqual(RailroadStatus(idx + 1), railroad.status)
             self.assertEqual(25 * 2**idx, railroad.rent)
+
+        # Verify nothing happens if you try to buy a non-asset tile
+        tile: Tile = Tile(id=0, name="Test")
+        player.update(BuyUpdate(tile))
+        self.assertEqual(0, tile.id)
+        self.assertEqual("Test", tile.name)
+        self.assertNotIn(tile, player.assets)
 
     def test_improvement_update(self):
         player: Player = self.make_player()

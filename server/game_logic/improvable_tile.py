@@ -5,9 +5,9 @@ Author:         Jordan Bourdeau, Hayden Collins
 """
 
 from typing import Any
-from server.game_logic.asset_tile import AssetTile
-from server.game_logic.constants import IMPROVEMENT_MAP
-from server.game_logic.types import AssetGroups, PropertyStatus
+from .asset_tile import AssetTile
+from .constants import IMPROVEMENT_MAP
+from .types import AssetGroups, PropertyStatus
 
 
 class ImprovableTile(AssetTile):
@@ -42,7 +42,6 @@ class ImprovableTile(AssetTile):
         total_worth += max(0, self.status - PropertyStatus.MONOPOLY) * self.improvement_cost / 2
         return total_worth
 
-        
     def to_dict(self) -> dict[str, Any]:
         """
         Description:    Method used to return a dictionary representation of the class.

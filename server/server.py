@@ -40,7 +40,7 @@ def start_game():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
+        player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
@@ -62,7 +62,7 @@ def register_player():
     global game
 
     try:
-        display_name: str = request.args.get("displayName")
+        display_name: str = request.args.get("display_name")
     # No query parameters passed in
     except AttributeError as e:
         return jsonify({"registered": False})
@@ -91,7 +91,7 @@ def roll_dice():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
+        player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
@@ -121,8 +121,8 @@ def draw_card():
     global game
 
     try:
-        player_id: str = request.args.get("playerId").lower()
-        card_arg: str = request.args.get("cardType").lower()
+        player_id: str = request.args.get("player_id").lower()
+        card_arg: str = request.args.get("card_type").lower()
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
@@ -131,7 +131,7 @@ def draw_card():
     match card_arg:
         case "chance":
             card_type: CardType = CardType.CHANCE
-        case "communityChest":
+        case "community_chest":
             card_type: CardType = CardType.COMMUNITY_CHEST
         case _:
             card_type: CardType = CardType.INVALID
@@ -160,8 +160,8 @@ def buy_property():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
-        tile_id: int = int(request.args.get("tileId"))
+        player_id: str = request.args.get("player_id").lower()
+        tile_id: int = int(request.args.get("tile_id"))
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
@@ -191,8 +191,8 @@ def set_improvements():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
-        tile_id: int = int(request.args.get("tileId"))
+        player_id: str = request.args.get("player_id").lower()
+        tile_id: int = int(request.args.get("tile_id"))
         quantity: int = int(request.args.get("quantity"))
     # No query parameters passed in
     except AttributeError as e:
@@ -217,6 +217,7 @@ def set_improvements():
     }
     return jsonify(state)
 
+
 @app.route("/game/set_mortgage")
 def set_mortgage():
     """
@@ -225,8 +226,8 @@ def set_mortgage():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
-        tile_id: int = int(request.args.get("tileId"))
+        player_id: str = request.args.get("player_id").lower()
+        tile_id: int = int(request.args.get("tile_id"))
         mortgage: bool = True if request.args.get("mortgage").lower() == "true" else False
     # No query parameters passed in
     except AttributeError as e:
@@ -258,7 +259,7 @@ def get_out_of_jail():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
+        player_id: str = request.args.get("player_id").lower()
         method_arg: str = request.args.get("method").lower()
     # No query parameters passed in
     except AttributeError as e:
@@ -300,7 +301,7 @@ def end_turn():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
+        player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
@@ -326,7 +327,7 @@ def reset():
     """
     global game
     try:
-        player_id: str = request.args.get("playerId").lower()
+        player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""

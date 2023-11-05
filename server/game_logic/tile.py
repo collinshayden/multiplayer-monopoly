@@ -4,7 +4,8 @@ Date:           10/18/2023
 Author:         Aidan Bonner, Jordan Bourdeau, Haydens Collins
 """
 
-from server.game_logic.player import Player
+from .player import Player
+from .roll import Roll
 
 from typing import Any
 
@@ -19,7 +20,7 @@ class Tile:
         self.id: int = id
         self.name: str = name
 
-    def land(self, player: Player, roll: int = None) -> dict:
+    def land(self, player: Player, roll: Roll = None) -> dict:
         """
         Description:    Method which will be overridden in subclasses.
         :param player:  Player landing on the tile.

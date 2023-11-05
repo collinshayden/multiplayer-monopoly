@@ -80,7 +80,7 @@ class AssetTile(Tile):
         """
         # TODO: Handle the case where rent knocks a player out and the owner
         # TODO: does not actually get the full rent sum.
-        from server.game_logic.player_updates import MoneyUpdate
+        from .player_updates import MoneyUpdate
         if self.owner is player or self.owner is None:
             return {}
         else:

@@ -4,13 +4,13 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from typing import Any
 from .card import Card
-from .constants import JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
+from .constants import (JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, NUM_TILES,
+                                         PLAYER_ID_LENGTH, START_LOCATION)
 from .player import Player
-from .player_updates import LeaveJailUpdate, MoneyUpdate, RollUpdate
-from .tile import Tile
+from .player_updates import BuyUpdate, LeaveJailUpdate, MoneyUpdate, PlayerUpdate, RollUpdate
 from .roll import Roll
+from .tile import Tile
 from .types import CardType, JailMethod, PlayerStatus
 
 import random
@@ -25,13 +25,14 @@ class Game:
         Description:    Main class holding all the game state used for managing game logic.
         :returns:       None.
         """
-        self.last_roll: Roll = Roll()
+        self.last_roll: tuple[int, int] = None, None
         self.started: bool = False
         self.players: dict[str: Player] = {}
         self.turn_order: list[str] = []
         self.active_player_idx: int = -1
         self.active_player_id: str = ""
-        self.tiles: list[Tile] = []
+        # TODO: Actually initialize this correctly. For now, just blank tiles.
+        self.tiles: list[Tile] = [Tile(id=idx, name=f"Tile{idx}") for idx in range(NUM_TILES)]
         self.community_deck: list[Card] = []
         self.chance_deck: list[Card] = []
 
@@ -43,9 +44,9 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            Boolean value if the game is successfully started.
         """
-        if self.started:
+        if not self._valid_player(player_id, require_active_player=False) or self.started:
             return False
-        elif MIN_NUM_PLAYERS <= len(self.players) <= MAX_NUM_PLAYERS and player_id in self.players.keys():
+        elif MIN_NUM_PLAYERS <= len(self.players) <= MAX_NUM_PLAYERS:
             self.started = True
             # Shuffle turn order and set active player idx/id
             random.shuffle(self.turn_order)
@@ -80,15 +81,16 @@ class Game:
         # Reject requests when there are not enough players
         if len(self.players) < MIN_NUM_PLAYERS:
             return False
-        # Reject requests if the player making it is not the active player
-        elif player_id != self.active_player_id:
-            return False
-        # Reject request to roll dice if the game hasn't started.
-        elif not self.started:
+        if not self._valid_player(player_id, require_game_started=True):
             return False
         player: Player = self.players[self.active_player_id]
-        roll: Roll = Roll(first=random.randint(MIN_DIE, MAX_DIE), second =random.randint(MIN_DIE, MAX_DIE))
-        return player.update(RollUpdate(roll)) != PlayerStatus.INVALID
+        roll: Roll = Roll(random.randint(MIN_DIE, MAX_DIE), random.randint(MIN_DIE, MAX_DIE))
+        # Move the player
+        player.update(RollUpdate(roll))
+        # Get updates from the tile then apply them
+        updates: dict[str: PlayerUpdate] = self.tiles[player.location].land(player, roll)
+        self._apply_updates(updates)
+        return player.status != PlayerStatus.INVALID
 
     def draw_card(self, player_id: str, card_type: CardType) -> bool:
         """
@@ -97,7 +99,7 @@ class Game:
         :param card_type:   Type of card being drawn.
         :return:            True if the request succeeds. False otherwise.
         """
-        if player_id != self.active_player_id:
+        if not self._valid_player(player_id):
             return False
 
         # TODO: Implement surrounding functionality and uncomment this.
@@ -122,12 +124,16 @@ class Game:
         :param tile_id:     Integer ID for the tile being bought.
         :return:            True if the request succeeds. False otherwise.
         """
-        if player_id != self.active_player_id:
+        if not self._valid_player(player_id):
             return False
-        # TODO: Fill in body
+        elif tile_id < START_LOCATION or tile_id >= NUM_TILES:
+            return False
+        player: Player = self.players[player_id]
+        tile: Tile = self.tiles[tile_id]
+        player.update(BuyUpdate(tile))
         return True
 
-    def set_improvements(self, player_id: str, tile_id: int, quantity: int) -> bool:
+    def improvements(self, player_id: str, tile_id: int, amount: int) -> bool:
         """
         Description:        Method used to buy improvements to a property.
         :param player_id:   ID of the player making the request.
@@ -135,12 +141,17 @@ class Game:
         :param amount:      Number of improvements to buy/sell.
         :return:            True if the request succeeds. False otherwise.
         """
-        if player_id != self.active_player_id:
+        # Player ID is not the valid, active player.
+        if not self._valid_player(player_id):
             return False
-        # TODO: Fill in body
+        # Invalid tile targeted for improvements.
+        elif tile_id < START_LOCATION or tile_id >= NUM_TILES:
+            return False
+        player: Player = self.players[player_id]
+        tile: Tile = self.tiles[tile_id]
         return True
 
-    def set_mortgage(self, player_id: str, tile_id: int, mortgage: bool) -> bool:
+    def mortgage(self, player_id: str, tile_id: int, mortgage: bool) -> bool:
         """
         Description:        Method for the active player to mortgage a property.
         :param player_id:   ID of the player making the request.
@@ -148,7 +159,7 @@ class Game:
         :param mortgage:    Boolean flag for if the player is mortgaging/unmortgaging (T = mortgage and vice versa).
         :return:            True if the request succeeds. False otherwise.
         """
-        if player_id != self.active_player_id:
+        if not self._valid_player(player_id):
             return False
         # TODO: Fill in body
         return True
@@ -160,7 +171,7 @@ class Game:
         :param method:      The method being used to get out of jail.
         :return:            True if the request succeeds. False otherwise.
         """
-        if player_id != self.active_player_id:
+        if not self._valid_player(player_id):
             return False
         player: Player = self.players[player_id]
         player.update(LeaveJailUpdate(method))
@@ -172,7 +183,7 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            True if the request succeeds. False otherwise.
         """
-        if player_id != self.active_player_id:
+        if not self._valid_player(player_id):
             return False
         self._next_player()
         return True
@@ -183,29 +194,48 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            True if the request succeeds. False otherwise.
         """
-        # Only allow a player from a running game to reset it
-        if player_id not in self.players.keys() or not self.started:
+        if not self._valid_player(player_id, require_active_player=False, require_game_started=True):
             return False
         self.__init__()
         return True
 
     """ Private Helper Methods """
 
-    def _update_money(self, deltas: dict) -> bool:
+    def _apply_updates(self, deltas: dict[str, MoneyUpdate]) -> bool:
         """
-        Description:    Private method used to update the money for players.
-        :param deltas:  Dictionary mapping player IDs to monetary amount to update by.
+        Description:    Private method used to apply PlayerUpdates to marked player IDs.
+        :param deltas:  Dictionary mapping player IDs to an update object.
         :return:        True if the method succeeds. False if there are any invalid keys.
         """
-        if not self.started:
+        for id, update in deltas.items():
+            player: Player = self.players.get(id, None)
+            # Somehow got an invalid player ID. Return False.
+            if player is None:
+                return False
+            else:
+                player.update(update)
+        return True
+
+    def _valid_player(self, player_id: str, require_active_player: bool = True,
+                      require_game_started: bool = False) -> bool:
+        """
+        Description:                    Method which checks to see if a player ID is valid to be making a move
+        (is active player).
+        :param player_id:               Unique string player ID.
+        :param require_active_player:   Boolean for if the function requires the player to be the active player as
+                                        opposed to just being a player in the game.
+        :param require_game_started:    Boolean value for whether the game must have already been started for an action.
+        :return:                        Boolean value for if the player is valid to be making a move.
+        """
+        # Checks that the player is the active player or in the list of players depending on boolean flag
+        if require_active_player and self.active_player_id != player_id:
             return False
-        player_deltas: list[tuple[Player, int]] = [(self.players.get(id, None), val) for (id, val) in deltas.items()
-                                                   if self.players.get(id, None) is not None]
-        # Make sure every key matched
-        if len(player_deltas) != len(deltas):
+        elif player_id not in self.players.keys():
             return False
-        for player, delta in player_deltas:
-            player.update(MoneyUpdate(delta))
+        # Check if the game has started if the boolean flag is active
+        if require_game_started and not self.started:
+            return False
+        # Otherwise, return True and permit the action
         return True
 
     def _next_player(self) -> bool:
@@ -230,16 +260,16 @@ class Game:
             self.active_player_id = self.turn_order[idx]
             return True
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict:
         """
         Description:    Method used to return a dictionary representation of the class.
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        client_bindings = {
-            "lastRoll": self.last_roll.to_dict(),
+        return {
+            "die_1": self.last_roll[0],
+            "die_2": self.last_roll[1],
             "started": True,
             "activePlayerId": self.active_player_id,
             "players": [player.to_dict() for player in self.players.values()]
         }
-        return client_bindings

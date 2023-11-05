@@ -97,7 +97,6 @@ class GameTests(unittest.TestCase):
     def test_get_out_of_jail(self):
         game: Game = Game()
 
-
     def test_reset(self):
         game: Game = Game()
         # Register 8 players
@@ -118,33 +117,27 @@ class GameTests(unittest.TestCase):
 
     """ Test Private Helper Methods """
 
-    def test_update_money(self):
+    def test_apply_update(self):
+        pass
+
+    def test_valid_player(self):
         game: Game = Game()
-        # Money can't be updated when the game has not started
-        self.assertFalse(game._update_money({}))
-        # Register 8 players
-        ids: list[str] = []
-        for i in range(1, MAX_NUM_PLAYERS + 1):
-            display_name: str = f"test{i}"
-            id: str = game.register_player(display_name)
-            ids.append(id)
-        game.start_game(id)
-        # Empty list of deltas trivially evaluates to True
-        self.assertTrue(game._update_money({}))
-        # Make sure nothing changed
-        for id in ids:
-            self.assertEqual(STARTING_MONEY, game.players[id].money)
-        deltas: dict[str: int] = {id: 200 for id in ids}
-        # Method should succeed
-        self.assertTrue(game._update_money(deltas))
-        # Verify money was updated
-        for id in ids:
-            self.assertEqual(STARTING_MONEY + 200, game.players[id].money)
-        deltas["bogus"] = 13
-        # Verify method fails and money was not updated
-        self.assertFalse(game._update_money(deltas))
-        for id in ids:
-            self.assertEqual(STARTING_MONEY + 200, game.players[id].money)
+        self.assertFalse(game._valid_player("", require_active_player=True,  require_game_started=False))
+        self.assertFalse(game._valid_player("", require_active_player=False, require_game_started=False))
+        self.assertFalse(game._valid_player("", require_active_player=False, require_game_started=True))
+        valid_id: str = game.register_player("test")
+        # Game hasn't started so there is no active player ID but the player has been created
+        self.assertFalse(game._valid_player(valid_id, require_active_player=True, require_game_started=False))
+        self.assertTrue(game._valid_player(valid_id, require_active_player=False, require_game_started=False))
+        self.assertFalse(game._valid_player(valid_id, require_active_player=False, require_game_started=True))
+        valid_id2: str = game.register_player("test2")
+        self.assertTrue(game.start_game(valid_id2))
+        # Start the game and verify require active player works
+        id1, id2 = game.turn_order
+        self.assertTrue(game._valid_player(id1, require_active_player=True, require_game_started=False))
+        self.assertTrue(game._valid_player(id1, require_active_player=True, require_game_started=True))
+        self.assertFalse(game._valid_player(id2, require_active_player=True, require_game_started=False))
+        self.assertFalse(game._valid_player(id2, require_active_player=True, require_game_started=True))
 
     def test_next_player(self):
         game: Game = Game()
@@ -156,7 +149,7 @@ class GameTests(unittest.TestCase):
             display_name: str = f"test{i}"
             id: str = game.register_player(display_name)
             ids.append(id)
-        # Game hasn't started yet
+        # Game hasn't started yet. Cannot get the next player.
         self.assertFalse(game._next_player())
         game.start_game(id)
         # Note: This test fails with very low odds when the randomized order is also the order players joined

@@ -163,6 +163,9 @@ class BuyUpdate(PlayerUpdate):
         # Can't buy a property that is already owned
         if self.tile in player.assets:
             return
+        # Must be an AssetTile subclass
+        elif not isinstance(self.tile, AssetTile):
+            return False
         player.assets.append(self.tile)
         self.tile.owner = player
         player.money -= self.tile.price

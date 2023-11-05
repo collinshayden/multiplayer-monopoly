@@ -4,10 +4,11 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from server.game_logic.asset_tile import AssetTile
-from server.game_logic.player import Player
-from server.game_logic.types import AssetGroups
-from server.game_logic.constants import RENTS
+from .asset_tile import AssetTile
+from .player import Player
+from .roll import Roll
+from .types import AssetGroups
+from .constants import RENTS
 
 from typing import Any
 
@@ -21,7 +22,7 @@ class UtilityTile(AssetTile):
         """
         super().__init__(id, name, price, AssetGroups.UTILITY)
 
-    def land(self, player: Player, roll: int = None) -> dict:
+    def land(self, player: Player, roll: Roll = None) -> dict:
         """
         Description:    Method which will be overridden in subclasses.
         :param player:  Player landing on the tile.
@@ -30,13 +31,13 @@ class UtilityTile(AssetTile):
         """
         # TODO: Handle the case where rent knocks a player out and the owner
         # TODO: does not actually get the full rent sum.
-        from server.game_logic.player_updates import MoneyUpdate
+        from .player_updates import MoneyUpdate
         if self.owner is player or self.owner is None:
             return {}
         else:
             return {
-                player.id: MoneyUpdate(-self.rent * roll),
-                self.owner.id: MoneyUpdate(self.rent * roll)
+                player.id: MoneyUpdate(-self.rent * roll.total),
+                self.owner.id: MoneyUpdate(self.rent * roll.total)
             }
 
     def to_dict(self) -> dict[str, Any]:
