@@ -208,7 +208,7 @@ class TileTests(unittest.TestCase):
         self.assertEqual(UtilityStatus.MONOPOLY, electric_company.status)
         self.assertEqual(UtilityStatus.MONOPOLY, water_works.status)
 
-def test_tax_tile(self):
+    def test_tax_tile(self):
         tile: TaxTile = TaxTile(4, "Income Tax", -200)
         player: Player = self.make_player1()
         self.assertEqual(STARTING_MONEY, player.money)

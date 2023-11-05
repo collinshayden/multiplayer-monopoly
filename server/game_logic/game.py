@@ -12,12 +12,13 @@ from .railroad_tile import RailroadTile
 from .tile import Tile
 from .utility_tile import UtilityTile
 from .card import Card
-from .constants import (JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, NUM_TILES,
-                                         PLAYER_ID_LENGTH, START_LOCATION)
+from .constants import (JAIL_COST, INCOME_TAX, LUXURY_TAX, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS,
+                        NUM_TILES, PLAYER_ID_LENGTH, START_LOCATION)
 from .player import Player
 from .player_updates import (BuyUpdate, ImprovementUpdate, LeaveJailUpdate, MoneyUpdate, MortgageUpdate, PlayerUpdate,
                              RollUpdate)
 from .roll import Roll
+from .tax_tile import TaxTile
 from .tile import Tile
 from .types import AssetGroups, CardType, JailMethod, PlayerStatus, PropertyStatus
 from .utility_tile import UtilityTile
@@ -272,7 +273,7 @@ class Game:
             ImprovableTile(1, "Mediterranean Avenue", 60, AssetGroups.BROWN),
             Tile(2, "Community Chest"),
             ImprovableTile(3, "Baltic Avenue", 60, AssetGroups.BROWN),
-            Tile(4, "Income Tax"),
+            TaxTile(4, "Income Tax", INCOME_TAX),
             RailroadTile(5, "Reading Railroad"),
             ImprovableTile(6, "Oriental Avenue", 100, AssetGroups.LIGHT_BLUE),
             Tile(7, "Chance"),
@@ -306,7 +307,7 @@ class Game:
             RailroadTile(35, "Short Line Railroad"),
             Tile(36, "Chance"),
             ImprovableTile(37, "Park Place", 350, AssetGroups.DARK_BLUE),
-            Tile(38, "Luxury Tax"),
+            TaxTile(38, "Luxury Tax", LUXURY_TAX),
             ImprovableTile(39, "Boardwalk", 400, AssetGroups.DARK_BLUE),
         ]
         return tiles

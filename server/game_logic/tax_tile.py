@@ -17,9 +17,10 @@ class TaxTile(Tile):
         :param amount:  The amount of tax levied
         :returns:       None.
         """
-        super.__init__(id, name)
+        super().__init__(id, name)
+        self.amount: int = amount
 
-    def land(self, player: Player, roll: int = None)-> dict[str: MoneyUpdate]:
+    def land(self, player: Player, roll: int = None) -> dict[str: MoneyUpdate]:
         """
         Description:    Method for taxing the player that lands on it
         :returns:       The MoneyUpdate taxing the player
