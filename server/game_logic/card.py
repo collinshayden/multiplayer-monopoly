@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/22/2023
 """
 
-from server.game_logic.player import Player
+from .player import Player
 
 
 class Card:

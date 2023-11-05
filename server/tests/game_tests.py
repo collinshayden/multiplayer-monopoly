@@ -42,15 +42,15 @@ class GameTests(unittest.TestCase):
         self.assertEqual(0, len(game.players))
         # Verify up to the maximum number of players can be added
         for i in range(1, MAX_NUM_PLAYERS + 1):
-            username: str = f"test{i}"
-            id: str = game.register_player(username)
+            display_name: str = f"test{i}"
+            id: str = game.register_player(display_name)
             self.assertEqual(PLAYER_ID_LENGTH, len(id))
             self.assertEqual(i, len(game.players))
-            self.assertEqual(username, game.players[id].username)
-            self.assertEqual(id, game.players[id].player_id)
+            self.assertEqual(display_name, game.players[id].display_name)
+            self.assertEqual(id, game.players[id].id)
         # Can't register a player beyond the maximum
-        username = f"test{MAX_NUM_PLAYERS + 1}"
-        id = game.register_player(username)
+        display_name = f"test{MAX_NUM_PLAYERS + 1}"
+        id = game.register_player(display_name)
         self.assertTrue(id == "")
         self.assertEqual(MAX_NUM_PLAYERS, len(game.players))
 
@@ -59,13 +59,13 @@ class GameTests(unittest.TestCase):
         # Can't roll dice when there is < 2 players or the active player ID is invalid
         self.assertFalse(game.roll_dice("bogus"))
         # Get a valid ID and verify it still doesn't let them roll the dice
-        username: str = "player1"
-        id: str = game.register_player(username)
+        display_name: str = "player1"
+        id: str = game.register_player(display_name)
         self.assertFalse(game.roll_dice(id))
 
         # Create a second player and now there are enough to start but the active player ID has not been decided.
-        username2: str = "player2"
-        id2: str = game.register_player(username2)
+        display_name2: str = "player2"
+        id2: str = game.register_player(display_name2)
         self.assertFalse(game.roll_dice(id))
 
         # Start the game and get the turn order
@@ -102,8 +102,8 @@ class GameTests(unittest.TestCase):
         game: Game = Game()
         # Register 8 players
         for i in range(1, MAX_NUM_PLAYERS + 1):
-            username: str = f"test{i}"
-            id: str = game.register_player(username)
+            display_name: str = f"test{i}"
+            id: str = game.register_player(display_name)
         self.assertEqual(MAX_NUM_PLAYERS, len(game.players))
         # Verify reset doesn't work without valid ID
         self.assertFalse(game.reset("bogus"))
@@ -125,8 +125,8 @@ class GameTests(unittest.TestCase):
         # Register 8 players
         ids: list[str] = []
         for i in range(1, MAX_NUM_PLAYERS + 1):
-            username: str = f"test{i}"
-            id: str = game.register_player(username)
+            display_name: str = f"test{i}"
+            id: str = game.register_player(display_name)
             ids.append(id)
         game.start_game(id)
         # Empty list of deltas trivially evaluates to True
@@ -153,8 +153,8 @@ class GameTests(unittest.TestCase):
         # Populate the game with players
         ids: list[str] = []
         for i in range(1, MAX_NUM_PLAYERS + 1):
-            username: str = f"test{i}"
-            id: str = game.register_player(username)
+            display_name: str = f"test{i}"
+            id: str = game.register_player(display_name)
             ids.append(id)
         # Game hasn't started yet
         self.assertFalse(game._next_player())

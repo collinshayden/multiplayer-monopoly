@@ -4,6 +4,7 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
+from typing import Any
 from server.game_logic.asset_tile import AssetTile
 from server.game_logic.constants import IMPROVEMENT_MAP
 from server.game_logic.types import AssetGroups, PropertyStatus
@@ -38,5 +39,25 @@ class ImprovableTile(AssetTile):
         if self.is_mortgaged:
             return 0
         total_worth: int = self.mortage_price
-        total_worth += max(0, self.status - PropertyStatus.MONOPOLY) * self.improvement_cost/2
+        total_worth += max(0, self.status - PropertyStatus.MONOPOLY) * self.improvement_cost / 2
         return total_worth
+
+        
+    def to_dict(self) -> dict[str, Any]:
+        """
+        Description:    Method used to return a dictionary representation of the class.
+                        Used for creating JSON representation of the game state.
+        :return:        Dictionary of class attributes.
+        """
+        client_bindings = {
+            "id": self.id,
+            "owner": self.owner,
+            "price": self.price,
+            "isMortgaged": self.is_mortgaged,
+            "mortgagePrice": self.mortage_price,
+            "group": self.group,
+            "rent": self.rent,
+            "status": self.status.name,
+            "improvementCost": self.improvement_cost
+        }
+        return client_bindings

@@ -17,14 +17,14 @@ class TileTests(unittest.TestCase):
 
     def make_player1(self) -> Player:
         id: str = "abcdefghi1234567"
-        username: str = "Test"
-        player: Player = Player(player_id=id, username=username)
+        display_name: str = "Test"
+        player: Player = Player(id=id, display_name=display_name)
         return player
 
     def make_player2(self) -> Player:
         id: str = "abcdefghi7777777"
-        username: str = "Test2"
-        player: Player = Player(player_id=id, username=username)
+        display_name: str = "Test2"
+        player: Player = Player(id=id, display_name=display_name)
         return player
 
     def test_tile(self):
@@ -59,9 +59,9 @@ class TileTests(unittest.TestCase):
         updates: dict[str: PlayerUpdate] = tile.land(player2, 7)
         self.assertEqual(2, len(updates))
         for id, update in updates.items():
-            if id == player1.player_id:
+            if id == player1.id:
                 player1.update(update)
-            elif id == player2.player_id:
+            elif id == player2.id:
                 player2.update(update)
         self.assertEqual(STARTING_MONEY + expected_rent, player1.money)
         self.assertEqual(STARTING_MONEY - expected_rent, player2.money)
@@ -89,7 +89,7 @@ class TileTests(unittest.TestCase):
         updates: dict[str: PlayerUpdate] = tile.land(player, 7)
         self.assertEqual(1, len(updates))
         for id, update in updates.items():
-            if id == player.player_id:
+            if id == player.id:
                 player.update(update)
         self.assertEqual(STARTING_MONEY + GO_MONEY, player.money)
 
@@ -103,7 +103,7 @@ class TileTests(unittest.TestCase):
         updates: dict[str: PlayerUpdate] = tile.land(player, 7)
         self.assertEqual(1, len(updates))
         for id, update in updates.items():
-            if id == player.player_id:
+            if id == player.id:
                 player.update(update)
         self.assertTrue(player.in_jail)
         self.assertEqual(JAIL_TURNS, player.turns_in_jail)
@@ -130,9 +130,9 @@ class TileTests(unittest.TestCase):
         base_rent: int = 16
         updates: dict[str: PlayerUpdate] = ny_ave.land(player2, 7)
         for id, update in updates.items():
-            if id == player1.player_id:
+            if id == player1.id:
                 player1.update(update)
-            elif id == player2.player_id:
+            elif id == player2.id:
                 player2.update(update)
         self.assertEqual(STARTING_MONEY - base_rent * 2, player2.money)
         self.assertEqual(STARTING_MONEY + base_rent * 2 - 560, player1.money)

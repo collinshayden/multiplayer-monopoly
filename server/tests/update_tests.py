@@ -17,8 +17,8 @@ class UpdateTests(unittest.TestCase):
 
     def make_player(self) -> Player:
         id: str = "abcdefghi1234567"
-        username: str = "Test"
-        player: Player = Player(player_id=id, username=username)
+        display_name: str = "Test"
+        player: Player = Player(id=id, display_name=display_name)
         return player
 
     def test_buy_update(self):
@@ -103,8 +103,8 @@ class UpdateTests(unittest.TestCase):
         bno = AssetTile(id=25, name="B&O Railroad", price=200, group=AssetGroups.RAILROAD)
         short_line = AssetTile(id=35, name="Short Line Railroad", price=200, group=AssetGroups.RAILROAD)
 
-        electric_company = AssetTile(id=12, name="Electric Company", price=150, group=AssetGroups.UTILITY)
-        water_works = AssetTile(id=28, name="Water Works", price=150, group=AssetGroups.UTILITY)
+        electric_company: AssetTile = AssetTile(id=12, name="Electric Company", price=150, group=AssetGroups.UTILITY)
+        water_works: AssetTile = AssetTile(id=28, name="Water Works", price=150, group=AssetGroups.UTILITY)
 
         # Try updating tiles the player doesn't own. Nothing happens.
         for idx, asset in enumerate([st_james, ten_ave,
@@ -208,11 +208,10 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(PropertyStatus.MONOPOLY, asset.status)
         self.assertEqual(650, player.money)
 
-
     def test_mortgage_update(self):
         # Make the player and given them an AssetTile
         player: Player = self.make_player()
-        asset = AssetTile(id=0, name="Test", price=200, group=AssetGroups.ORANGE)
+        asset: AssetTile = AssetTile(id=0, name="Test", price=200, group=AssetGroups.ORANGE)
         asset.owner = player
         player.assets.append(asset)
 
@@ -281,41 +280,41 @@ class UpdateTests(unittest.TestCase):
     def test_roll_dice(self):
         player: Player = self.make_player()
         # Invalid die rolls shouldn't move the player
-        player.update(RollUpdate(0, 0))
+        player.update(RollUpdate(Roll(0, 0)))
         self.assertEqual(0, player.location)
-        player.update(RollUpdate(7, 7))
+        player.update(RollUpdate(Roll(7, 7)))
         self.assertEqual(0, player.location)
-        player.update(RollUpdate(7, 7))
+        player.update(RollUpdate(Roll(7, 7)))
         self.assertEqual(0, player.location)
-        player.update(RollUpdate(3, 7))
+        player.update(RollUpdate(Roll(3, 7)))
         self.assertEqual(0, player.location)
 
         # Will convert doubles to integers with floor
-        player.update(RollUpdate(6, 6))
+        player.update(RollUpdate(Roll(6, 6)))
         self.assertEqual(12, player.location)
         self.assertEqual(1, player.doubles_streak)
 
         # Roll should reset doubles
-        player.update(RollUpdate(1, 4))
+        player.update(RollUpdate(Roll(1, 4)))
         self.assertEqual(17, player.location)
         self.assertFalse(player.in_jail)
         self.assertEqual(0, player.doubles_streak)
 
         # Roll 3 doubles in a row and check for jail condition and doubles streak
         for i in range(2):
-            player.update(RollUpdate(1, 1))
+            player.update(RollUpdate(Roll(1, 1)))
         self.assertEqual(2, player.doubles_streak)
         self.assertFalse(player.in_jail)
 
         # Verify behavior works as expected when player gets sent to jail
-        player.update(RollUpdate(1, 1))
+        player.update(RollUpdate(Roll(1, 1)))
         self.assertEqual(0, player.doubles_streak)
         self.assertTrue(player.in_jail)
         self.assertEqual(JAIL_TURNS, player.turns_in_jail)
         self.assertEqual(JAIL_LOCATION, player.location)
 
         # Verify player can get out of jail with doubles
-        player.update(RollUpdate(1, 1))
+        player.update(RollUpdate(Roll(1, 1)))
         self.assertFalse(player.in_jail)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(JAIL_LOCATION + 2, player.location)
@@ -323,27 +322,27 @@ class UpdateTests(unittest.TestCase):
 
         # Put them back in jail by rolling 3 more doubles
         for i in range(3):
-            player.update(RollUpdate(1, 1))
+            player.update(RollUpdate(Roll(1, 1)))
         self.assertEqual(3, player.turns_in_jail)
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(0, player.doubles_streak)
 
         # Verify behavior when not rolling doubles in jail
-        player.update(RollUpdate(1, 2))
+        player.update(RollUpdate(Roll(1, 2)))
         self.assertTrue(player.in_jail)
         self.assertEqual(2, player.turns_in_jail)
-        player.update(RollUpdate(1, 2))
+        player.update(RollUpdate(Roll(1, 2)))
         self.assertTrue(player.in_jail)
         self.assertEqual(1, player.turns_in_jail)
 
         # After the 3rd roll, they will no longer have any turns left in jail but should still be at the jail location
-        player.update(RollUpdate(1, 2))
+        player.update(RollUpdate(Roll(1, 2)))
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertFalse(player.in_jail)
         self.assertEqual(0, player.turns_in_jail)
 
         # Verify their next roll does in fact move them
-        player.update(RollUpdate(1, 2))
+        player.update(RollUpdate(Roll(1, 2)))
         self.assertEqual(JAIL_LOCATION + 3, player.location)
         self.assertFalse(player.in_jail)
         self.assertEqual(0, player.turns_in_jail)
@@ -446,7 +445,7 @@ class UpdateTests(unittest.TestCase):
 
         # Redo this but give the player a faux-property so they can enter the IN_THE_HOLE state.
         player: Player = self.make_player()
-        asset = AssetTile(id=0, name="Test", price=200, group=AssetGroups.ORANGE)
+        asset: AssetTile = AssetTile(id=0, name="Test", price=200, group=AssetGroups.ORANGE)
         asset.owner = player
         player.assets.append(asset)
         self.assertEqual(STARTING_MONEY, player.money)

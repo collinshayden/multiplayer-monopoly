@@ -4,7 +4,7 @@ Author:         Jordan Bourdeau
 Date:           10/15/2023
 """
 
-from server.game_logic.types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
+from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
 # Secret key
 SECRET_KEY: str = "replace"

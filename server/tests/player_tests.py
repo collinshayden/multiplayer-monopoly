@@ -16,8 +16,8 @@ class PlayerTests(unittest.TestCase):
 
     def make_player(self) -> Player:
         id: str = "abcdefghi1234567"
-        username: str = "Test"
-        player: Player = Player(player_id=id, username=username)
+        display_name: str = "Test"
+        player: Player = Player(id=id, display_name=display_name)
         return player
 
     def test_in_jail(self):
@@ -39,7 +39,7 @@ class PlayerTests(unittest.TestCase):
     def test_calculate_net_worth(self):
         player: Player = self.make_player()
         self.assertEqual(STARTING_MONEY, player.net_worth)
-        property = AssetTile(id=0, name="Test", price=200, group=AssetGroups.ORANGE)
+        property: AssetTile = AssetTile(id=0, name="Test", price=200, group=AssetGroups.ORANGE)
         property.owner = player
         player.assets.append(property)
         self.assertEqual(STARTING_MONEY + 100, player.net_worth)

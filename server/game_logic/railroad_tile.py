@@ -9,6 +9,8 @@ from server.game_logic.player import Player
 from server.game_logic.types import AssetGroups, RailroadStatus
 from server.game_logic.constants import RENTS
 
+from typing import Any
+
 
 class RailroadTile(AssetTile):
 

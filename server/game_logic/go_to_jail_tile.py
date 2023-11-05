@@ -23,4 +23,4 @@ class GoToJailTile(Tile):
         Description:    Method for sending the character to Jail for landing on this tile
         :returns:       The GoToJailUpdate object sending the Player to jail
         """
-        return {player.player_id: GoToJailUpdate()}
+        return {player.id: GoToJailUpdate()}

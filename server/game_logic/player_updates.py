@@ -4,11 +4,16 @@ Author:         Jordan Bourdeau
 Date:           10/30/23
 """
 
-from server.game_logic.types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
-from server.game_logic.constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE, NUM_TILES,
+from .asset_tile import AssetTile
+from .types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
+from .constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE, NUM_TILES,
                         START_LOCATION, GROUP_SIZE, RENTS)
-from server.game_logic.player import Player, PlayerStatus
-from server.game_logic.improvable_tile import ImprovableTile
+from .player import Player, PlayerStatus
+from .asset_tile import AssetTile
+from .improvable_tile import ImprovableTile
+from .railroad_tile import RailroadTile
+from .utility_tile import UtilityTile
+from .roll import Roll
 
 
 class PlayerUpdate:
@@ -108,48 +113,46 @@ class LeaveJailUpdate(PlayerUpdate):
 
 
 class RollUpdate(PlayerUpdate):
-    def __init__(self, die1: int, die2: int):
+    def __init__(self, roll: Roll):
         """
         Description:    Object for performing a dice roll.
         """
-        self.die1: int = die1
-        self.die2: int = die2
+        self.roll: Roll = roll
 
     def update(self, player: Player):
         # Check early return conditions (invalid die roll)
-        if not (MIN_DIE <= self.die1 <= MAX_DIE and MIN_DIE <= self.die2 <= MAX_DIE):
+        if not (MIN_DIE <= self.roll.first <= MAX_DIE and MIN_DIE <= self.roll.second <= MAX_DIE):
             return
         # Float values are passed in. Do nothing/
-        elif isinstance(self.die1, float) or isinstance(self.die2, float):
+        elif isinstance(self.roll.first, float) or isinstance(self.roll.second, float):
             return
         # Get the player out of jail and increment doubles streak
-        elif self.die1 == self.die2 and player.in_jail:
+        elif self.roll.is_doubles and player.in_jail:
             player.update(LeaveJailUpdate(JailMethod.DOUBLES))
         # Player is in jail but doesn't roll double. Decrement turns in jail.
         elif player.in_jail:
             player.turns_in_jail -= 1
             return  # Don't move them, exit early
         # Rolled double for the third time. Player goes straight to jail.
-        elif self.die1 == self.die2 and player.doubles_streak == 2:
+        elif self.roll.is_doubles and player.doubles_streak == 2:
             player.update(GoToJailUpdate())
             player.doubles_streak = 0
             return  # Don't move them, exit early
-        elif self.die1 == self.die2:
+        elif self.roll.is_doubles:
             player.doubles_streak += 1
         else:
             player.doubles_streak = 0
         # To get here means the player will be getting their movement
-        player.update(MoveUpdate(self.die1 + self.die2))
+        player.update(MoveUpdate(self.roll.total))
 
 
 class BuyUpdate(PlayerUpdate):
-
-    def __init__(self, tile):
+    def __init__(self, tile: AssetTile):
         """
         Description:    Object for a player buying a tile.
         :param tile:    The AssetTile object being bought.
         """
-        self.tile = tile
+        self.tile: AssetTile = tile
 
     def update(self, player: Player):
         """
@@ -157,12 +160,14 @@ class BuyUpdate(PlayerUpdate):
         :param player:  Player purchasing a property.
         :return:        None.
         """
+        # Can't buy a property that is already owned
+        if self.tile in player.assets:
+            return
         player.assets.append(self.tile)
         self.tile.owner = player
-        
         player.money -= self.tile.price
         # List of tiles in the same group as the tile being bought
-        group_share: list = player.group_share(self.tile.group)
+        group_share: list[AssetTile] = player.group_share(self.tile.group)
         # Depending on the group, update all the matched group share property statuses accordingly
         match self.tile.group:
             case AssetGroups.RAILROAD:
@@ -182,13 +187,13 @@ class BuyUpdate(PlayerUpdate):
 
 
 class ImprovementUpdate(PlayerUpdate):
-    def __init__(self, asset, delta: int):
+    def __init__(self, asset: AssetTile, delta: int):
         """
         Description:        Update to change the number of improvements a property has.
         :param asset:       The property to improve/degrade.
         :param delta:       Delta for the number of improvements to buy/sell.
         """
-        self.asset = asset
+        self.asset: AssetTile = asset
         self.delta: int = delta
 
     def update(self, player: Player):
@@ -212,7 +217,7 @@ class ImprovementUpdate(PlayerUpdate):
         # Evil enumeration integer conversion hacking with IntEnum.
         elif self.asset.status < PropertyStatus.MONOPOLY:
             return
-        group_share: list = player.group_share(self.asset.group)
+        group_share: list[AssetTile] = player.group_share(self.asset.group)
         # 2 cases:
         # 1. Player is looking to increase the number of improvements.
         if self.delta > 0:
@@ -253,13 +258,13 @@ class ImprovementUpdate(PlayerUpdate):
 
 
 class MortgageUpdate(PlayerUpdate):
-    def __init__(self, property, mortgage: bool):
+    def __init__(self, property: AssetTile, mortgage: bool):
         """
         Description:        Update to mortgage a property owned by a player.
         :param property:    The property to mortgage.
         :param mortage:     Bool for whether property is being mortgaged (True) or unmortgaged (False).
         """
-        self.asset = property
+        self.asset: AssetTile = property
         self.mortgage: bool = mortgage
 
     def update(self, player: Player):
@@ -269,7 +274,7 @@ class MortgageUpdate(PlayerUpdate):
         :return:        None.
         """
 
-        # 1. Check the player owns the property
+        # Check the player owns the property
         if self.asset not in player.assets:
             return
 
@@ -320,14 +325,3 @@ class LocationUpdate(PlayerUpdate):
         """
         if START_LOCATION <= self.destination < NUM_TILES:
             player.location = self.destination
-
-class NullUpdate(PlayerUpdate):
-    def __init__(self):
-        """
-        Description:    Object used when nothing needs to happen to a Player but an update needs to be produced.
-        :return:        None.
-        """
-        pass
-
-    def update(self, player: Player):
-        pass

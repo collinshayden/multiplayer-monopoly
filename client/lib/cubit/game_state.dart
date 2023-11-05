@@ -14,16 +14,24 @@ class GameInitial extends GameState {}
 /// Loading in configuration from local files.
 class LocalConfigLoading extends GameState {}
 
-class LocalConfigSuccess extends GameState {}
+class LocalConfigSuccess extends GameState {
+  LocalConfigSuccess({required this.boardJson});
 
-class LocalConfigFailure extends GameState {}
+  final Map<String, dynamic> boardJson;
+}
+
+class LocalConfigFailure extends GameState {
+  LocalConfigFailure([this.object]);
+
+  final dynamic object;
+}
 
 /// Establish a connection with the server.
-class EndpointLoading extends GameState {}
+class RemoteConfigLoading extends GameState {}
 
-class EndpointSuccess extends GameState {}
+class RemoteConfigSuccess extends GameState {}
 
-class EndpointFailure extends GameState {}
+class RemoteConfigFailure extends GameState {}
 
 /// Attempt to register a new player with an active session.
 class JoinGameLoading extends GameState {}

@@ -3,10 +3,11 @@ Description:    Class representing a buyable tile.
 Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
-from server.game_logic.constants import RENTS
-from server.game_logic.player import Player
-from server.game_logic.tile import Tile
-from server.game_logic.types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
+
+from .constants import IMPROVEMENT_MAP, RENTS
+from .player import Player
+from .tile import Tile
+from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
 from typing import Union
 
@@ -84,8 +85,8 @@ class AssetTile(Tile):
             return {}
         else:
             return {
-                player.player_id: MoneyUpdate(-self.rent),
-                self.owner.player_id: MoneyUpdate(self.rent)
+                player.id: MoneyUpdate(-self.rent),
+                self.owner.id: MoneyUpdate(self.rent)
             }
 
     # Simple interface methods to mortgage/unmortgage the property
@@ -101,7 +102,7 @@ class AssetTile(Tile):
         state["price"] = self.price
         state["group"] = self.group.name
         state["status"] = self.status.name
-        state["owner"] = self.owner.player_id
+        state["owner"] = self.owner.id
         state["isMortgaged"] = self.is_mortgaged
         state["mortgagePrice"] = self.mortage_price
         state["rent"] = self.rent

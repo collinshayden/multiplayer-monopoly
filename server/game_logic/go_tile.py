@@ -24,4 +24,4 @@ class GoTile(Tile):
         Description:    Method for paying the character for landing on Go.
         :returns:       The MoneyUpdate object giving the Player $200.
         """
-        return {player.player_id: MoneyUpdate(GO_MONEY)}
+        return {player.id: MoneyUpdate(GO_MONEY)}

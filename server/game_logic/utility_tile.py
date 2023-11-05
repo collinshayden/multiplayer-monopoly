@@ -9,6 +9,8 @@ from server.game_logic.player import Player
 from server.game_logic.types import AssetGroups
 from server.game_logic.constants import RENTS
 
+from typing import Any
+
 
 class UtilityTile(AssetTile):
 
@@ -33,16 +35,16 @@ class UtilityTile(AssetTile):
             return {}
         else:
             return {
-                player.player_id: MoneyUpdate(-self.rent * roll),
-                self.owner.player_id: MoneyUpdate(self.rent * roll)
+                player.id: MoneyUpdate(-self.rent * roll),
+                self.owner.id: MoneyUpdate(self.rent * roll)
             }
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """
         Description:    Overridden to_dict() method which replaces 'rent' with 'rentMultiplier'.
         :return:        Dictionary for the tile state.
         """
-        state: dict = super().to_dict()
-        state.pop("rent")
-        state["rentMultiplier"] = self.rent
-        return state
+        client_bindings: dict = super().to_dict()
+        client_bindings.pop("rent")
+        client_bindings["rentMultiplier"] = self.rent
+        return client_bindings

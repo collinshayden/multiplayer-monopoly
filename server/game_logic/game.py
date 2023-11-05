@@ -4,12 +4,14 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from server.game_logic.card import Card
-from server.game_logic.constants import JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
-from server.game_logic.player import Player
-from server.game_logic.player_updates import LeaveJailUpdate, MoneyUpdate, RollUpdate
-from server.game_logic.tile import Tile
-from server.game_logic.types import CardType, JailMethod, PlayerStatus
+from typing import Any
+from .card import Card
+from .constants import JAIL_COST, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS, PLAYER_ID_LENGTH
+from .player import Player
+from .player_updates import LeaveJailUpdate, MoneyUpdate, RollUpdate
+from .tile import Tile
+from .roll import Roll
+from .types import CardType, JailMethod, PlayerStatus
 
 import random
 import secrets
@@ -23,7 +25,7 @@ class Game:
         Description:    Main class holding all the game state used for managing game logic.
         :returns:       None.
         """
-        self.last_roll: tuple[int, int] = None, None
+        self.last_roll: Roll = Roll()
         self.started: bool = False
         self.players: dict[str: Player] = {}
         self.turn_order: list[str] = []
@@ -52,7 +54,7 @@ class Game:
             return True
         return False
 
-    def register_player(self, username: str) -> str:
+    def register_player(self, display_name: str) -> str:
         """
         Description:    Method used to register a player and return their player ID. Doesn't allow players to be
                         added once the game has started.
@@ -65,7 +67,7 @@ class Game:
         player_id: str = "".join(secrets.choice(character_set) for _ in range(PLAYER_ID_LENGTH))
         while self.players.get(player_id, None) is not None:
             player_id = "".join(secrets.choice(character_set) for _ in range(PLAYER_ID_LENGTH))
-        self.players[player_id] = Player(player_id=player_id, username=username)
+        self.players[player_id] = Player(id=player_id, display_name=display_name)
         self.turn_order.append(player_id)
         return player_id
 
@@ -85,9 +87,8 @@ class Game:
         elif not self.started:
             return False
         player: Player = self.players[self.active_player_id]
-        die1: int = random.randint(MIN_DIE, MAX_DIE)
-        die2: int = random.randint(MIN_DIE, MAX_DIE)
-        return player.update(RollUpdate(die1, die2)) != PlayerStatus.INVALID
+        roll: Roll = Roll(first=random.randint(MIN_DIE, MAX_DIE), second =random.randint(MIN_DIE, MAX_DIE))
+        return player.update(RollUpdate(roll)) != PlayerStatus.INVALID
 
     def draw_card(self, player_id: str, card_type: CardType) -> bool:
         """
@@ -126,7 +127,7 @@ class Game:
         # TODO: Fill in body
         return True
 
-    def improvements(self, player_id: str, tile_id: int, amount: int) -> bool:
+    def set_improvements(self, player_id: str, tile_id: int, quantity: int) -> bool:
         """
         Description:        Method used to buy improvements to a property.
         :param player_id:   ID of the player making the request.
@@ -139,7 +140,7 @@ class Game:
         # TODO: Fill in body
         return True
 
-    def mortgage(self, player_id: str, tile_id: int, mortgage: bool) -> bool:
+    def set_mortgage(self, player_id: str, tile_id: int, mortgage: bool) -> bool:
         """
         Description:        Method for the active player to mortgage a property.
         :param player_id:   ID of the player making the request.
@@ -229,16 +230,16 @@ class Game:
             self.active_player_id = self.turn_order[idx]
             return True
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """
         Description:    Method used to return a dictionary representation of the class.
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        return {
-            "die_1": self.last_roll[0],
-            "die_2": self.last_roll[1],
+        client_bindings = {
+            "lastRoll": self.last_roll.to_dict(),
             "started": True,
             "activePlayerId": self.active_player_id,
             "players": [player.to_dict() for player in self.players.values()]
         }
+        return client_bindings
