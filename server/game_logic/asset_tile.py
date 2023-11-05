@@ -4,8 +4,9 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .constants import IMPROVEMENT_MAP, RENTS
+from .constants import RENTS
 from .player import Player
+from .player_updates import PlayerUpdate
 from .tile import Tile
 from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
@@ -71,7 +72,7 @@ class AssetTile(Tile):
         """
         return round(self.mortage_price * 1.1)
 
-    def land(self, player: Player, roll: int = None) -> dict:
+    def land(self, player: Player, roll: int = None) -> dict[str: PlayerUpdate]:
         """
         Description:    Method which will be overridden in subclasses.
         :param player:  Player landing on the tile.
