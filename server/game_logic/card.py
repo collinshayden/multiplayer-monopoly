@@ -5,19 +5,25 @@ Date:           10/22/2023
 """
 
 from .player import Player
+from .player_updates import PlayerUpdate
 
 
 class Card:
 
-    def __init__(self, name: str, chance: bool, active: bool, owner: Player) -> None:
+    def __init__(self, text: str, deck, delta: int) -> None:
         """
         Description:    Class representing a chance/community chest card.
-        :param name:    String value for the name/description of the card.
-        :param chance:  Boolean value for whether the card belongs to chance or community chest.
+        :param text:    String value for the description of the card.
+        :param deck:    The deck (community chest/chance) that the card belongs to.
+        :param active:  Whether the card is currently in play
         :param owner:   The owner of a card (only for get out fo jail free cards).
         :returns:       None.
         """
-        self.name: str = name
-        self.chance: bool = chance
-        self.active: bool = active
-        self.owner: Player = owner
+        self.name: str = text
+        self.deck = deck
+        self.delta = delta
+        self.in_deck = True
+
+    def draw(self, owner: Player, players: list[Player]) -> dict:
+        self.in_deck = False
+        return{owner: PlayerUpdate(self.delta)}
