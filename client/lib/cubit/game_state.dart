@@ -14,11 +14,7 @@ class GameInitial extends GameState {}
 /// Loading in configuration from local files.
 class LocalConfigLoading extends GameState {}
 
-class LocalConfigSuccess extends GameState {
-  LocalConfigSuccess({required this.boardJson});
-
-  final Map<String, dynamic> boardJson;
-}
+class LocalConfigSuccess extends GameState {}
 
 class LocalConfigFailure extends GameState {
   LocalConfigFailure([this.object]);

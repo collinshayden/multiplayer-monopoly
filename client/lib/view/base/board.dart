@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:client/model/tile_data.dart';
+import 'package:client/model/tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:client/view/base/tiles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -130,7 +130,7 @@ class _CustomLayoutDelegate extends MultiChildLayoutDelegate {
 }
 
 class CustomLayout extends StatelessWidget {
-  // final Map<int, Widget> tiles = {};
+  // 1final Map<int, Widget> tiles = {};
 
   /// Constructor populates tiles with local board configuration
   CustomLayout({super.key}) {
@@ -229,35 +229,4 @@ class PlaceholderTile extends StatelessWidget {
       child: Placeholder(),
     );
   }
-}
-
-Map<int, Widget> createTiles({required Map<int, TileData> tileData}) {
-  Map<int, Widget> tiles = {};
-  for (int i = 0; i < tileData.length; i++) {
-    TileData data = tileData[i]!;
-    switch (data.runtimeType) {
-      case ImprovableTileData:
-        data = data as ImprovableTileData;
-        tiles[i] = ImprovableTile(data: data);
-      case CornerTileData:
-        data = data as CornerTileData;
-        tiles[i] = CornerTile(data: data);
-      case CommunityTileData:
-        data = data as CommunityTileData;
-        tiles[i] = CommunityTile(data: data);
-      case ChanceTileData:
-        data = data as ChanceTileData;
-        tiles[i] = ChanceTile(data: data);
-      case RailroadTileData:
-        data = data as RailroadTileData;
-        tiles[i] = RailroadTile(data: data);
-      case UtilityTile:
-        data = data as UtilityTileData;
-        tiles[i] = UtilityTile(data: data);
-      case TaxTile:
-        data = data as TaxTileData;
-        tiles[i] = TaxTile(data: data);
-    }
-  }
-  return tiles;
 }

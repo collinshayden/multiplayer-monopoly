@@ -50,6 +50,7 @@ class ImprovableTile(AssetTile):
         """
         client_bindings = {
             "id": self.id,
+            "type": "improvable",
             "owner": self.owner,
             "price": self.price,
             "isMortgaged": self.is_mortgaged,

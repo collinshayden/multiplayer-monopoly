@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import '../constants.dart';
-import '../json_utils.dart';
+import 'package:client/constants.dart';
+import 'package:client/json_utils.dart';
 
 /// Retrieves files from the root bundle created by the framework for the
 /// application.
@@ -15,10 +15,11 @@ class FileService {
   // Instantiate singleton
   static final FileService _instance = FileService._internal();
 
-  /// Reads JSON in from a path within the assets folder.
-  Future<Json> loadLocalBoardConfig() async {
-    Future<Json> localBoardConfig =
-        loadJson('$LOCAL_ASSET_DIR/board_config.json');
-    return localBoardConfig;
+  /// Reads in board config from local files as JSON.
+  Future<Json> getLocalTileConfig() async {
+    String serializedTileConfig =
+        await rootBundle.loadString('$LOCAL_ASSET_DIR/local_config.json');
+    Json localTileConfig = jsonDecode(serializedTileConfig);
+    return localTileConfig;
   }
 }

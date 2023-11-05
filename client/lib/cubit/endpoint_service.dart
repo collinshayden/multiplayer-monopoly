@@ -1,10 +1,9 @@
 import 'dart:convert';
-
-import 'package:client/model/game_data.dart';
 import 'package:http/http.dart' as http;
-import '../constants.dart';
-import '../json_utils.dart';
+import 'package:client/constants.dart';
+import 'package:client/json_utils.dart';
 
+/// A service which provides access to the server's game API and outputs JSON.
 class EndpointService {
   /// Internal constructor which should only be called once by the class itself.
   EndpointService._internal() : server = http.Client();
