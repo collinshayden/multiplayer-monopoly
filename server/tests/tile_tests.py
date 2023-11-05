@@ -11,6 +11,7 @@ from server.game_logic.railroad_tile import RailroadTile
 from server.game_logic.tile import Tile
 from server.game_logic.types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 from server.game_logic.utility_tile import UtilityTile
+from server.game_logic.tax_tile import TaxTile
 
 
 class TileTests(unittest.TestCase):
@@ -206,6 +207,17 @@ class TileTests(unittest.TestCase):
         self.assertEqual(10, water_works.rent)
         self.assertEqual(UtilityStatus.MONOPOLY, electric_company.status)
         self.assertEqual(UtilityStatus.MONOPOLY, water_works.status)
+
+def test_tax_tile(self):
+        tile: TaxTile = TaxTile(4, "Income Tax", -200)
+        player: Player = self.make_player1()
+        self.assertEqual(STARTING_MONEY, player.money)
+        updates: dict[str: PlayerUpdate] = tile.land(player, 4)
+        self.assertEqual(1, len(updates))
+        for id, update in updates.items():
+            if id == player.id:
+                player.update(update)
+        self.assertEqual(STARTING_MONEY - 200, player.money)
 
 
 if __name__ == '__main__':
