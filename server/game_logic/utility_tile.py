@@ -30,6 +30,7 @@ class UtilityTile(AssetTile):
         """
         client_bindings = {
             "id": self.id,
+            "type": "utility",
             "owner": self.owner,
             "price": self.price,
             "isMortgaged": self.is_mortaged,

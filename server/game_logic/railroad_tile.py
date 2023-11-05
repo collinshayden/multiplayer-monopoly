@@ -38,7 +38,9 @@ class RailroadTile(AssetTile):
         """
         client_bindings = {
             "id": self.id,
-            "owner": self.owner,"price": self.price,
+            "type": "railroad",
+            "owner": self.owner,
+            "price": self.price,
             "isMortgaged": self.is_mortgaged,
             "mortgagePrice": self.mortgage_price,
             "rentMap": self.rent_map,

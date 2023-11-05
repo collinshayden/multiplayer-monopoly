@@ -1,0 +1,457 @@
+{
+  "monetaryUnitName": "dollar",
+  "monetaryUnitSymbol": "$",
+  "tierColors": {
+    "1": "FF955436",
+    "2": "FFAAE0FC",
+    "3": "FFDC3897",
+    "4": "FFF7941D",
+    "5": "FFED1B24",
+    "6": "FFFEF102",
+    "7": "FF1FB25A",
+    "8": "FF0171BB"
+  },
+  "tiles": [
+    {
+      "_comment": "This tile configuration must contain exactly 40 items (not counting `_comment`) representing tiles, where each item must provide an `id` value and certain fields according to its position on the board. The `id` is unique and its value is an integer in the range [0, 39]."
+    },
+    {
+      "id": 0,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": [
+        "COLLECT",
+        "SALARY",
+        "AS YOU PASS"
+      ],
+      "goImage": "go_text.png",
+      "arrowImage": "go_arrow.png"
+    },
+    {
+      "id": 1,
+      "type": "improvable",
+      "tier": 0,
+      "quarterTurns": 1,
+      "price": 60,
+      "title": [
+        "MEDITER-",
+        "RANEAN",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "communityChest",
+      "quarterTurns": 1,
+      "title": [
+        "COMMUNITY",
+        "CHEST"
+      ],
+      "image": "community_chest.png"
+    },
+    {
+      "id": 3,
+      "type": "improvable",
+      "tier": 0,
+      "quarterTurns": 1,
+      "price": 60,
+      "title": [
+        "BALTIC",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "tax",
+      "quarterTurns": 1,
+      "title": [
+        "INCOME",
+        "TAX"
+      ],
+      "image": "income_tax.png",
+      "payCommandText": "PAY"
+    },
+    {
+      "id": 5,
+      "type": "railroad",
+      "quarterTurns": 1,
+      "price": 200,
+      "title": [
+        "READING",
+        "RAILROAD"
+      ],
+      "image": "railroad.png"
+    },
+    {
+      "id": 6,
+      "type": "improvable",
+      "tier": 1,
+      "quarterTurns": 1,
+      "price": 100,
+      "title": [
+        "ORIENTAL",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "chance",
+      "quarterTurns": 1,
+      "title": [
+        "CHANCE"
+      ],
+      "image": "chance-1.png"
+    },
+    {
+      "id": 8,
+      "type": "improvable",
+      "tier": 1,
+      "quarterTurns": 1,
+      "price": 100,
+      "title": [
+        "VERMONT",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "improvable",
+      "tier": 1,
+      "quarterTurns": 1,
+      "price": 120,
+      "title": [
+        "CONNECTICUT",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 10,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": [
+        "IN"
+      ],
+      "image": "jail.png",
+      "lowerText": [
+        "JAIL"
+      ],
+      "visitingText": [
+        "JUST",
+        "VISITING"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "improvable",
+      "tier": 3,
+      "quarterTurns": 2,
+      "price": 140,
+      "title": [
+        "ST. CHARLES",
+        "PLACE"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "utility",
+      "quarterTurns": 2,
+      "price": 150,
+      "title": [
+        "ELECTRIC",
+        "COMPANY"
+      ]
+    },
+    {
+      "id": 13,
+      "type": "improvable",
+      "tier": 3,
+      "quarterTurns": 2,
+      "price": 140,
+      "title": [
+        "STATES",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 14,
+      "type": "improvable",
+      "tier": 3,
+      "quarterTurns": 2,
+      "price": 160,
+      "title": [
+        "VIRGINIA",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "railroad",
+      "quarterTurns": 2,
+      "price": 200,
+      "title": [
+        "PENNSYLVANIA",
+        "RAILROAD"
+      ],
+      "image": "railroad.png"
+    },
+    {
+      "id": 16,
+      "type": "improvable",
+      "tier": 4,
+      "quarterTurns": 2,
+      "price": 180,
+      "title": [
+        "ST. JAMES",
+        "PLACE"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "communityChest",
+      "quarterTurns": 2,
+      "title": [
+        "COMMUNITY",
+        "CHEST"
+      ],
+      "image": "community_chest.png"
+    },
+    {
+      "id": 18,
+      "type": "improvable",
+      "tier": 4,
+      "quarterTurns": 2,
+      "price": 180,
+      "title": [
+        "TENNESSEE",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 19,
+      "type": "improvable",
+      "tier": 4,
+      "quarterTurns": 2,
+      "price": 200,
+      "title": [
+        "NEW YORK",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 20,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": [
+        "FREE"
+      ],
+      "image": "free_parking.png",
+      "lowerText": [
+        "PARKING"
+      ]
+    },
+    {
+      "id": 21,
+      "type": "improvable",
+      "tier": 5,
+      "quarterTurns": 3,
+      "price": 220,
+      "title": [
+        "KENTUCKY",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 22,
+      "type": "chance",
+      "quarterTurns": 3,
+      "title": [
+        "CHANCE"
+      ],
+      "image": "chance-2.png"
+    },
+    {
+      "id": 23,
+      "type": "improvable",
+      "tier": 5,
+      "quarterTurns": 3,
+      "price": 220,
+      "title": [
+        "INDIANA",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 24,
+      "type": "improvable",
+      "tier": 5,
+      "quarterTurns": 3,
+      "price": 240,
+      "title": [
+        "ILLINOIS",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 25,
+      "type": "railroad",
+      "quarterTurns": 3,
+      "price": 200,
+      "title": [
+        "B. & O.",
+        "RAILROAD"
+      ],
+      "image": "railroad.png"
+    },
+    {
+      "id": 26,
+      "type": "improvable",
+      "tier": 6,
+      "quarterTurns": 3,
+      "price": 260,
+      "title": [
+        "ATLANTIC",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 27,
+      "type": "improvable",
+      "tier": 5,
+      "quarterTurns": 3,
+      "price": 260,
+      "title": [
+        "VENTNOR",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 28,
+      "type": "utility",
+      "quarterTurns": 3,
+      "price": 150,
+      "title": [
+        "WATER",
+        "WORKS"
+      ]
+    },
+    {
+      "id": 29,
+      "type": "improvable",
+      "tier": 5,
+      "quarterTurns": 3,
+      "price": 280,
+      "title": [
+        "MARVIN",
+        "GARDENS"
+      ]
+    },
+    {
+      "id": 30,
+      "type": "corner",
+      "quarterTurns": 0,
+      "upperText": [
+        "GO TO"
+      ],
+      "image": "go_to_jail.png",
+      "lowerText": [
+        "JAIL"
+      ]
+    },
+    {
+      "id": 31,
+      "type": "improvable",
+      "tier": 6,
+      "quarterTurns": 0,
+      "price": 300,
+      "title": [
+        "PACIFIC",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 32,
+      "type": "improvable",
+      "tier": 6,
+      "quarterTurns": 0,
+      "price": 300,
+      "title": [
+        "NORTH",
+        "CAROLINA",
+        "AVENUE"
+      ]
+    },
+    {
+      "id": 33,
+      "type": "communityChest",
+      "quarterTurns": 0,
+      "title": [
+        "COMMUNITY",
+        "CHEST"
+      ],
+      "image": "community_chest.png"
+    },
+    {
+      "id": 34,
+      "type": "improvable",
+      "tier": 6,
+      "quarterTurns": 0,
+      "price": 320,
+      "title": [
+        "PENNSYLVANIA",
+        "AVNEUE"
+      ]
+    },
+    {
+      "id": 35,
+      "type": "railroad",
+      "quarterTurns": 0,
+      "price": 200,
+      "title": [
+        "SHORT",
+        "LINE"
+      ],
+      "image": "railroad.png"
+    },
+    {
+      "id": 36,
+      "type": "chance",
+      "quarterTurns": 0,
+      "title": [
+        "CHANCE"
+      ],
+      "image": "chance-3.png"
+    },
+    {
+      "id": 37,
+      "type": "improvable",
+      "tier": 7,
+      "quarterTurns": 0,
+      "price": 350,
+      "title": [
+        "PARK",
+        "PLACE"
+      ]
+    },
+    {
+      "id": 38,
+      "type": "tax",
+      "quarterTurns": 0,
+      "title": [
+        "LUXURY",
+        "TAX"
+      ],
+      "image": "luxury_tax.png",
+      "payCommandText": "PAY"
+    },
+    {
+      "id": 39,
+      "type": "improvable",
+      "tier": 7,
+      "quarterTurns": 0,
+      "price": 400,
+      "title": [
+        "BOARDWALK"
+      ]
+    }
+  ]
+}
