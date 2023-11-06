@@ -1,3 +1,4 @@
+import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:client/model/game.dart';
@@ -41,5 +42,27 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void loadRemoteConfig() async {}
+  void rollDice({required String playerId}) async {
+    emit(ActionRequesting());
+    try {
+      endpointService.rollDice(playerId);
+    } catch (e) {
+      emit(ActionRejected());
+    }
+  }
+
+  void loadRemoteConfig() async {
+    // Loaing local config
+    emit(RemoteConfigLoading());
+    late Json? remoteConfig;
+    try {
+      remoteConfig = await endpointService.getGameData();
+      game.withJson(remoteConfig);
+      print(remoteConfig);
+    } catch (e) {
+      emit(RemoteConfigFailure());
+    }
+
+    emit(RemoteConfigSuccess());
+  }
 }

@@ -16,11 +16,7 @@
       "id": 0,
       "type": "go",
       "quarterTurns": 0,
-      "upperText": [
-        "COLLECT",
-        "SALARY",
-        "AS YOU PASS"
-      ],
+      "upperText": "COLLECT\nSALARY\nAS YOU PASS",
       "goImage": "go_text.png",
       "arrowImage": "go_arrow.png"
     },
@@ -30,20 +26,13 @@
       "tier": 0,
       "quarterTurns": 1,
       "price": 60,
-      "title": [
-        "MEDITER-",
-        "RANEAN",
-        "AVENUE"
-      ]
+      "title": "MEDITER-\nRANEAN\nAVENUE"
     },
     {
       "id": 2,
       "type": "communityChest",
       "quarterTurns": 1,
-      "title": [
-        "COMMUNITY",
-        "CHEST"
-      ],
+      "title": "COMMUNITY\nCHEST",
       "image": "community_chest.png"
     },
     {
@@ -52,19 +41,13 @@
       "tier": 0,
       "quarterTurns": 1,
       "price": 60,
-      "title": [
-        "BALTIC",
-        "AVENUE"
-      ]
+      "title": "BALTIC\nAVENUE"
     },
     {
       "id": 4,
       "type": "tax",
       "quarterTurns": 1,
-      "title": [
-        "INCOME",
-        "TAX"
-      ],
+      "title": "INCOME\nTAX",
       "image": "income_tax.png",
       "payCommandText": "PAY"
     },
@@ -73,10 +56,7 @@
       "type": "railroad",
       "quarterTurns": 1,
       "price": 200,
-      "title": [
-        "READING",
-        "RAILROAD"
-      ],
+      "title": "READING\nRAILROAD",
       "image": "railroad.png"
     },
     {
@@ -85,18 +65,13 @@
       "tier": 1,
       "quarterTurns": 1,
       "price": 100,
-      "title": [
-        "ORIENTAL",
-        "AVENUE"
-      ]
+      "title": "ORIENTAL\nAVENUE"
     },
     {
       "id": 7,
       "type": "chance",
       "quarterTurns": 1,
-      "title": [
-        "CHANCE"
-      ],
+      "title": ["CHANCE"],
       "image": "chance-1.png"
     },
     {
@@ -105,10 +80,7 @@
       "tier": 1,
       "quarterTurns": 1,
       "price": 100,
-      "title": [
-        "VERMONT",
-        "AVENUE"
-      ]
+      "title": "VERMONT\nAVENUE"
     },
     {
       "id": 9,
@@ -116,26 +88,16 @@
       "tier": 1,
       "quarterTurns": 1,
       "price": 120,
-      "title": [
-        "CONNECTICUT",
-        "AVENUE"
-      ]
+      "title": "CONNECTICUT\nAVENUE"
     },
     {
       "id": 10,
       "type": "jail",
       "quarterTurns": 0,
-      "upperText": [
-        "IN"
-      ],
+      "upperText": ["IN"],
       "image": "jail.png",
-      "lowerText": [
-        "JAIL"
-      ],
-      "visitingText": [
-        "JUST",
-        "VISITING"
-      ]
+      "lowerText": ["JAIL"],
+      "visitingText": "JUST\nVISITING"
     },
     {
       "id": 11,
@@ -143,21 +105,15 @@
       "tier": 3,
       "quarterTurns": 2,
       "price": 140,
-      "title": [
-        "ST. CHARLES",
-        "PLACE"
-      ]
+      "title": "ST. CHARLES\nPLACE"
     },
     {
       "id": 12,
       "type": "utility",
       "quarterTurns": 2,
       "price": 150,
-      "title": [
-        "ELECTRIC",
-        "COMPANY"
-      ],
-      "image" : "electric-company.png"
+      "title": "ELECTRIC\nCOMPANY",
+      "image": "electric-company.png"
     },
     {
       "id": 13,
@@ -165,10 +121,7 @@
       "tier": 3,
       "quarterTurns": 2,
       "price": 140,
-      "title": [
-        "STATES",
-        "AVENUE"
-      ]
+      "title": "STATES\nAVENUE"
     },
     {
       "id": 14,
@@ -176,20 +129,14 @@
       "tier": 3,
       "quarterTurns": 2,
       "price": 160,
-      "title": [
-        "VIRGINIA",
-        "AVENUE"
-      ]
+      "title": "VIRGINIA\nAVENUE"
     },
     {
       "id": 15,
       "type": "railroad",
       "quarterTurns": 2,
       "price": 200,
-      "title": [
-        "PENNSYLVANIA",
-        "RAILROAD"
-      ],
+      "title": "PENNSYLVANIA\nRAILROAD",
       "image": "railroad.png"
     },
     {
@@ -198,19 +145,13 @@
       "tier": 4,
       "quarterTurns": 2,
       "price": 180,
-      "title": [
-        "ST. JAMES",
-        "PLACE"
-      ]
+      "title": "ST. JAMES\nPLACE"
     },
     {
       "id": 17,
       "type": "communityChest",
       "quarterTurns": 2,
-      "title": [
-        "COMMUNITY",
-        "CHEST"
-      ],
+      "title": "COMMUNITY\nCHEST",
       "image": "community_chest.png"
     },
     {
@@ -219,10 +160,7 @@
       "tier": 4,
       "quarterTurns": 2,
       "price": 180,
-      "title": [
-        "TENNESSEE",
-        "AVENUE"
-      ]
+      "title": "TENNESSEE\nAVENUE"
     },
     {
       "id": 19,
@@ -230,22 +168,15 @@
       "tier": 4,
       "quarterTurns": 2,
       "price": 200,
-      "title": [
-        "NEW YORK",
-        "AVENUE"
-      ]
+      "title": "NEW YORK\nAVENUE"
     },
     {
       "id": 20,
       "type": "freeParking",
       "quarterTurns": 0,
-      "upperText": [
-        "FREE"
-      ],
+      "upperText": ["FREE"],
       "image": "free_parking.png",
-      "lowerText": [
-        "PARKING"
-      ]
+      "lowerText": ["PARKING"]
     },
     {
       "id": 21,
@@ -253,18 +184,13 @@
       "tier": 5,
       "quarterTurns": 3,
       "price": 220,
-      "title": [
-        "KENTUCKY",
-        "AVENUE"
-      ]
+      "title": "KENTUCKY\nAVENUE"
     },
     {
       "id": 22,
       "type": "chance",
       "quarterTurns": 3,
-      "title": [
-        "CHANCE"
-      ],
+      "title": ["CHANCE"],
       "image": "chance-2.png"
     },
     {
@@ -273,10 +199,7 @@
       "tier": 5,
       "quarterTurns": 3,
       "price": 220,
-      "title": [
-        "INDIANA",
-        "AVENUE"
-      ]
+      "title": "INDIANA\nAVENUE"
     },
     {
       "id": 24,
@@ -284,10 +207,7 @@
       "tier": 5,
       "quarterTurns": 3,
       "price": 240,
-      "title": [
-        "ILLINOIS",
-        "AVENUE"
-      ]
+      "title": "ILLINOIS\nAVENUE"
     },
     {
       "id": 25,
