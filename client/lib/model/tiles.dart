@@ -48,6 +48,15 @@ class ImprovableTile extends Tile {
   int? quarterTurns;
   int? price;
 
+  /// Returns whether this object's display configuration has been fully set.
+  bool get _displayConfigurationComplete {
+    if (title == null || title!.isEmpty) return false;
+    if (tier == null) return false;
+    if (quarterTurns == null) return false;
+    if (price == null) return false;
+    return true;
+  }
+
   @override
   void withJson(Json json) {
     title = json['title'] ?? title;
@@ -58,6 +67,10 @@ class ImprovableTile extends Tile {
 
   @override
   Widget createWidget() {
+    assert(
+      _displayConfigurationComplete,
+      'One or more parameters have not been fully defined for ${this.runtimeType}',
+    );
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
