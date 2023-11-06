@@ -13,11 +13,8 @@
   },
   "tiles": [
     {
-      "_comment": "This tile configuration must contain exactly 40 items (not counting `_comment`) representing tiles, where each item must provide an `id` value and certain fields according to its position on the board. The `id` is unique and its value is an integer in the range [0, 39]."
-    },
-    {
       "id": 0,
-      "type": "corner",
+      "type": "go",
       "quarterTurns": 0,
       "upperText": "COLLECT\nSALARY\nAS YOU PASS",
       "goImage": "go_text.png",
@@ -95,7 +92,7 @@
     },
     {
       "id": 10,
-      "type": "corner",
+      "type": "jail",
       "quarterTurns": 0,
       "upperText": ["IN"],
       "image": "jail.png",
@@ -175,7 +172,7 @@
     },
     {
       "id": 20,
-      "type": "corner",
+      "type": "freeParking",
       "quarterTurns": 0,
       "upperText": ["FREE"],
       "image": "free_parking.png",
@@ -217,7 +214,7 @@
       "type": "railroad",
       "quarterTurns": 3,
       "price": 200,
-      "title": ["B. & O.", "RAILROAD"],
+      "title": "B. & O.\nRAILROAD",
       "image": "railroad.png"
     },
     {
@@ -226,7 +223,7 @@
       "tier": 6,
       "quarterTurns": 3,
       "price": 260,
-      "title": ["ATLANTIC", "AVENUE"]
+      "title": "ATLANTIC\nAVENUE"
     },
     {
       "id": 27,
@@ -234,15 +231,15 @@
       "tier": 5,
       "quarterTurns": 3,
       "price": 260,
-      "title": ["VENTNOR", "AVENUE"]
+      "title": "VENTNOR\nAVENUE"
     },
     {
       "id": 28,
       "type": "utility",
       "quarterTurns": 3,
       "price": 150,
-      "title": ["WATER", "WORKS"],
-      "image": "water-works.png"
+      "title": "WATER\nWORKS",
+      "image" : "water-works.png"
     },
     {
       "id": 29,
@@ -250,15 +247,15 @@
       "tier": 5,
       "quarterTurns": 3,
       "price": 280,
-      "title": ["MARVIN", "GARDENS"]
+      "title": "MARVIN\nGARDENS"
     },
     {
       "id": 30,
-      "type": "corner",
+      "type": "goToJail",
       "quarterTurns": 0,
-      "upperText": ["GO TO"],
+      "upperText": "GO TO",
       "image": "go_to_jail.png",
-      "lowerText": ["JAIL"]
+      "lowerText": "JAIL"
     },
     {
       "id": 31,
@@ -266,7 +263,7 @@
       "tier": 6,
       "quarterTurns": 0,
       "price": 300,
-      "title": ["PACIFIC", "AVENUE"]
+      "title": "PACIFIC\nAVENUE"
     },
     {
       "id": 32,
@@ -274,13 +271,13 @@
       "tier": 6,
       "quarterTurns": 0,
       "price": 300,
-      "title": ["NORTH", "CAROLINA", "AVENUE"]
+      "title": "NORTH\nCAROLINA\nAVENUE"
     },
     {
       "id": 33,
       "type": "communityChest",
       "quarterTurns": 0,
-      "title": ["COMMUNITY", "CHEST"],
+      "title": "COMMUNITY\nCHEST",
       "image": "community_chest.png"
     },
     {
@@ -289,21 +286,21 @@
       "tier": 6,
       "quarterTurns": 0,
       "price": 320,
-      "title": ["PENNSYLVANIA", "AVNEUE"]
+      "title": "PENNSYLVANIA\nAVENUE"
     },
     {
       "id": 35,
       "type": "railroad",
       "quarterTurns": 0,
       "price": 200,
-      "title": ["SHORT", "LINE"],
+      "title": "SHORT\nLINE",
       "image": "railroad.png"
     },
     {
       "id": 36,
       "type": "chance",
       "quarterTurns": 0,
-      "title": ["CHANCE"],
+      "title": "CHANCE",
       "image": "chance-3.png"
     },
     {
@@ -312,13 +309,13 @@
       "tier": 7,
       "quarterTurns": 0,
       "price": 350,
-      "title": ["PARK", "PLACE"]
+      "title": "PARK\nPLACE"
     },
     {
       "id": 38,
       "type": "tax",
       "quarterTurns": 0,
-      "title": ["LUXURY", "TAX"],
+      "title": "LUXURY\nTAX",
       "image": "luxury_tax.png",
       "payCommandText": "PAY"
     },
@@ -328,7 +325,7 @@
       "tier": 7,
       "quarterTurns": 0,
       "price": 400,
-      "title": ["BOARDWALK"]
+      "title": "BOARDWALK"
     }
   ]
 }

@@ -32,9 +32,8 @@ class _MonopolyAppState extends State<MonopolyApp> {
           create: (context) => GameCubit(),
           child: Stack(
             children: [
-              // CubitTest(),
-              // Board()
-              SizedBox(width: 125, height: 75, child: ImprovableTile(id: 1,title: "test \ntitle", quarterTurns: 1, price: 500).createWidget(),),
+              CubitTest(),
+              Board(),
               Center(
                 child: SizedBox.fromSize(
                   size: const Size(100.0, 150.0),

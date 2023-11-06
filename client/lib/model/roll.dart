@@ -11,7 +11,8 @@ class Roll {
   int? first;
   int? second;
 
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     first = json['first'] ?? first;
     second = json['second'] ?? second;
   }

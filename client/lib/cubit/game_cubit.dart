@@ -22,11 +22,10 @@ class GameCubit extends Cubit<GameState> {
     // Loaing local config
     emit(LocalConfigLoading());
     await Future.delayed(Duration(seconds: 1)); // TODO: Remove
-    late Json? localTileConfig;
+    late Json? localConfig;
     try {
-      localTileConfig = await fileService.getLocalTileConfig();
-      game.withJson(localTileConfig);
-      print(localTileConfig);
+      localConfig = await fileService.getLocalConfig();
+      game.withJson(localConfig);
     } catch (e) {
       emit(LocalConfigFailure(e));
     }

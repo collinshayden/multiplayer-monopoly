@@ -19,9 +19,9 @@ class PlayerId {
 }
 
 class Player {
-  Player();
+  Player({required this.id});
 
-  PlayerId? id;
+  PlayerId id;
   String? displayName;
   int? money;
   int? location;
