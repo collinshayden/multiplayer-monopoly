@@ -6,7 +6,6 @@ Author:         Jordan Bourdeau, Hayden Collins
 
 from .constants import RENTS
 from .player import Player
-from .player_updates import PlayerUpdate
 from .tile import Tile
 from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 
@@ -72,7 +71,7 @@ class AssetTile(Tile):
         """
         return round(self.mortage_price * 1.1)
 
-    def land(self, player: Player, roll: int = None) -> dict[str: PlayerUpdate]:
+    def land(self, player: Player, roll: int = None):
         """
         Description:    Method which will be overridden in subclasses.
         :param player:  Player landing on the tile.
