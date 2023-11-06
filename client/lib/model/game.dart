@@ -24,8 +24,8 @@ class Game {
   /// Update game data to match provided JSON values.
   void withJson(Json? json) {
     if (json == null) return;
-    monetaryUnitName = json['monetaryUnitName'] as String;
-    monetaryUnitSymbol = json['monetaryUnitSymbol'] as String;
+    monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
+    monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;
     tierColors[1] = Color(int.parse(json['tierColors']['1'], radix: 16));
     tierColors[2] = Color(int.parse(json['tierColors']['2'], radix: 16));
     tierColors[3] = Color(int.parse(json['tierColors']['3'], radix: 16));

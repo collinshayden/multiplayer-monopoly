@@ -71,7 +71,7 @@
       "id": 7,
       "type": "chance",
       "quarterTurns": 1,
-      "title": ["CHANCE"],
+      "title": "CHANCE",
       "image": "chance-1.png"
     },
     {
@@ -94,9 +94,9 @@
       "id": 10,
       "type": "jail",
       "quarterTurns": 0,
-      "upperText": ["IN"],
+      "upperText": "IN",
       "image": "jail.png",
-      "lowerText": ["JAIL"],
+      "lowerText": "JAIL",
       "visitingText": "JUST\nVISITING"
     },
     {
@@ -174,9 +174,9 @@
       "id": 20,
       "type": "freeParking",
       "quarterTurns": 0,
-      "upperText": ["FREE"],
+      "upperText": "FREE",
       "image": "free_parking.png",
-      "lowerText": ["PARKING"]
+      "lowerText": "PARKING"
     },
     {
       "id": 21,
@@ -190,7 +190,7 @@
       "id": 22,
       "type": "chance",
       "quarterTurns": 3,
-      "title": ["CHANCE"],
+      "title": "CHANCE",
       "image": "chance-2.png"
     },
     {
