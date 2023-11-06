@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:client/constants.dart';
 import 'package:client/json_utils.dart';
@@ -16,10 +17,16 @@ class FileService {
   static final FileService _instance = FileService._internal();
 
   /// Reads in board config from local files as JSON.
-  Future<Json> getLocalTileConfig() async {
-    String serializedTileConfig =
+  Future<Json> getLocalConfig() async {
+    String serializedConfig =
         await rootBundle.loadString('$LOCAL_ASSET_DIR/local_config.json');
-    Json localTileConfig = jsonDecode(serializedTileConfig);
-    return localTileConfig;
+    Json localConfig = jsonDecode(serializedConfig);
+    return localConfig;
   }
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  FileService fs = FileService();
+  Json localConfig = await fs.getLocalConfig();
 }

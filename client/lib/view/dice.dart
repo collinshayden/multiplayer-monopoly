@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Dice extends StatelessWidget {
-  const Dice({super.key});
+  const Dice({
+    super.key,
+    required this.value1,
+    required this.value2,
+  });
+
+  final int value1;
+  final int value2;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +18,7 @@ class Dice extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [SingleDie(value: 1), SingleDie(value: 6)],
+          children: [SingleDie(value: value1), SingleDie(value: value2)],
         ),
       ),
     );
@@ -111,7 +118,7 @@ void main() {
       home: Scaffold(
         backgroundColor: Colors.red[200],
         body: Center(
-          child: SizedBox(width: 400, height: 200, child: Dice()),
+          child: SizedBox(width: 400, height: 200, child: Dice(value1: 2, value2: 4,)),
         ),
       ),
     ),

@@ -25,7 +25,7 @@ sealed class Tile {
 
   final int id;
 
-  void withJson(Json json);
+  void withJson(Json? json);
 
   /// This function returns a widget whose configuration depends on fields of
   /// this [Tile].
@@ -48,8 +48,18 @@ class ImprovableTile extends Tile {
   int? quarterTurns;
   int? price;
 
+  /// Returns whether this object's display configuration has been fully set.
+  bool get _displayConfigurationComplete {
+    if (title == null || title!.isEmpty) return false;
+    if (tier == null) return false;
+    if (quarterTurns == null) return false;
+    if (price == null) return false;
+    return true;
+  }
+
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     tier = json['tier'] ?? tier;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
@@ -58,29 +68,36 @@ class ImprovableTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Flexible(
-            flex: 1,
-            child: Container(color: Colors.red),
-          ),
-          Flexible(
-              flex: 3,
-              child: Column(
-                children: [
-                  Expanded(
-                      child: Text(
-                    title ?? "Placeholder title",
-                    textAlign: TextAlign.center,
-                  )),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Text('Price: $price', textAlign: TextAlign.center),
-                  )
-                ],
-              ))
-        ]));
+    assert(
+      _displayConfigurationComplete,
+      'One or more parameters have not been fully defined for ${this.runtimeType}',
+    );
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Flexible(
+              flex: 1,
+              child: Container(color: Colors.red),
+            ),
+            Flexible(
+                flex: 3,
+                child: Column(
+                  children: [
+                    Expanded(
+                        child: Text(
+                      title ?? "Placeholder title",
+                      textAlign: TextAlign.center,
+                    )),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Text('Price: $price', textAlign: TextAlign.center),
+                    )
+                  ],
+                ))
+          ])),
+    );
   }
 }
 
@@ -99,7 +116,8 @@ class RailroadTile extends Tile {
   String? image;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     price = json['price'] ?? price;
@@ -108,23 +126,26 @@ class RailroadTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-          Flexible(
-            flex: 0,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Price: $price', textAlign: TextAlign.center),
-            ),
-          )
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+            Flexible(
+              flex: 0,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Text('Price: $price', textAlign: TextAlign.center),
+              ),
+            )
+          ])),
+    );
   }
 }
 
@@ -143,7 +164,8 @@ class UtilityTile extends Tile {
   String? image;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     price = json['price'] ?? price;
@@ -152,23 +174,26 @@ class UtilityTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-          Flexible(
-            flex: 0,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Price: $price', textAlign: TextAlign.center),
-            ),
-          )
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+            Flexible(
+              flex: 0,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Text('Price: $price', textAlign: TextAlign.center),
+              ),
+            )
+          ])),
+    );
   }
 }
 
@@ -185,7 +210,8 @@ class ChanceTile extends Tile {
   int? quarterTurns;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     image = json['image'] ?? image;
@@ -193,16 +219,19 @@ class ChanceTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -219,7 +248,8 @@ class CommunityChestTile extends Tile {
   int? quarterTurns;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     image = json['image'] ?? image;
@@ -227,16 +257,19 @@ class CommunityChestTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          // TODO image
-        ]));
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -255,7 +288,8 @@ class TaxTile extends Tile {
   int? quarterTurns;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     image = json['image'] ?? image;
@@ -264,21 +298,24 @@ class TaxTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            title ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              payCommandText ?? "Placeholder price",
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              title ?? "Placeholder title",
               textAlign: TextAlign.center,
-            ),
-          )
-        ]));
+            )),
+            Flexible(
+              child: Text(
+                payCommandText ?? "Placeholder price",
+                textAlign: TextAlign.center,
+              ),
+            )
+          ])),
+    );
   }
 }
 
@@ -299,7 +336,8 @@ class GoTile extends Tile {
   String? arrowImage;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     goImage = json['goImage'] ?? goImage;
@@ -308,7 +346,19 @@ class GoTile extends Tile {
 
   @override
   Widget createWidget() {
-    return const Placeholder();
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -329,7 +379,8 @@ class JailTile extends Tile {
   String? visitingText;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     lowerText = json['lowerText'] ?? lowerText;
@@ -339,28 +390,31 @@ class JailTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
+              textAlign: TextAlign.center,
+            )),
+            Flexible(
               child: Text(
-            upperText ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              lowerText ?? "Placeholder lower text",
-              textAlign: TextAlign.center,
+                lowerText ?? "Placeholder lower text",
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          Flexible(
-            child: Text(
-              visitingText ?? "Placeholder visiting text",
-              textAlign: TextAlign.center,
-            ),
-            // TODO image
-          )
-        ]));
+            Flexible(
+              child: Text(
+                visitingText ?? "Placeholder visiting text",
+                textAlign: TextAlign.center,
+              ),
+              // TODO image
+            )
+          ])),
+    );
   }
 }
 
@@ -379,7 +433,8 @@ class FreeParkingTile extends Tile {
   String? lowerText;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     lowerText = json['lowerText'] ?? lowerText;
@@ -388,22 +443,25 @@ class FreeParkingTile extends Tile {
 
   @override
   Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            upperText ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              lowerText ?? "Placeholder lower text",
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
               textAlign: TextAlign.center,
+            )),
+            Flexible(
+              child: Text(
+                lowerText ?? "Placeholder lower text",
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          // TODO image
-        ]));
+            // TODO image
+          ])),
+    );
   }
 }
 
@@ -422,7 +480,8 @@ class GoToJailTile extends Tile {
   String? lowerText;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     lowerText = json['lowerText'] ?? lowerText;
@@ -430,22 +489,25 @@ class GoToJailTile extends Tile {
   }
 
   @override
-    Widget createWidget() {
-    return Container(
-        color: Colors.grey,
-        child: Column(children: [
-          Expanded(
-              child: Text(
-            upperText ?? "Placeholder title",
-            textAlign: TextAlign.center,
-          )),
-          Flexible(
-            child: Text(
-              lowerText ?? "Placeholder lower text",
+  Widget createWidget() {
+    return RotatedBox(
+      quarterTurns: quarterTurns ?? 0,
+      child: Container(
+          color: Colors.grey,
+          child: Column(children: [
+            Expanded(
+                child: Text(
+              upperText ?? "Placeholder title",
               textAlign: TextAlign.center,
+            )),
+            Flexible(
+              child: Text(
+                lowerText ?? "Placeholder lower text",
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          // TODO image
-        ]));
+            // TODO image
+          ])),
+    );
   }
 }

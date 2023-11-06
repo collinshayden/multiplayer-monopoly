@@ -14,7 +14,11 @@ class GameInitial extends GameState {}
 /// Loading in configuration from local files.
 class LocalConfigLoading extends GameState {}
 
-class LocalConfigSuccess extends GameState {}
+class LocalConfigSuccess extends GameState {
+  LocalConfigSuccess({required this.game});
+
+  final Game game;
+}
 
 class LocalConfigFailure extends GameState {
   LocalConfigFailure([this.object]);

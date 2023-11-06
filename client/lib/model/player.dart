@@ -3,7 +3,7 @@ import 'package:client/json_utils.dart';
 class PlayerId {
   PlayerId(this.value);
 
-  final int value;
+  final String value;
 
   @override
   bool operator ==(Object other) {
@@ -19,9 +19,9 @@ class PlayerId {
 }
 
 class Player {
-  Player();
+  Player({required this.id});
 
-  PlayerId? id;
+  PlayerId id;
   String? displayName;
   int? money;
   int? location;
