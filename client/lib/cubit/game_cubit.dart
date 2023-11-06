@@ -42,10 +42,10 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void rollDice({required String playerId}) async {
+  void rollDice() async {
     emit(ActionRequesting());
     try {
-      endpointService.rollDice(playerId);
+      endpointService.rollDice();
     } catch (e) {
       emit(ActionRejected());
     }
@@ -57,6 +57,7 @@ class GameCubit extends Cubit<GameState> {
     late Json? remoteConfig;
     try {
       remoteConfig = await endpointService.getGameData();
+      
       game.withJson(remoteConfig);
       print(remoteConfig);
     } catch (e) {
