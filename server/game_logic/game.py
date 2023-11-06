@@ -87,17 +87,17 @@ class Game:
         self.turn_order.append(player_id)
         return player_id
 
-    def roll_dice(self, player_id: str) -> bool:
+    def roll_dice(self, player_id: str) -> tuple[bool, bool]:
         """
         Description:        Method for rolling the dice.
         :param player_id:   ID of the player making the request.
-        :return:            True if the request succeeds. False otherwise.
+        :return:            True if the request succeeds and True if the player should roll again.
         """
         # Reject requests when there are not enough players
         if len(self.players) < MIN_NUM_PLAYERS:
-            return False
-        # if not self._valid_player(player_id, require_game_started=True):
-        #     return False
+            return False, False
+        if not self._valid_player(player_id, require_game_started=True):
+            return False, False
         player: Player = self.players[self.active_player_id]
         roll: Roll = Roll(random.randint(MIN_DIE, MAX_DIE), random.randint(MIN_DIE, MAX_DIE))
         # Move the player
@@ -106,7 +106,7 @@ class Game:
         # Get updates from the tile then apply them
         updates: dict[str: PlayerUpdate] = self.tiles[player.location].land(player, roll)
         self._apply_updates(updates)
-        return player.status != PlayerStatus.INVALID
+        return player.status != PlayerStatus.INVALID, player.roll_again
 
     def draw_card(self, player_id: str, card_type: CardType) -> bool:
         """
@@ -260,8 +260,8 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            True if the request succeeds. False otherwise.
         """
-        # if not self._valid_player(player_id, require_active_player=False, require_game_started=True):
-        #     return False
+        if not self._valid_player(player_id, require_active_player=False, require_game_started=True):
+            return False
         self.__init__()
         return True
 
@@ -433,7 +433,7 @@ class Game:
         :return:        Dictionary of class attributes.
         """
         return {
-            "lastRoll": self.last_roll.to_dict() if self.last_roll is not None else "",
+            "lastRoll": self.last_roll.to_dict() if self.last_roll is not None else {},
             "started": self.started,
             "activePlayerId": self.active_player_id,
             "players": [player.to_dict() for player in self.players.values()],

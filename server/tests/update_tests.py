@@ -308,7 +308,6 @@ class UpdateTests(unittest.TestCase):
         player.update(RollUpdate(Roll(3, 7)))
         self.assertEqual(0, player.location)
 
-        # Will convert doubles to integers with floor
         player.update(RollUpdate(Roll(6, 6)))
         self.assertEqual(12, player.location)
         self.assertEqual(1, player.doubles_streak)

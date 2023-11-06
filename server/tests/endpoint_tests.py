@@ -9,9 +9,10 @@ from server.game_logic.constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, M
                                          PLAYER_ID_LENGTH, START_LOCATION, STARTING_MONEY)
 from server.game_logic.improvable_tile import ImprovableTile
 from server.game_logic.player import Player
-from server.game_logic.player_updates import BuyUpdate, GoToJailUpdate
+from server.game_logic.player_updates import BuyUpdate, GoToJailUpdate, LeaveJailUpdate
 from server.game_logic.railroad_tile import RailroadTile
-from server.game_logic.types import PropertyStatus, RailroadStatus, UtilityStatus
+from server.game_logic.roll import Roll
+from server.game_logic.types import JailMethod, PropertyStatus, RailroadStatus, UtilityStatus
 from server.server import app, game
 
 from flask_testing import TestCase
@@ -44,10 +45,8 @@ class EndpointTests(TestCase):
         self.assertEqual(amount, len(game.players))
         return players
 
-    # TODO: Re-implement in following sprint
-    # TODO: Set require_active_player to True
-    def authenticate(self, endpoint: str, event: str, require_active_player: bool = False,
-                     require_active_game_tests: bool = True):
+    def authenticate(self, endpoint: str, event: str, require_active_player: bool = True,
+                     require_active_game_tests: bool = True, expected_args: dict = {}):
         """
         Description:                        Function used to eliminate repeat tests.
         :param endpoint:                    Flask app endpoint to test.
@@ -59,6 +58,7 @@ class EndpointTests(TestCase):
         """
         # Verify endpoint does nothing when game hasn't started and there are no players
         expected: dict = {"event": event, "success": False}
+        expected.update(expected_args)
         response = self.client.get(endpoint)
         self.assert200(response)
         self.assertEqual(expected, json.loads(response.data))
@@ -164,28 +164,61 @@ class EndpointTests(TestCase):
         self.assertEqual(1, len(game.players))
         self.assertIn(json_data.get("playerId", ""), game.players.keys())
 
-    # TODO: Uncomment this in following Sprints (short-term solution to get data flow working)
-    # def test_roll_dice(self):
-    #     endpoint: str = "/game/roll_dice"
-    #     event: str = "rollDice"
-    #     self.authenticate(endpoint, event)
-    #     player_ids: list[str] = game.turn_order
-    #     query_string: dict = {"player_id": player_ids[0]}
-    #     expected: dict = {
-    #         "event": event,
-    #         "success": True
-    #     }
-    #     # Verify player can keep rolling the dice until the end_turn method is called
-    #     for n in range(5):
-    #         response = self.client.get(endpoint, query_string=query_string)
-    #         self.assert200(response)
-    #         self.assertEqual(expected, json.loads(response.data))
-    #     game.end_turn(player_ids[0])
-    #     # End the turn and verify first player can no longer roll dice
-    #     expected["success"] = False
-    #     response = self.client.get(endpoint, query_string=query_string)
-    #     self.assert200(response)
-    #     self.assertEqual(expected, json.loads(response.data))
+    def test_roll_dice(self):
+        endpoint: str = "/game/roll_dice"
+        event: str = "rollDice"
+        self.authenticate(endpoint, event, expected_args={"rollAgain": False})
+
+        id1, id2 = game.turn_order
+        query_string: dict = {"player_id": id1}
+        expected: dict = {
+            "event": event,
+            "success": True,
+            "rollAgain": False
+        }
+
+        # Can roll the dice as the active player
+        player: Player = game.players[id1]
+        self.assertEqual(0, player.doubles_streak)
+        self.assertFalse(player.roll_again)
+        response = self.client.get(endpoint, query_string=query_string)
+        self.assert200(response)
+        json_data: dict = json.loads(response.data)
+
+        # Keep having them roll dice until they get doubles
+        while not game.last_roll.is_doubles:
+            # Just in case they landed on Go To Jail
+            if player.in_jail:
+                player.update(LeaveJailUpdate(JailMethod.DOUBLES))
+            self.assertTrue(json_data["success"])
+            response = self.client.get(endpoint, query_string=query_string)
+            self.assert200(response)
+            json_data: dict = json.loads(response.data)
+        self.assertEqual(json_data["rollAgain"], game.last_roll.is_doubles)
+        self.assertEqual(1, player.doubles_streak)
+        self.assertTrue(player.roll_again)
+        self.assertFalse(player.in_jail)
+
+        # Resets doubles condition
+        game.last_roll = Roll(1, 2)
+        player.doubles_streak = 0
+        self.assertFalse(player.in_jail)
+
+        while not json_data["rollAgain"]:
+            # Just in case they landed on Go To Jail
+            if player.in_jail:
+                player.update(LeaveJailUpdate(JailMethod.DOUBLES))
+            print(game.last_roll.first, game.last_roll.second)
+            self.assertFalse(player.in_jail)
+            player.doubles_streak = 2
+            response = self.client.get(endpoint, query_string=query_string)
+            self.assert200(response)
+            json_data: dict = json.loads(response.data)
+        print(game.last_roll.first, game.last_roll.second)
+        self.assertEqual(0, player.doubles_streak)
+        self.assertFalse(player.roll_again)
+        self.assertEqual(JAIL_LOCATION, player.location)
+        self.assertTrue(player.in_jail)
 
     def test_draw_card(self):
         endpoint: str = "/game/draw_card"
@@ -546,11 +579,10 @@ class EndpointTests(TestCase):
         self.assertEqual(expected, json.loads(response.data))
         self.assertEqual(game.active_player_id, player_ids[0])
 
-    # TODO: Uncomment this in following Sprints (short-term solution to get data flow working)
-    # def test_reset(self):
-    #     endpoint: str = "/game/reset"
-    #     event: str = "reset"
-    #     self.authenticate(endpoint, event, require_active_player=False)
+    def test_reset(self):
+        endpoint: str = "/game/reset"
+        event: str = "reset"
+        self.authenticate(endpoint, event, require_active_player=False)
 
 
 if __name__ == '__main__':

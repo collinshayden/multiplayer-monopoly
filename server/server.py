@@ -106,10 +106,11 @@ def roll_dice():
         4) If the player rolled doubles, increment their doubles streak.
         5) If the player rolled their third pair of doubles, move them to the jail tile and end their turn.
     """
-    success: bool = game.roll_dice(player_id=player_id)
+    success, roll_again = game.roll_dice(player_id=player_id)
     client_bindings: dict[str, Any] = {
         "event": "rollDice",
-        "success": success
+        "success": success,
+        "rollAgain": roll_again
     }
     return jsonify(client_bindings)
 
