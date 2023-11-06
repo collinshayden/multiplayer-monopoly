@@ -12,6 +12,10 @@ SECRET_KEY: str = "replace"
 # Constants for specific tiles
 START_LOCATION: int = 0
 NUM_TILES: int = 40
+CHANCE_TILES: list[int] = [7, 22, 36]
+COMMUNITY_CHEST_TILES: list[int] = [2, 17, 33]
+NUM_CHANCE_CARDS: int = 16
+NUM_COMMUNITY_CHEST_CARDS: int = 16
 
 # Constants for bound checking rolls
 MIN_DIE: int = 1

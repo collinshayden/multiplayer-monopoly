@@ -198,7 +198,6 @@ def set_improvements():
     :return:        Returns a JSON-serliazable status response.
     """
     global game
-    print(request.args)
     try:
         player_id: str = request.args.get("player_id").lower()
         tile_id: int = int(request.args.get("tile_id"))

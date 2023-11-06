@@ -1,17 +1,27 @@
-import unittest
+"""
+Description:    Testing suite for the various Tile subclasses.
+Author:         Jordan Bourdeau
+Date:           11/5/23
+"""
 
 from server.game_logic.asset_tile import AssetTile
+from server.game_logic.cards import Card
+from server.game_logic.card_tile import CardTile
 from server.game_logic.constants import JAIL_LOCATION, JAIL_TURNS, GO_MONEY, STARTING_MONEY
+from server.game_logic.deck import Deck
 from server.game_logic.go_to_jail_tile import GoToJailTile
 from server.game_logic.go_tile import GoTile
 from server.game_logic.improvable_tile import ImprovableTile
 from server.game_logic.player import Player
 from server.game_logic.player_updates import BuyUpdate, ImprovementUpdate, PlayerUpdate
 from server.game_logic.railroad_tile import RailroadTile
+from server.game_logic.roll import Roll
 from server.game_logic.tile import Tile
 from server.game_logic.types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus
 from server.game_logic.utility_tile import UtilityTile
 from server.game_logic.tax_tile import TaxTile
+
+import unittest
 
 
 class TileTests(unittest.TestCase):
@@ -218,6 +228,17 @@ class TileTests(unittest.TestCase):
             if id == player.id:
                 player.update(update)
         self.assertEqual(STARTING_MONEY - 200, player.money)
+
+    # TODO: Expand this test once all Card subclasses have been implemented
+    def test_card_tile(self):
+        player1: Player = self.make_player1()
+        player2: Player = self.make_player2()
+        cards: list[Card] = [Card("1"), Card("2"), Card("3"), Card("4")]
+        deck: Deck = Deck(cards)
+        tile: CardTile = CardTile(0, "test", deck, [player1, player2])
+        # Base card classes all return an empty dictionary
+        for player in [player1, player2]:
+            self.assertEqual({}, tile.land(player, Roll(2, 5)))
 
 
 if __name__ == '__main__':
