@@ -4,7 +4,7 @@ Date:           10/18/2023
 Author:         Jordan Bourdeau, Hayden Collins
 """
 
-from .constants import IMPROVEMENT_MAP, RENTS
+from .constants import RENTS
 from .player import Player
 from .tile import Tile
 from .types import AssetGroups, PropertyStatus, RailroadStatus, UtilityStatus

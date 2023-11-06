@@ -4,9 +4,9 @@ Date:           11/4/2023
 Author:         Aidan Bonner
 """
 
-from server.game_logic.tile import Tile
-from server.game_logic.player import Player
-from server.game_logic.player_updates import MoneyUpdate
+from .tile import Tile
+from .player import Player
+from .player_updates import MoneyUpdate
 
 
 class TaxTile(Tile):

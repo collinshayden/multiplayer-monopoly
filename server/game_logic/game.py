@@ -5,15 +5,15 @@ Author:         Jordan Bourdeau, Hayden Collins
 """
 
 from .asset_tile import AssetTile
+from .cards import Card
+from .card_tile import CardTile
+from .constants import (CHANCE_TILES, COMMUNITY_CHEST_TILES, INCOME_TAX, LUXURY_TAX, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS,
+                        MIN_NUM_PLAYERS, NUM_TILES, PLAYER_ID_LENGTH, START_LOCATION)
+from .deck import Deck
 from .improvable_tile import ImprovableTile
 from .go_tile import GoTile
 from .go_to_jail_tile import GoToJailTile
 from .railroad_tile import RailroadTile
-from .tile import Tile
-from .utility_tile import UtilityTile
-from .card import Card
-from .constants import (JAIL_COST, INCOME_TAX, LUXURY_TAX, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS,
-                        NUM_TILES, PLAYER_ID_LENGTH, START_LOCATION)
 from .player import Player
 from .player_updates import (BuyUpdate, ImprovementUpdate, LeaveJailUpdate, MoneyUpdate, MortgageUpdate, PlayerUpdate,
                              RollUpdate)
@@ -36,14 +36,19 @@ class Game:
         Description:    Main class holding all the game state used for managing game logic.
         :returns:       None.
         """
+        self.last_roll: Roll = None
         self.started: bool = False
         self.players: dict[str: Player] = {}
         self.turn_order: list[str] = []
         self.active_player_idx: int = -1
         self.active_player_id: str = ""
+        # Private variables for the list of Player objects
+        # Used in the chance/community chest deck
+        self._players: list[Player] = []
+        # Save initialization until game is started
+        self.chance_deck: Deck = self._make_chance_deck()
+        self.community_chest_deck: Deck = self._make_community_chest_deck()
         self.tiles: list[Tile] = self._make_board()
-        self.community_deck: list[Card] = []
-        self.chance_deck: list[Card] = []
 
     """ Exposed API Methods """
 
@@ -78,6 +83,7 @@ class Game:
         while self.players.get(player_id, None) is not None:
             player_id = "".join(secrets.choice(character_set) for _ in range(PLAYER_ID_LENGTH))
         self.players[player_id] = Player(id=player_id, display_name=display_name)
+        self._players.append(self.players[player_id])
         self.turn_order.append(player_id)
         return player_id
 
@@ -96,12 +102,12 @@ class Game:
         roll: Roll = Roll(random.randint(MIN_DIE, MAX_DIE), random.randint(MIN_DIE, MAX_DIE))
         # Move the player
         player.update(RollUpdate(roll))
+        self.last_roll = roll
         # Get updates from the tile then apply them
         updates: dict[str: PlayerUpdate] = self.tiles[player.location].land(player, roll)
         self._apply_updates(updates)
         return player.status != PlayerStatus.INVALID
 
-    # TODO: Impelement this function and the corresponding test.
     def draw_card(self, player_id: str, card_type: CardType) -> bool:
         """
         Description:        Method for rolling the dice.
@@ -115,21 +121,22 @@ class Game:
         # Card type isn't valid
         if card_type == CardType.INVALID:
             return False
-
-        # TODO: Implement surrounding functionality and uncomment this.
+        player: Player = self.players[player_id]
+        # Must be within board limits
+        if player.location < START_LOCATION or player.location > NUM_TILES:
+            return False
         # Check that the tile they are on is a valid chance/community chest tile
-        tile: Tile = self.tiles[self.players[player_id]]
-        # match card_type:
-        #     case CardType.CHANCE:
-        #         if not isinstance(tile, Chance):
-        #             return False
-        #     case CardType.COMMUNITY_CHEST:
-        #         if not isinstance(tile, CommunityChest):
-        #             return False
-
-        # TODO: Implement a "deck mechanism" here
-
-        return True
+        match card_type:
+            # Valid Chance tile locations
+            case CardType.CHANCE:
+                if player.location not in CHANCE_TILES:
+                    return False
+            case CardType.COMMUNITY_CHEST:
+                if player.location not in COMMUNITY_CHEST_TILES:
+                    return False
+        card_tile: CardTile = self.tiles[player.location]
+        updates: dict[str: PlayerUpdate] = card_tile.land(player, None)
+        return self._apply_updates(updates)
 
     def buy_property(self, player_id: str, tile_id: int) -> bool:
         """
@@ -158,7 +165,6 @@ class Game:
         # Player must have the funds to purchase the tile
         elif tile.price > player.money:
             return False
-        # Player cannot
         player.update(BuyUpdate(tile))
         return True
 
@@ -271,12 +277,12 @@ class Game:
         tiles: list[Tile] = [
             GoTile(),
             ImprovableTile(1, "Mediterranean Avenue", 60, AssetGroups.BROWN),
-            Tile(2, "Community Chest"),
+            CardTile(2, "Community Chest", self.community_chest_deck, self._players),
             ImprovableTile(3, "Baltic Avenue", 60, AssetGroups.BROWN),
             TaxTile(4, "Income Tax", INCOME_TAX),
             RailroadTile(5, "Reading Railroad"),
             ImprovableTile(6, "Oriental Avenue", 100, AssetGroups.LIGHT_BLUE),
-            Tile(7, "Chance"),
+            CardTile(7, "Chance", self.chance_deck, self._players),
             ImprovableTile(8, "Vermont Avenue", 100, AssetGroups.LIGHT_BLUE),
             ImprovableTile(9, "Connecticut Avenue", 120, AssetGroups.LIGHT_BLUE),
             Tile(10, "Jail"),
@@ -286,12 +292,12 @@ class Game:
             ImprovableTile(14, "Virginia Avenue", 160, AssetGroups.PINK),
             RailroadTile(15, "Pennsylvania Railroad"),
             ImprovableTile(16, "St. James Place", 180, AssetGroups.ORANGE),
-            Tile(17, "Community Chest"),
+            CardTile(17, "Community Chest", self.community_chest_deck, self._players),
             ImprovableTile(18, "Tennessee Avenue", 180, AssetGroups.ORANGE),
             ImprovableTile(19, "New York Avenue", 200, AssetGroups.ORANGE),
             Tile(20, "Free Parking"),
             ImprovableTile(21, "Kentucky Avenue", 220, AssetGroups.RED),
-            Tile(22, "Chance"),
+            CardTile(22, "Chance", self.chance_deck, self._players),
             ImprovableTile(23, "Indiana Avenue", 220, AssetGroups.RED),
             ImprovableTile(24, "Illinois Avenue", 240, AssetGroups.RED),
             RailroadTile(25, "B & O Railroad"),
@@ -302,15 +308,60 @@ class Game:
             GoToJailTile(),
             ImprovableTile(31, "Pacific Avenue", 300, AssetGroups.GREEN),
             ImprovableTile(32, "North Carolina Avenue", 300, AssetGroups.GREEN),
-            Tile(33, "Community Chest"),
+            CardTile(33, "Community Chest", self.community_chest_deck, self._players),
             ImprovableTile(34, "Pennsylvania Avenue", 320, AssetGroups.GREEN),
             RailroadTile(35, "Short Line Railroad"),
-            Tile(36, "Chance"),
+            CardTile(36, "Chance", self.chance_deck, self._players),
             ImprovableTile(37, "Park Place", 350, AssetGroups.DARK_BLUE),
             TaxTile(38, "Luxury Tax", LUXURY_TAX),
             ImprovableTile(39, "Boardwalk", 400, AssetGroups.DARK_BLUE),
         ]
         return tiles
+
+    def _make_chance_deck(self) -> Deck:
+        cards = [
+            Card("Advance to Boardwalk"),
+            Card("Advance to Go (Collect $200)"),
+            Card("Advance to Illinois Avenue. If you pass Go, collect $200"),
+            Card("Advance to St. Charles Place. If you pass Go, collect $200"),
+            Card("Advance to the nearest Railroad. If unowned, you may buy it from the Bank. "
+                 "If owned, pay owner twice the rental to which they are otherwise entitled"),
+            Card("Advance to the nearest Railroad. If unowned, you may buy it from the Bank. "
+                 "If owned, pay owner twice the rental to which they are otherwise entitled"),
+            Card("Advance token to nearest Utility. If unowned, you may buy it from the Bank. "
+                 "If owned, throw dice and pay owner a total ten times the amount thrown."),
+            Card("Bank pays you a dividend of $50"),
+            Card("Get Out of Jail Free"),
+            Card("Go Back 3 Spaces"),
+            Card("Go to Jail. Go directly to Jail, do not pass Go, do not collect $200"),
+            Card("Make general repairs on all your property. For each house pay $25. For each hotel pay $100"),
+            Card("Speeding fine $15"),
+            Card("Take a trip to Reading Railroad. If you pass Go, collect $200"),
+            Card("You have been elected Chairman of the Board. Pay each player $50"),
+            Card("Your building loan matures. Collect $150")
+        ]
+        return Deck(cards)
+
+    def _make_community_chest_deck(self) -> Deck:
+        cards = [
+            Card("Advance to Go (Collect $200)"),
+            Card("Bank error in your favor. Collect $200"),
+            Card("Doctor’s fee. Pay $50"),
+            Card("From the sale of stock, you get $50"),
+            Card("Get Out of Jail Free"),
+            Card("Go to Jail. Go directly to jail, do not pass Go, do not collect $200"),
+            Card("Holiday fund matures. Receive $100"),
+            Card("Income tax refund. Collect $20"),
+            Card("It is your birthday. Collect $10 from every player"),
+            Card("Life insurance matures. Collect $100"),
+            Card("Pay hospital fees of $100"),
+            Card("Pay school fees of $50"),
+            Card("Receive $25 consultancy fee"),
+            Card("You are assessed for street repair. $40 per house. $115 per hotel"),
+            Card("You have won second prize in a beauty contest. Collect $10"),
+            Card("You inherit $100")
+        ]
+        return Deck(cards)
 
     def _apply_updates(self, deltas: dict[str, PlayerUpdate]) -> bool:
         """
@@ -382,6 +433,7 @@ class Game:
         :return:        Dictionary of class attributes.
         """
         return {
+            "lastRoll": self.last_roll.to_dict() if self.last_roll is not None else "",
             "started": self.started,
             "activePlayerId": self.active_player_id,
             "players": [player.to_dict() for player in self.players.values()],
