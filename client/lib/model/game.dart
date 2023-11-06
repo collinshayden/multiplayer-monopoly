@@ -36,7 +36,7 @@ class Game {
     lastRoll = Roll()..withJson(json['lastRoll']);
 
     for (Json player in json['players']) {
-      final id = PlayerId(player['id'] as int);
+      final id = PlayerId(player['id'] as String);
       players[id] = Player()..withJson(player);
     }
     for (Json tile in json['tiles']) {
