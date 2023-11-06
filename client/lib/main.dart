@@ -85,15 +85,16 @@ class DiceRollButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
+        // BlocProvider.of<GameCubit>(context).endpointService.reset();
         BlocProvider.of<GameCubit>(context).endpointService.startGame();
         BlocProvider.of<GameCubit>(context).joinGame(displayName: "player1");
         BlocProvider.of<GameCubit>(context).joinGame(displayName: "player2");
-        BlocProvider.of<GameCubit>(context).endpointService.getGameData();
-        PlayerId activePlayerId = BlocProvider.of<GameCubit>(context).game.activePlayerId!;
-        BlocProvider.of<GameCubit>(context).rollDice(playerId: activePlayerId.value);
-        Roll lastRoll = BlocProvider.of<GameCubit>(context).game.lastRoll!;
+        BlocProvider.of<GameCubit>(context).loadRemoteConfig();
+        BlocProvider.of<GameCubit>(context).rollDice();
+        BlocProvider.of<GameCubit>(context).loadRemoteConfig();
+        Roll lastRoll = BlocProvider.of<GameCubit>(context).game.lastRoll;
         print(lastRoll.first);
-        BlocProvider.of<GameCubit>(context).endpointService.reset(activePlayerId.value);
+        // BlocProvider.of<GameCubit>(context).endpointService.reset();
 
         // String active_player_id = 
         

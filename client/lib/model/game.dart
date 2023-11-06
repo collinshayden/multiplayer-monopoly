@@ -36,6 +36,7 @@ class Game {
     tierColors[8] = Color(int.parse(json['tierColors']['8'], radix: 16));
     activePlayerId = json['activePlayerId'] ?? activePlayerId;
     lastRoll = lastRoll..withJson(json['lastRoll']);
+    print(lastRoll);
 
     // Load and update players
     if (json['players'] != null) {

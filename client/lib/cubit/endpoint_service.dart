@@ -16,7 +16,7 @@ class EndpointService {
 
   final http.Client server;
 
-    Future<Json> startGame() async {
+  Future<Json> startGame() async {
     final response = await server.get(
       Uri.parse('$API_URL/start_game'),
     );
@@ -29,6 +29,7 @@ class EndpointService {
       Uri.parse('$API_URL/state'),
     );
     final gameData = jsonDecode(response.body);
+    
     return gameData;
   }
 
@@ -40,9 +41,9 @@ class EndpointService {
     return status;
   }
 
-  Future<Json> rollDice(String playerId) async {
+  Future<Json> rollDice() async {
     final response = await server.get(
-      Uri.parse('$API_URL/roll_dice?player_id=$playerId'),
+      Uri.parse('$API_URL/roll_dice'),
     );
     final status = jsonDecode(response.body);
     return status;
@@ -111,9 +112,9 @@ class EndpointService {
     return status;
   }
 
-  Future<Json> reset(String playerId) async {
+  Future<Json> reset() async {
     final response = await server.get(
-      Uri.parse('$API_URL/reset?player_id=$playerId'),
+      Uri.parse('$API_URL/reset'),
     );
     final status = jsonDecode(response.body);
     return status;
