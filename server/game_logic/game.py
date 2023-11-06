@@ -58,9 +58,10 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            Boolean value if the game is successfully started.
         """
-        if not self._valid_player(player_id, require_active_player=False) or self.started:
-            return False
-        elif MIN_NUM_PLAYERS <= len(self.players) <= MAX_NUM_PLAYERS:
+        # TODO: Uncomment this
+        # if not self._valid_player(player_id, require_active_player=False) or self.started:
+        #     return False
+        if MIN_NUM_PLAYERS <= len(self.players) <= MAX_NUM_PLAYERS:
             self.started = True
             # Shuffle turn order and set active player idx/id
             random.shuffle(self.turn_order)
@@ -96,6 +97,7 @@ class Game:
         # Reject requests when there are not enough players
         if len(self.players) < MIN_NUM_PLAYERS:
             return False
+        # TODO: Uncomment this
         # if not self._valid_player(player_id, require_game_started=True):
         #     return False
         player: Player = self.players[self.active_player_id]
@@ -249,8 +251,9 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            True if the request succeeds. False otherwise.
         """
-        if not self._valid_player(player_id):
-            return False
+        # TODO: Uncomment this
+        # if not self._valid_player(player_id):
+        #     return False
         self._next_player()
         return True
 
@@ -433,7 +436,7 @@ class Game:
         :return:        Dictionary of class attributes.
         """
         return {
-            "lastRoll": self.last_roll.to_dict() if self.last_roll is not None else "",
+            "lastRoll": self.last_roll.to_dict() if self.last_roll is not None else {},
             "started": self.started,
             "activePlayerId": self.active_player_id,
             "players": [player.to_dict() for player in self.players.values()],
