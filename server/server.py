@@ -4,9 +4,9 @@ Date:           10/06/23
 Author:         Jordan Bourdeau
 """
 
-from .game_logic.constants import SECRET_KEY
-from .game_logic.game import Game
-from .game_logic.types import CardType, JailMethod
+from game_logic.constants import SECRET_KEY
+from game_logic.game import Game
+from game_logic.types import CardType, JailMethod
 
 from flask import Flask, jsonify, request
 from random import randint
@@ -40,7 +40,7 @@ def start_game():
     try:
         player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, KeyError) as e:
         player_id: str = ""
     if player_id is None:
         player_id: str = ""
@@ -63,7 +63,7 @@ def register_player():
     try:
         display_name: str = request.args.get("display_name")
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, KeyError) as e:
         return jsonify({"event": "registerPlayer", "registered": False})
     if display_name is None:
         return jsonify({"event": "registerPlayer", "registered": False})
@@ -93,7 +93,7 @@ def roll_dice():
     try:
         player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, KeyError) as e:
         player_id: str = ""
     if player_id is None:
         player_id: str = ""
@@ -127,7 +127,7 @@ def draw_card():
         player_id: str = request.args.get("player_id").lower()
         card_arg: str = request.args.get("card_type").lower()
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, KeyError) as e:
         player_id: str = ""
         card_arg: str = ""
     if player_id is None or card_arg is None:
@@ -169,7 +169,7 @@ def buy_property():
         player_id: str = request.args.get("player_id").lower()
         tile_id: int = int(request.args.get("tile_id"))
     # No query parameters passed in
-    except (AttributeError, TypeError, ValueError) as e:
+    except (AttributeError, KeyError, TypeError, ValueError) as e:
         player_id: str = ""
         tile_id: int = -1
     if player_id is None or tile_id is None:
@@ -203,7 +203,7 @@ def set_improvements():
         tile_id: int = int(request.args.get("tile_id"))
         quantity: int = int(request.args.get("quantity"))
     # No query parameters passed in
-    except (AttributeError, TypeError, ValueError) as e:
+    except (AttributeError, KeyError, TypeError, ValueError) as e:
         player_id: str = ""
         tile_id: int = -1
         quantity: int = 0
@@ -243,7 +243,7 @@ def set_mortgage():
         tile_id: int = int(request.args.get("tile_id"))
         mortgage: bool = True if request.args.get("mortgage").lower() == "true" else False
     # No query parameters passed in or invalid integer value for tile ID
-    except (AttributeError, TypeError, ValueError) as e:
+    except (AttributeError, KeyError, TypeError, ValueError) as e:
         player_id: str = ""
         tile_id: int = -1
         mortgage: bool = False
@@ -279,7 +279,7 @@ def get_out_of_jail():
         player_id: str = request.args.get("player_id").lower()
         method_arg: str = request.args.get("method").lower()
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, KeyError) as e:
         player_id: str = ""
         method_arg: str = ""
     if player_id is None or method_arg is None:
@@ -323,7 +323,7 @@ def end_turn():
     try:
         player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, KeyError) as e:
         player_id: str = ""
     if player_id is None:
         player_id: str = ""
@@ -351,7 +351,7 @@ def reset():
     try:
         player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
-    except AttributeError as e:
+    except (AttributeError, KeyError) as e:
         player_id: str = ""
     if player_id is None:
         player_id: str = ""
