@@ -57,9 +57,9 @@ class GameCubit extends Cubit<GameState> {
     late Json? remoteConfig;
     try {
       remoteConfig = await endpointService.getGameData();
-      
+
       game.withJson(remoteConfig);
-      print(remoteConfig);
+      // print(remoteConfig);
     } catch (e) {
       emit(RemoteConfigFailure());
     }

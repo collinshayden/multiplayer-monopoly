@@ -83,16 +83,20 @@ class DiceRollButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String rollValue = 'None';
     return TextButton(
       onPressed: () {
         // BlocProvider.of<GameCubit>(context).endpointService.reset();
-        BlocProvider.of<GameCubit>(context).endpointService.startGame();
-        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player1");
-        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player2");
+        // BlocProvider.of<GameCubit>(context).joinGame(displayName: "player1");
+        // BlocProvider.of<GameCubit>(context).joinGame(displayName: "player2");
+        // BlocProvider.of<GameCubit>(context).endpointService.startGame();
+
         BlocProvider.of<GameCubit>(context).loadRemoteConfig();
+        BlocProvider.of<GameCubit>(context).rollDice();
         BlocProvider.of<GameCubit>(context).rollDice();
         BlocProvider.of<GameCubit>(context).loadRemoteConfig();
         Roll lastRoll = BlocProvider.of<GameCubit>(context).game.lastRoll;
+        rollValue = '${lastRoll.first}, ${lastRoll.second}';
         print(lastRoll.first);
         // BlocProvider.of<GameCubit>(context).endpointService.reset();
 
@@ -100,7 +104,7 @@ class DiceRollButton extends StatelessWidget {
         
         print('Rolling dice!');
       },
-      child: const Text('Roll Dice!'),
+      child: Text(rollValue),
     );
   }
 }
