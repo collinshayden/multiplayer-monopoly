@@ -59,6 +59,14 @@ class Player:
             asset_values += asset.liquid_value
         return self.money + asset_values
 
+    @property
+    def roll_again(self) -> bool:
+        """
+        Description:    Computed property which sees if the player has a doubles streak and should roll again.
+        :return:        True if the player has a doubles streak, False otherwise.
+        """
+        return self.doubles_streak > 0
+
     def group_share(self, group: AssetGroups) -> list:
         """
         Description:    Method used to retrieve all AssetTile objects from a specific group.

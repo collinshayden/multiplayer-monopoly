@@ -60,24 +60,45 @@ class GameTests(unittest.TestCase):
     def test_roll_dice(self):
         game: Game = Game()
         # Can't roll dice when there is < 2 players or the active player ID is invalid
-        self.assertFalse(game.roll_dice("bogus"))
+        self.assertEqual((False, False), game.roll_dice("bogus"))
+
         # Get a valid ID and verify it still doesn't let them roll the dice
         display_name: str = "player1"
         id: str = game.register_player(display_name)
-        self.assertFalse(game.roll_dice(id))
+        self.assertEqual((False, False), game.roll_dice(id))
 
         # Create a second player and now there are enough to start but the active player ID has not been decided.
         display_name2: str = "player2"
         id2: str = game.register_player(display_name2)
-        self.assertFalse(game.roll_dice(id))
+        self.assertEqual((False, False), game.roll_dice(id))
 
         # Start the game and get the turn order
         game.start_game(id2)
-        turn_order: list[str] = game.turn_order
+        id1, id2 = game.turn_order
         # Can't roll the dice without being the active player
-        self.assertFalse(game.roll_dice(turn_order[1]))
+        self.assertEqual((False, False), game.roll_dice(id2))
+
         # Can roll the dice as the active player
-        self.assertTrue(game.roll_dice(turn_order[0]))
+        player: Player = game.players[id1]
+        self.assertEqual(0, player.doubles_streak)
+        self.assertFalse(player.roll_again)
+        result = game.roll_dice(id1)
+        while not game.last_roll.is_doubles:
+            result = game.roll_dice(id1)
+        self.assertEqual(1, player.doubles_streak)
+        self.assertTrue(player.roll_again)
+
+        # Resets doubles condition
+        game.last_roll = Roll(1, 2)
+        player.doubles_streak = 0
+
+        while not game.last_roll.is_doubles:
+            player.doubles_streak = 2
+            result = game.roll_dice(id1)
+        self.assertEqual((True, False), result)
+        self.assertEqual(0, player.doubles_streak)
+        self.assertFalse(player.roll_again)
+        self.assertTrue(player.in_jail)
 
     # TODO: Expand this test once all Card subclasses are implemented
     def test_draw_card(self):

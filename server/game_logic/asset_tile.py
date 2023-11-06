@@ -71,7 +71,7 @@ class AssetTile(Tile):
         """
         return round(self.mortage_price * 1.1)
 
-    def land(self, player: Player, roll: int = None) -> dict:
+    def land(self, player: Player, roll: int = None):
         """
         Description:    Method which will be overridden in subclasses.
         :param player:  Player landing on the tile.
