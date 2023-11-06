@@ -1,4 +1,7 @@
 import 'package:client/cubit/game_cubit.dart';
+import 'package:client/model/player.dart';
+import 'package:client/model/roll.dart';
+import 'package:client/model/tiles.dart';
 import 'package:client/view/base/board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,17 +36,12 @@ class _MonopolyAppState extends State<MonopolyApp> {
               Board(),
               Center(
                 child: SizedBox.fromSize(
-                  size: const Size(100.0, 50.0),
+                  size: const Size(100.0, 150.0),
                   child: Column(
                     children: [
                       Align(),
-                      TextButton(
-                        onPressed: () {
-                          BlocProvider.of<GameCubit>(context).state;
-                          print('Rolling dice!');
-                        },
-                        child: const Text('Roll Dice!'),
-                      )
+                      DiceRollButton(),
+                      // Roll(first: 1, second: 4).createWidget(),
                     ],
                   ),
                 ),
@@ -76,6 +74,32 @@ class CubitTest extends StatelessWidget {
         }
         return const Text('Loaded local config!');
       },
+    );
+  }
+}
+
+class DiceRollButton extends StatelessWidget {
+  const DiceRollButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        BlocProvider.of<GameCubit>(context).endpointService.startGame();
+        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player1");
+        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player2");
+        BlocProvider.of<GameCubit>(context).endpointService.getGameData();
+        PlayerId activePlayerId = BlocProvider.of<GameCubit>(context).game.activePlayerId!;
+        BlocProvider.of<GameCubit>(context).rollDice(playerId: activePlayerId.value);
+        Roll lastRoll = BlocProvider.of<GameCubit>(context).game.lastRoll!;
+        print(lastRoll.first);
+        BlocProvider.of<GameCubit>(context).endpointService.reset(activePlayerId.value);
+
+        // String active_player_id = 
+        
+        print('Rolling dice!');
+      },
+      child: const Text('Roll Dice!'),
     );
   }
 }
