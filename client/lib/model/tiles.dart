@@ -25,7 +25,7 @@ sealed class Tile {
 
   final int id;
 
-  void withJson(Json json);
+  void withJson(Json? json);
 
   /// This function returns a widget whose configuration depends on fields of
   /// this [Tile].
@@ -58,7 +58,8 @@ class ImprovableTile extends Tile {
   }
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     tier = json['tier'] ?? tier;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
@@ -115,7 +116,8 @@ class RailroadTile extends Tile {
   String? image;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     price = json['price'] ?? price;
@@ -162,7 +164,8 @@ class UtilityTile extends Tile {
   String? image;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     price = json['price'] ?? price;
@@ -207,7 +210,8 @@ class ChanceTile extends Tile {
   int? quarterTurns;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     image = json['image'] ?? image;
@@ -244,7 +248,8 @@ class CommunityChestTile extends Tile {
   int? quarterTurns;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     image = json['image'] ?? image;
@@ -283,7 +288,8 @@ class TaxTile extends Tile {
   int? quarterTurns;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     title = json['title'] ?? title;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     image = json['image'] ?? image;
@@ -330,7 +336,8 @@ class GoTile extends Tile {
   String? arrowImage;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     goImage = json['goImage'] ?? goImage;
@@ -372,7 +379,8 @@ class JailTile extends Tile {
   String? visitingText;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     lowerText = json['lowerText'] ?? lowerText;
@@ -425,7 +433,8 @@ class FreeParkingTile extends Tile {
   String? lowerText;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     lowerText = json['lowerText'] ?? lowerText;
@@ -471,7 +480,8 @@ class GoToJailTile extends Tile {
   String? lowerText;
 
   @override
-  void withJson(Json json) {
+  void withJson(Json? json) {
+    if (json == null) return;
     quarterTurns = json['quarterTurns'] ?? quarterTurns;
     upperText = json['upperText'] ?? upperText;
     lowerText = json['lowerText'] ?? lowerText;

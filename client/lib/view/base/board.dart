@@ -18,12 +18,13 @@ class Board extends StatelessWidget {
         child: AspectRatio(
           aspectRatio: 1 / 1,
           child: Transform.rotate(
-            // angle: pi / 2,
             angle: 0,
-            child: Stack(children: [
-              Container(color: Colors.red[100]),
-              CustomLayout(),
-            ]),
+            child: Stack(
+              children: [
+                Container(color: Colors.red[100]),
+                CustomLayout(),
+              ],
+            ),
           ),
         ),
       ),
@@ -45,6 +46,51 @@ Color randomColor() {
   final blue = 150;
 
   return Color.fromARGB(255, red, green, blue);
+}
+
+class CustomLayout extends StatelessWidget {
+  /// Constructor populates tiles with local board configuration
+  CustomLayout({super.key});
+
+  static final List<int> _ids = range(40);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(
+      builder: (context, state) {
+        switch (state) {
+          case LocalConfigLoading():
+            return const CircularProgressIndicator();
+          case LocalConfigFailure():
+            return const Placeholder(
+              child: Text('Failed to load local configuration!'),
+            );
+          case LocalConfigSuccess():
+            return _buildBoard(context, state as LocalConfigSuccess);
+          case _:
+            return const Placeholder(child: Text('Invalid state.'));
+        }
+      },
+    );
+  }
+
+  Widget _buildBoard(BuildContext context, LocalConfigSuccess state) {
+    return CustomMultiChildLayout(
+      delegate: _CustomLayoutDelegate(ids: _ids),
+      children: _buildLayoutChildren(context, state),
+    );
+  }
+
+  List<Widget> _buildLayoutChildren(
+      BuildContext context, LocalConfigSuccess state) {
+    // print('Test!');
+    final List<Widget> children = [];
+    for (var tile in state.game.tiles.entries) {
+      children
+          .add(LayoutId(id: tile.key as int, child: tile.value.createWidget()));
+    }
+    return children;
+  }
 }
 
 /// Lays out the children in a cascade, where the top corner of the next child
@@ -127,111 +173,4 @@ class _CustomLayoutDelegate extends MultiChildLayoutDelegate {
   // automatically cause a relayout, like any other widget.
   @override
   bool shouldRelayout(_CustomLayoutDelegate oldDelegate) => true;
-}
-
-class CustomLayout extends StatelessWidget {
-  // 1final Map<int, Widget> tiles = {};
-
-  /// Constructor populates tiles with local board configuration
-  CustomLayout({super.key}) {
-    // tiles[0] = CornerTile(id: 0, title: "Go", quarterTurns: 0);
-    // for (int id = 1; id < 10; id++) {
-    //   tiles[id] = ImprovableTile(
-    //       id: id,
-    //       color: Colors.red,
-    //       title: "id: $id",
-    //       price: id * 15,
-    //       quarterTurns: 1);
-    // }
-    // tiles[10] = CornerTile(id: 10, title: "Jail", quarterTurns: 0);
-    // for (int id = 11; id < 20; id++) {
-    //   tiles[id] = ImprovableTile(
-    //       id: id,
-    //       color: Colors.red,
-    //       title: "id: $id",
-    //       price: id * 15,
-    //       quarterTurns: 2);
-    // }
-    // tiles[20] = CornerTile(id: 20, title: "Free Parking", quarterTurns: 0);
-    // for (int id = 21; id < 30; id++) {
-    //   tiles[id] = ImprovableTile(
-    //       id: id,
-    //       color: Colors.red,
-    //       title: "id: $id",
-    //       price: id * 15,
-    //       quarterTurns: 3);
-    // }
-    // tiles[30] = CornerTile(id: 30, title: "Go to Jail", quarterTurns: 0);
-    // for (int id = 31; id < 40; id++) {
-    //   tiles[id] = ImprovableTile(
-    //       id: id,
-    //       color: Colors.red,
-    //       title: "id: $id",
-    //       price: id * 15,
-    //       quarterTurns: 0);
-    // }
-  }
-
-  static final List<int> _ids = range(40);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder(
-      builder: (context, state) {
-        switch (state) {
-          case LocalConfigLoading:
-            return const CircularProgressIndicator();
-          case LocalConfigFailure:
-            return const Placeholder(
-              child: Text('Failed to load local configuration!'),
-            );
-          case LocalConfigSuccess:
-            return _buildBoard(context, state as LocalConfigSuccess);
-        }
-        return Placeholder();
-      },
-    );
-  }
-
-  Widget _buildBoard(BuildContext context, LocalConfigSuccess state) {
-    List<Widget> tiles = _buildLayoutChildren(context, state);
-    return CustomMultiChildLayout(
-      delegate: _CustomLayoutDelegate(ids: _ids),
-      children: <Widget>[
-        // Create all of the colored boxes in the colors map.
-        for (var id in _ids)
-          // The "id" can be any Object, not just a String.
-          LayoutId(
-            id: id,
-            child: GestureDetector(
-              onTap: () => print('Tapped Tile $id'),
-              // child: Transform.rotate(angle: tiles[id]!.angle, child: tiles[id]),
-              child: tiles[id],
-            ),
-          ),
-      ],
-    );
-  }
-
-  List<Widget> _buildLayoutChildren(
-      BuildContext context, LocalConfigSuccess state) {
-    final List<Widget> children = [];
-    for (var tile in state.game.tiles.values) {
-      children.add(tile.createWidget());
-    }
-    return children;
-  }
-}
-
-class PlaceholderTile extends StatelessWidget {
-  final double angle;
-  const PlaceholderTile({super.key, required this.angle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.rotate(
-      angle: angle,
-      child: Placeholder(),
-    );
-  }
 }
