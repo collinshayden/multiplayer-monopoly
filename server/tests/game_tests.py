@@ -4,11 +4,12 @@ Author:         Jordan Bourdeau
 Date:           10/24/23
 """
 
-from server.game_logic.constants import MAX_NUM_PLAYERS, PLAYER_ID_LENGTH, STARTING_MONEY
+from server.game_logic.constants import (CHANCE_TILES, COMMUNITY_CHEST_TILES, MAX_NUM_PLAYERS, NUM_CHANCE_CARDS,
+                                         NUM_COMMUNITY_CHEST_CARDS, PLAYER_ID_LENGTH, STARTING_MONEY)
 from server.game_logic.game import Game
 from server.game_logic.player_updates import *
 from server.game_logic.tile import Tile
-from server.game_logic.types import PlayerStatus
+from server.game_logic.types import CardType, PlayerStatus
 
 import unittest
 
@@ -16,9 +17,6 @@ import unittest
 class GameTests(unittest.TestCase):
 
     """ Test Exposed API Methods """
-
-
-
     def test_start_game(self):
         game: Game = Game()
         # Can't start game with no players and without valid player ID
@@ -52,6 +50,7 @@ class GameTests(unittest.TestCase):
             self.assertEqual(i, len(game.players))
             self.assertEqual(display_name, game.players[id].display_name)
             self.assertEqual(id, game.players[id].id)
+            self.assertEqual(i, len(game._players))
         # Can't register a player beyond the maximum
         display_name = f"test{MAX_NUM_PLAYERS + 1}"
         id = game.register_player(display_name)
@@ -80,8 +79,53 @@ class GameTests(unittest.TestCase):
         # Can roll the dice as the active player
         self.assertTrue(game.roll_dice(turn_order[0]))
 
+    # TODO: Expand this test once all Card subclasses are implemented
     def test_draw_card(self):
         game: Game = Game()
+        id1: str = game.register_player("player1")
+        id2: str = game.register_player("player2")
+        game.start_game(id1)
+        id1, id2 = game.turn_order
+        self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
+        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS, len(game.community_chest_deck.stack))
+        # Can't draw a card since they aren't on the correct tile type
+        self.assertFalse(game.draw_card(id1, CardType.CHANCE))
+        self.assertFalse(game.draw_card(id1, CardType.COMMUNITY_CHEST))
+        self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
+        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS, len(game.community_chest_deck.stack))
+
+        # Move player to community chest tile and verify they can draw a community chest card
+        player: Player = game.players[id1]
+        player.location = COMMUNITY_CHEST_TILES[0]
+        self.assertFalse(game.draw_card(id1, CardType.CHANCE))
+        self.assertTrue(game.draw_card(id1, CardType.COMMUNITY_CHEST))
+        self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
+        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
+
+        # Move player to chance tile and verify they can draw a chance card
+        player.location = CHANCE_TILES[0]
+        self.assertTrue(game.draw_card(id1, CardType.CHANCE))
+        self.assertFalse(game.draw_card(id1, CardType.COMMUNITY_CHEST))
+        self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
+        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
+
+        # Draw the rest of the cards and verify the deck gets refilled at the final draw
+        for _ in range(NUM_CHANCE_CARDS):
+            self.assertTrue(game.draw_card(id1, CardType.CHANCE))
+        for card in game.chance_deck.discard:
+            self.assertFalse(card.in_use)
+        # Deck is refilled since cards are deactivated as they are drawn
+        self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
+        for card in game.chance_deck.stack:
+            self.assertTrue(card.in_use)
+
+        # Verify non-active player cannot draw a card
+        player2: Player = game.players[id2]
+        player2.location = COMMUNITY_CHEST_TILES[0]
+        self.assertFalse(game.draw_card(id2, CardType.CHANCE))
+        self.assertFalse(game.draw_card(id2, CardType.COMMUNITY_CHEST))
+        self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
+        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
 
     def test_buy_property(self):
         game: Game = Game()
