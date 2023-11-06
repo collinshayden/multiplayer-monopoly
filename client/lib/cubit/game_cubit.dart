@@ -1,3 +1,4 @@
+import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:client/model/game.dart';
@@ -12,7 +13,6 @@ class GameCubit extends Cubit<GameState> {
 
   // Initialise game
   final game = Game();
-  
 
   // Initialise services
   final fileService = FileService();
@@ -26,6 +26,7 @@ class GameCubit extends Cubit<GameState> {
     try {
       localTileConfig = await fileService.getLocalTileConfig();
       game.withJson(localTileConfig);
+      print(localTileConfig);
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
@@ -42,7 +43,27 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
+  void rollDice({required String playerId}) async {
+    emit(ActionRequesting());
+    try {
+      endpointService.rollDice(playerId);
+    } catch (e) {
+      emit(ActionRejected());
+    }
+  }
+
   void loadRemoteConfig() async {
-    
+    // Loaing local config
+    emit(RemoteConfigLoading());
+    late Json? remoteConfig;
+    try {
+      remoteConfig = await endpointService.getGameData();
+      game.withJson(remoteConfig);
+      print(remoteConfig);
+    } catch (e) {
+      emit(RemoteConfigFailure());
+    }
+
+    emit(RemoteConfigSuccess());
   }
 }
