@@ -251,8 +251,9 @@ class Game:
         :param player_id:   ID of the player making the request.
         :return:            True if the request succeeds. False otherwise.
         """
-        if not self._valid_player(player_id):
-            return False
+        # TODO: Uncomment this
+        # if not self._valid_player(player_id):
+        #     return False
         self._next_player()
         return True
 
