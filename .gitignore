@@ -3,3 +3,4 @@ api/
 .venv/
 __pycache__/
 .pytest*
+.DS_STORE
