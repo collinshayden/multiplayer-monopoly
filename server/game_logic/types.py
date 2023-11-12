@@ -98,3 +98,31 @@ class AssetGroups(Enum):
     YELLOW = 7
     GREEN = 8
     DARK_BLUE = 9
+
+
+class EventTypes(Enum):
+    """
+    Description:    Enumeration of the Events that can occur in the game
+    """
+    START_SESSION = 0
+    START_PLAYER_QUEUE = 1
+    PLAYER_JOIN = 2
+    READY_PROMPT = 3
+    PLAYER_IS_READY = 4
+    START_GAME = 5
+    START_NONJAIL_TURN = 6
+    SHOW_ROLL = 7
+    SHOW_GO_TO_JAIL = 8
+    MOVE_PLAYER = 9
+    PROMPT_PURCHASE = 10
+    PURCHASE_EVENT = 11
+    CARD_EVENT = 12
+    SHOW_IMPROVEMENT_CHANGE = 13
+    SHOW_MORTGAGE_CHANGE = 14
+    START_JAIL_TURN = 15
+    SHOW_FREE_FROM_JAIL = 16
+    PROMPT_END_TURN = 17
+    SHOW_PLAYER_BANKRUPTCY = 18
+    SHOW_PLAYER_WIN = 19
+    SHOW_AFTERMATH = 20
+
