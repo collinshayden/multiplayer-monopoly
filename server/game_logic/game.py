@@ -242,6 +242,11 @@ class Game:
         elif tile.is_mortgaged == mortgage:
             return False
         player.update(MortgageUpdate(tile, mortgage))
+        mortgage_event: Event = Event({
+            "name": "showMortgageChange",
+            "mortgaged": tile.is_mortgaged
+        })
+        self._enqueue_event(mortgage_event, EventType.UPDATE)
         return True
 
     def get_out_of_jail(self, player_id: str, method: JailMethod) -> bool:

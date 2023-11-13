@@ -312,13 +312,19 @@ class GameTests(unittest.TestCase):
         self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, game.tiles[16].status)
         self.assertEqual(money, player.money)
 
-
     def test_mortgage(self):
         game: Game = Game()
         id1: str = game.register_player("player1")
         id2: str = game.register_player("player2")
         game.start_game(id1)
         id1, id2 = game.turn_order
+        ids: list[str] = [id1, id2]
+
+        # Clear out event queue
+        for id in ids:
+            game.event_queue[id] = []
+        game.event_history = []
+
         # Shouldn't allow the non-active player to go
         self.assertFalse(game.mortgage(id2, 1, True))
         # Don't allow for invalid tile IDs
@@ -327,6 +333,10 @@ class GameTests(unittest.TestCase):
             self.assertFalse(game.mortgage(id1, tile_id, True))
         # Don't allow non-property tiles to be mortgaged
         self.assertFalse(game.mortgage(id1, 0, True))
+
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # Buy Boardwalk
         player1: Player = game.players[id1]
@@ -337,6 +347,9 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # This will do nothing since property is not mortgaged
         game.mortgage(id1, 39, False)
@@ -344,6 +357,9 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # This will mortgage the property
         game.mortgage(id1, 39, True)
@@ -352,6 +368,16 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertTrue(boardwalk.is_mortgaged)
+        # Event gets added to the queue
+        for id in ids:
+            self.assertEqual(1, len(game.event_queue[id]))
+            event: Event = game.event_queue[id][-1]
+            self.assertEqual("showMortgageChange", event.parameters["name"])
+            self.assertEqual(True, event.parameters["mortgaged"])
+        self.assertEqual(1, len(game.event_history))
+        event: Event = game.event_history[-1]
+        self.assertEqual("showMortgageChange", event.parameters["name"])
+        self.assertEqual(True, event.parameters["mortgaged"])
 
         # This will unmortgage the property at 10% interest
         game.mortgage(id1, 39, False)
@@ -361,9 +387,23 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        # Event gets added to the queue
+        for id in ids:
+            self.assertEqual(2, len(game.event_queue[id]))
+            event: Event = game.event_queue[id][-1]
+            self.assertEqual("showMortgageChange", event.parameters["name"])
+            self.assertEqual(False, event.parameters["mortgaged"])
+        self.assertEqual(2, len(game.event_history))
+        event: Event = game.event_history[-1]
+        self.assertEqual("showMortgageChange", event.parameters["name"])
+        self.assertEqual(False, event.parameters["mortgaged"])
 
         # Transition to next player
         game.end_turn(id1)
+        # Clear out event queue
+        for id in ids:
+            game.event_queue[id] = []
+        game.event_history = []
         baltic: ImprovableTile = game.tiles[3]
         player2: Player = game.players[id2]
         player2.update(BuyUpdate(baltic))
@@ -378,6 +418,9 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
     def test_get_out_of_jail(self):
         game: Game = Game()
@@ -462,6 +505,7 @@ class GameTests(unittest.TestCase):
         self.assertEqual(game.active_player_id, id1)
 
         # Clear event queues
+        game.event_history = []
         for id in ids:
             game.event_queue[id] = []
 
@@ -470,6 +514,7 @@ class GameTests(unittest.TestCase):
         self.assertEqual(game.active_player_id, id1)
         for id in ids:
             self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # Progresses the next player
         game.end_turn(id1)
@@ -480,6 +525,8 @@ class GameTests(unittest.TestCase):
             self.assertEqual(2, len(game.event_queue[id]))  # Two events for the player ending the turn
             self.assertEqual("endTurn", game.event_queue[id][0].parameters["name"])
             self.assertEqual("startTurn", game.event_queue[id][1].parameters["name"])
+        self.assertEqual(2, len(game.event_history))
+
 
         # Verify next player has 1 additional event for the promptRoll
         self.assertEqual(3, len(game.event_queue[id2]))  # Two events for the player ending the turn
