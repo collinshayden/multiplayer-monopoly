@@ -261,7 +261,12 @@ class Game:
         elif method == JailMethod.CARD and player.jail_cards == 0:
             return False
         player.update(LeaveJailUpdate(method))
-        return True
+        if not player.in_jail:
+            # Create an event showing the player has left jail
+            leave_jail: Event = Event({"name": "showFreeFromJail"})
+            self._enqueue_event(leave_jail, EventType.UPDATE)
+            return True
+        return False
 
     def end_turn(self, player_id: str) -> bool:
         """
@@ -271,9 +276,15 @@ class Game:
         """
         if not self._valid_player(player_id):
             return False
-        current_player_id: str = self.active_player_id
+        end_turn: Event = Event({"name": "endTurn"})
+        self._enqueue_event(end_turn, EventType.UPDATE)
+        # Increment to the next player
         self._next_player()
-        next_player_id: str = self.active_player_id
+        # Enqueue new events informing other players of a turn start and prompting player to roll the dice.
+        start_turn: Event = Event({"name": "startTurn"})
+        prompt_roll: Event = Event({"name": "promptRoll"})
+        self._enqueue_event(start_turn, EventType.UPDATE)
+        self._enqueue_event(prompt_roll, EventType.PROMPT)
         return True
 
     def reset(self, player_id: str) -> bool:

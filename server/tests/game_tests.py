@@ -385,18 +385,26 @@ class GameTests(unittest.TestCase):
         id2: str = game.register_player("player2")
         game.start_game(id1)
         id1, id2 = game.turn_order
+        ids: list[str] = [id1, id2]
         player: Player = game.players[id1]
+        for id in ids:
+            game.event_queue[id] = []
+
         # Verify pre-conditions
         self.assertEqual(STARTING_MONEY, player.money)
         self.assertEqual(START_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+
         # Send player to jail and verify it worked
         player.update(GoToJailUpdate())
         self.assertEqual(STARTING_MONEY, player.money)
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(JAIL_TURNS, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+
         # Test get out of jail method with a card
         # Nothing should happen since they have no cards
         game.get_out_of_jail(id1, JailMethod.CARD)
@@ -404,6 +412,9 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(JAIL_TURNS, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        self.assertEqual(0, len(game.event_queue[id1]))
+        self.assertEqual(0, len(game.event_queue[id2]))
+
         # Give them a get out of jail card and try again
         player.jail_cards += 1
         game.get_out_of_jail(id1, JailMethod.CARD)
@@ -411,6 +422,10 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertEqual("showFreeFromJail", game.event_queue[id][0].parameters["name"])
+
         # Send them back to jail then get them out using money
         player.update(GoToJailUpdate())
         game.get_out_of_jail(id1, JailMethod.MONEY)
@@ -418,6 +433,11 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(2, len(game.event_queue[id]))
+            for i in range(2):
+                self.assertEqual("showFreeFromJail", game.event_queue[id][i].parameters["name"])
+
         # Send them back to jail then get them out using 'doubles'
         # Note: roll_dice handles DOUBLES condition.
         player.update(GoToJailUpdate())
@@ -426,6 +446,10 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(3, len(game.event_queue[id]))
+            for i in range(3):
+                self.assertEqual("showFreeFromJail", game.event_queue[id][i].parameters["name"])
 
     def test_end_turn(self):
         game: Game = Game()
@@ -434,18 +458,47 @@ class GameTests(unittest.TestCase):
         id3: str = game.register_player("player3")
         game.start_game(id1)
         id1, id2, id3 = game.turn_order
+        ids: list[str] = [id1, id2, id3]
         self.assertEqual(game.active_player_id, id1)
+
+        # Clear event queues
+        for id in ids:
+            game.event_queue[id] = []
+
         # Nothing should happen since they aren't the active player
         game.end_turn(id2)
         self.assertEqual(game.active_player_id, id1)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+
         # Progresses the next player
         game.end_turn(id1)
         self.assertEqual(game.active_player_id, id2)
-        # Does nothing since they aren't the active playerR
+
+        # Ensure the endTurn and startTurn events are correctly enqueued
+        for id in [id1, id3]:
+            self.assertEqual(2, len(game.event_queue[id]))  # Two events for the player ending the turn
+            self.assertEqual("endTurn", game.event_queue[id][0].parameters["name"])
+            self.assertEqual("startTurn", game.event_queue[id][1].parameters["name"])
+
+        # Verify next player has 1 additional event for the promptRoll
+        self.assertEqual(3, len(game.event_queue[id2]))  # Two events for the player ending the turn
+        self.assertEqual("endTurn", game.event_queue[id2][0].parameters["name"])
+        self.assertEqual("startTurn", game.event_queue[id2][1].parameters["name"])
+        self.assertEqual("promptRoll", game.event_queue[id2][2].parameters["name"])
+
+        # Does nothing since they aren't the active player
         game.end_turn(id1)
         self.assertEqual(game.active_player_id, id2)
+
+        # Ensure no additional events are enqueued
+        self.assertEqual(2, len(game.event_queue[id1]))
+        self.assertEqual(3, len(game.event_queue[id2]))
+        self.assertEqual(2, len(game.event_queue[id3]))
+
         game.end_turn(id2)
         self.assertEqual(game.active_player_id, id3)
+
         # Make sure it wraps back around properly
         game.end_turn(id3)
         self.assertEqual(game.active_player_id, id1)
