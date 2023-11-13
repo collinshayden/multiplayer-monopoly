@@ -37,8 +37,8 @@ class Game:
         Description:    Main class holding all the game state used for managing game logic.
         :returns:       None.
         """
-        self.last_roll: Roll = None
         self.started: bool = False
+        # Dictionary mapping player IDs to Player objects.
         self.players: dict[str: Player] = {}
         self.turn_order: list[str] = []
         self.active_player_idx: int = -1
@@ -50,7 +50,6 @@ class Game:
         self.chance_deck: Deck = self._make_chance_deck()
         self.community_chest_deck: Deck = self._make_community_chest_deck()
         self.tiles: list[Tile] = self._make_board()
-
         # Variables to keep track of events that each client needs to receive
         # Maps player ID to a list of events in the order which the events were received
         self.event_queue: dict[str: list[Event]] = {}
@@ -73,6 +72,13 @@ class Game:
             random.shuffle(self.turn_order)
             self.active_player_idx = 0
             self.active_player_id = self.turn_order[0]
+            # Enqueue events to prompt client
+            start_game: Event = Event({"name": "startGame"})
+            start_turn: Event = Event({"name": "startTurn"})
+            prompt_roll: Event = Event({"name": "promptRoll"})
+            self._enqueue_event(start_game, EventType.UPDATE)
+            self._enqueue_event(start_turn, EventType.UPDATE)
+            self._enqueue_event(prompt_roll, EventType.PROMPT)
             return True
         return False
 
@@ -92,6 +98,13 @@ class Game:
         self.players[player_id] = Player(id=player_id, display_name=display_name)
         self._players.append(self.players[player_id])
         self.turn_order.append(player_id)
+
+        # Create a list in the event queue for the player and add some events
+        self.event_queue[player_id] = []
+        player_join: Event = Event({"name": "playerJoin"})
+        ready_prompt: Event = Event({"name": "startGamePrompt"})
+        self._enqueue_event(player_join, EventType.UPDATE)
+        self._enqueue_event(ready_prompt, target=player_id)
         return player_id
 
     def roll_dice(self, player_id: str) -> tuple[bool, bool]:
@@ -244,7 +257,7 @@ class Game:
         # If the player is not in jail, return False
         if not player.in_jail:
             return False
-        # If the method is CARD but the player has no get out of jail cards return Fasle
+        # If the method is CARD but the player has no get out of jail cards return False
         elif method == JailMethod.CARD and player.jail_cards == 0:
             return False
         player.update(LeaveJailUpdate(method))
@@ -258,7 +271,9 @@ class Game:
         """
         if not self._valid_player(player_id):
             return False
+        current_player_id: str = self.active_player_id
         self._next_player()
+        next_player_id: str = self.active_player_id
         return True
 
     def reset(self, player_id: str) -> bool:
@@ -274,15 +289,19 @@ class Game:
 
     """ Private Helper Methods """
 
-    def _enqueue_event(self, event: Event, event_type: EventType) -> None:
+    def _enqueue_event(self, event: Event, event_type: EventType = EventType.UPDATE, target: str = None) -> None:
         """
         Description:        Method used to enqueue an Event object into the event queue accordingly.
         :param event:       The Event object to be enqueued.
         :param event_type:  The enumeration for what type of event it is.
+        :param target:      Specific player ID to enqueue an event to. Will ignore event_type if selected.
         :return:            None.
         """
         # Event must have a name in its parameters
         if event.parameters.get("name") is None:
+            return
+        if target is not None:
+            self.event_queue[target].append(event)
             return
         # Iterable for locations to enqueue an event
         targets: list[list[Event]] = []

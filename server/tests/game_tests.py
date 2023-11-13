@@ -23,7 +23,6 @@ class GameTests(unittest.TestCase):
         # Can't start game with no players and without valid player ID
         self.assertFalse(game.start_game(""))
         id1: str = game.register_player("test1")
-        # TODO: Verify there is a "startSession" event in the first player's event queue
 
         # Valid id but not enough players
         self.assertFalse(game.start_game(id1))
@@ -34,14 +33,21 @@ class GameTests(unittest.TestCase):
         # Valid start
         self.assertTrue(game.start_game(id1))
 
+        # Verify events are enqueued as expected
+        # 2 from the UPDATE events when each player joined and then 2 from startGame + startTurn
+        self.assertEqual(4, len(game.event_history))
+        event_names: list[str] = ["playerJoin", "playerJoin", "startGame", "startTurn"]
+        for event, name in zip(game.event_history, event_names):
+            self.assertEqual(event.parameters["name"], name)
+        id1, id2 = game.turn_order
+        # Verify the active player's last two events are startTurn and promptRoll
+        last_2: list[Event] = game.event_queue[id1][-2:]
+        self.assertEqual(["startTurn", "promptRoll"], [event.parameters["name"] for event in last_2])
+
         # Verify it creates a turn order with the 2 ids and sets active player id and idx
         self.assertEqual(2, len(game.turn_order))
         self.assertEqual(0, game.active_player_idx)
         self.assertEqual(game.turn_order[0], game.active_player_id)
-
-        # TODO: Verify there is a "startGame" event in each player's event queue
-
-        # TODO: Verify there is a "startTurn" event in the active player's event queue
 
         # Can't start game again while it is still running
         self.assertFalse(game.start_game(id1))
@@ -59,6 +65,17 @@ class GameTests(unittest.TestCase):
             self.assertEqual(display_name, game.players[id].display_name)
             self.assertEqual(id, game.players[id].id)
             self.assertEqual(i, len(game._players))
+            # Verify new player got a "startGamePrompt" event
+            self.assertEqual(2, len(game.event_queue[id]))
+            self.assertEqual("playerJoin", game.event_queue[id][0].parameters["name"])
+            self.assertEqual("startGamePrompt", game.event_queue[id][1].parameters["name"])
+
+            # For each new player, verify the event queue was updated accordingly for existing ones
+            for n in range(i):
+                old_id: str = list(game.players.keys())[n]
+                # 2 events from when they were created, and then 1 more for every player after
+                self.assertEqual(2 + (i - n - 1), len(game.event_queue[old_id]))
+
         # Can't register a player beyond the maximum
         display_name = f"test{MAX_NUM_PLAYERS + 1}"
         id = game.register_player(display_name)
@@ -513,7 +530,13 @@ class GameTests(unittest.TestCase):
         expected_order = [event1, event2]
         for id in game.turn_order:
             self.assertEqual(expected_order, game.event_queue[id])
+            game.event_queue[id] = []
 
+        # Test enqueueing an event with a specific target player
+        target_event = Event({"name": "targetEvent"})
+        game._enqueue_event(target_event, EventType.STATUS, target="player2")
+        self.assertEqual(1, len(game.event_queue["player2"]))
+        self.assertIs(target_event, game.event_queue["player2"][0])
 
     def test_apply_updates(self):
         game: Game = Game()
