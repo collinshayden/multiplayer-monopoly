@@ -16,12 +16,12 @@ class EndpointService {
 
   final http.Client server;
 
-    Future<Json> startGame() async {
-    final response = await server.get(
+  void startGame() async {
+    server.get(
       Uri.parse('$API_URL/start_game'),
     );
-    final status = jsonDecode(response.body);
-    return status;
+    // final status = jsonDecode(response.body);
+    // return status;
   }
 
   Future<Json> getGameData() async {

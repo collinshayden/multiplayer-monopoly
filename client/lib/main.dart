@@ -40,12 +40,14 @@ class _MonopolyAppState extends State<MonopolyApp> {
                   child: Column(
                     children: [
                       Align(),
-                      DiceRollButton(),
                       // Roll(first: 1, second: 4).createWidget(),
                     ],
                   ),
                 ),
               ),
+              // TODO admin buttons will go here
+              Spacer(),
+              Center(child: AdminButtons()),
             ],
           ),
         ),
@@ -78,30 +80,57 @@ class CubitTest extends StatelessWidget {
   }
 }
 
-class DiceRollButton extends StatelessWidget {
-  const DiceRollButton({super.key});
+class AdminButtons extends StatelessWidget {
+  const AdminButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        BlocProvider.of<GameCubit>(context).endpointService.reset();
-
-        BlocProvider.of<GameCubit>(context).endpointService.startGame();
-        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player1");
-        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player2");
-        BlocProvider.of<GameCubit>(context).loadRemoteConfig();
-        // PlayerId activePlayerId = BlocProvider.of<GameCubit>(context).game.activePlayerId!;
-        BlocProvider.of<GameCubit>(context).rollDice();
-        Roll lastRoll = BlocProvider.of<GameCubit>(context).game.lastRoll;
-        print(lastRoll.first);
-        print(lastRoll.second);
-
-        // String active_player_id = 
-        
-        print('Rolling dice!');
+    return BlocBuilder<GameCubit, GameState>(
+      builder: (context, state) {
+        return Row(
+          children: [
+            TextButton(
+                onPressed: () {
+                  BlocProvider.of<GameCubit>(context)
+                      .endpointService
+                      .reset("admin");
+                },
+                child: Text('Reset')),
+            TextButton(
+                onPressed: () {
+                  BlocProvider.of<GameCubit>(context)
+                      .joinGame(displayName: "testUser");
+                },
+                child: Text('Join')),
+            TextButton(
+                onPressed: () {
+                  BlocProvider.of<GameCubit>(context)
+                      .endpointService
+                      .startGame();
+                },
+                child: Text('Start Game')),
+                TextButton(
+                onPressed: () {
+                  BlocProvider.of<GameCubit>(context)
+                      .loadRemoteConfig();
+                },
+                child: Text('Update')),
+                
+          ],
+        );
+        // if (state is GameInitial) {
+        //   return TextButton(
+        //     onPressed: () {
+        //       BlocProvider.of<GameCubit>(context).loadLocalConfig();
+        //     },
+        //     child: Text('Load local config'),
+        //   );
+        // }
+        // if (state is LocalConfigLoading) {
+        //   return const CircularProgressIndicator();
+        // }
+        // return const Text('Loaded local config!');
       },
-      child: const Text('Roll Dice!'),
     );
   }
 }
