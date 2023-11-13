@@ -7,12 +7,25 @@ Date:           10/24/23
 from enum import Enum, IntEnum
 
 
+class EventType(Enum):
+    """
+    Description:    Enumeration for the types of possible events. Will send certain events to all
+                    player queues (ex. INFORMATION) and others to only select players (ex. PROMPT).
+    STATUS:         Event type for something all players should see (ex. showRoll).
+    PROMPT:         Event type which expects a prompt that only the active player should see.
+    UPDATE:         Event type for an event all players should see, but should also be recorded in the history.
+    """
+    STATUS = 0
+    PROMPT = 1
+    UPDATE = 2
+
+
 class CardType(Enum):
     """
     Description:     Enumeration for potential card types.
     CHANCE:          Chance card.
     COMMUNITY_CHEST: Community chest card.
-    INVALID:        Undefined state. Should never be reached.
+    INVALID:         Undefined state. Should never be reached.
     """
     CHANCE = 0
     COMMUNITY_CHEST = 1
@@ -98,31 +111,4 @@ class AssetGroups(Enum):
     YELLOW = 7
     GREEN = 8
     DARK_BLUE = 9
-
-
-class EventTypes(Enum):
-    """
-    Description:    Enumeration of the Events that can occur in the game
-    """
-    START_SESSION = 0
-    START_PLAYER_QUEUE = 1
-    PLAYER_JOIN = 2
-    READY_PROMPT = 3
-    PLAYER_IS_READY = 4
-    START_GAME = 5
-    START_NONJAIL_TURN = 6
-    SHOW_ROLL = 7
-    SHOW_GO_TO_JAIL = 8
-    MOVE_PLAYER = 9
-    PROMPT_PURCHASE = 10
-    PURCHASE_EVENT = 11
-    CARD_EVENT = 12
-    SHOW_IMPROVEMENT_CHANGE = 13
-    SHOW_MORTGAGE_CHANGE = 14
-    START_JAIL_TURN = 15
-    SHOW_FREE_FROM_JAIL = 16
-    PROMPT_END_TURN = 17
-    SHOW_PLAYER_BANKRUPTCY = 18
-    SHOW_PLAYER_WIN = 19
-    SHOW_AFTERMATH = 20
 

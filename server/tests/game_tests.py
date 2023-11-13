@@ -6,10 +6,11 @@ Date:           10/24/23
 
 from server.game_logic.constants import (CHANCE_TILES, COMMUNITY_CHEST_TILES, MAX_NUM_PLAYERS, NUM_CHANCE_CARDS,
                                          NUM_COMMUNITY_CHEST_CARDS, PLAYER_ID_LENGTH, STARTING_MONEY)
+from server.game_logic.event import Event
 from server.game_logic.game import Game
 from server.game_logic.player_updates import *
 from server.game_logic.tile import Tile
-from server.game_logic.types import CardType, PlayerStatus
+from server.game_logic.types import CardType, EventType, PlayerStatus
 
 import unittest
 
@@ -22,9 +23,12 @@ class GameTests(unittest.TestCase):
         # Can't start game with no players and without valid player ID
         self.assertFalse(game.start_game(""))
         id1: str = game.register_player("test1")
+        # TODO: Verify there is a "startSession" event in the first player's event queue
+
         # Valid id but not enough players
         self.assertFalse(game.start_game(id1))
         id2: str = game.register_player("test2")
+
         # Valid number of players but invalid ID
         self.assertFalse(game.start_game(""))
         # Valid start
@@ -34,6 +38,10 @@ class GameTests(unittest.TestCase):
         self.assertEqual(2, len(game.turn_order))
         self.assertEqual(0, game.active_player_idx)
         self.assertEqual(game.turn_order[0], game.active_player_id)
+
+        # TODO: Verify there is a "startGame" event in each player's event queue
+
+        # TODO: Verify there is a "startTurn" event in the active player's event queue
 
         # Can't start game again while it is still running
         self.assertFalse(game.start_game(id1))
@@ -444,6 +452,68 @@ class GameTests(unittest.TestCase):
         self.assertEqual(0, len(game.players))
 
     """ Test Private Helper Methods """
+
+    def test_enqueue_event(self):
+        game: Game = Game()
+        # Add players and start the game without calling that method
+        player1: Player = Player("player1", "Player 1")
+        player2: Player = Player("player2", "Player 2")
+        game.players = {
+            "player1": player1,
+            "player2": player2
+        }
+        game.event_queue = {
+            "player1": [],
+            "player2": []
+        }
+        game._players.extend([player1, player2])
+        game.turn_order = ["player1", "player2"]
+        game.active_player_id = "player1"
+        game.active_player_idx = 0
+        game.started = True
+
+        # Test enqueueing an event without a "name" field.
+        event: Event = Event({})
+        game._enqueue_event(event, EventType.STATUS)
+        for id in game.turn_order:
+            self.assertEqual(0, len(game.event_queue[id]))
+        event = Event({"name": "event"})
+        # Test enqueueing a valid STATUS event that players see but is not stored in game history.
+        game._enqueue_event(event, EventType.STATUS)
+        self.assertEqual(0, len(game.event_history))
+        for id in game.turn_order:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertIs(event, game.event_queue[id][0])
+            # Clear out queue to stage for next text
+            game.event_queue[id] = []
+
+        # Test enqueueing a valid UPDATE event which goes to players and the game history.
+        game._enqueue_event(event, EventType.UPDATE)
+        self.assertEqual(1, len(game.event_history))
+        for id in game.turn_order:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertIs(event, game.event_queue[id][0])
+            # Clear out queue to stage for next text
+            game.event_queue[id] = []
+
+        # Test enqueueing a valid PROMPT event which only goes to the active player.
+        game.event_history = []
+        game._enqueue_event(event, EventType.PROMPT)
+        self.assertEqual(0, len(game.event_history))
+        self.assertEqual(1, len(game.event_queue["player1"]))
+        self.assertEqual(0, len(game.event_queue["player2"]))
+        game.event_queue["player1"] = []
+
+        # Test adding another event and verify the order is as expected
+        event1 = Event({"name": "event1"})
+        event2 = Event({"name": "event2"})
+        game._enqueue_event(event1, EventType.STATUS)
+        game._enqueue_event(event2, EventType.STATUS)
+
+        expected_order = [event1, event2]
+        for id in game.turn_order:
+            self.assertEqual(expected_order, game.event_queue[id])
+
 
     def test_apply_updates(self):
         game: Game = Game()

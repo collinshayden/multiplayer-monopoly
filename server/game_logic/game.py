@@ -10,6 +10,7 @@ from .card_tile import CardTile
 from .constants import (CHANCE_TILES, COMMUNITY_CHEST_TILES, INCOME_TAX, LUXURY_TAX, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS,
                         MIN_NUM_PLAYERS, NUM_TILES, PLAYER_ID_LENGTH, START_LOCATION)
 from .deck import Deck
+from .event import Event
 from .improvable_tile import ImprovableTile
 from .go_tile import GoTile
 from .go_to_jail_tile import GoToJailTile
@@ -20,7 +21,7 @@ from .player_updates import (BuyUpdate, ImprovementUpdate, LeaveJailUpdate, Mone
 from .roll import Roll
 from .tax_tile import TaxTile
 from .tile import Tile
-from .types import AssetGroups, CardType, JailMethod, PlayerStatus, PropertyStatus
+from .types import AssetGroups, CardType, EventType, JailMethod, PlayerStatus, PropertyStatus
 from .utility_tile import UtilityTile
 
 
@@ -49,6 +50,12 @@ class Game:
         self.chance_deck: Deck = self._make_chance_deck()
         self.community_chest_deck: Deck = self._make_community_chest_deck()
         self.tiles: list[Tile] = self._make_board()
+
+        # Variables to keep track of events that each client needs to receive
+        # Maps player ID to a list of events in the order which the events were received
+        self.event_queue: dict[str: list[Event]] = {}
+        # History of the events which palpably affect game state (not informational).
+        self.event_history: list[Event] = []
 
     """ Exposed API Methods """
 
@@ -266,6 +273,42 @@ class Game:
         return True
 
     """ Private Helper Methods """
+
+    def _enqueue_event(self, event: Event, event_type: EventType) -> None:
+        """
+        Description:        Method used to enqueue an Event object into the event queue accordingly.
+        :param event:       The Event object to be enqueued.
+        :param event_type:  The enumeration for what type of event it is.
+        :return:            None.
+        """
+        # Event must have a name in its parameters
+        if event.parameters.get("name") is None:
+            return
+        # Iterable for locations to enqueue an event
+        targets: list[list[Event]] = []
+        match event_type:
+            case EventType.STATUS:
+                targets = list(self.event_queue.values())
+            case EventType.PROMPT:
+                targets = [self.event_queue[self.active_player_id]]
+            case EventType.UPDATE:
+                targets = list(self.event_queue.values()) + [self.event_history]
+            case _:
+                return
+        for target in targets:
+            target.append(event)
+
+    def _clear_player_queue(self, player_id: str) -> None:
+        """
+        Description:        Method used to clear a player's event queue.
+        :param player_id:   ID of the player whose event queue needs to be cleared.
+        :return:            None.
+        """
+        queue: list[Event] = self.event_queue.get(player_id)
+        if queue is None:
+            return
+        queue = []
+
 
     def _make_board(self) -> list[Tile]:
         """

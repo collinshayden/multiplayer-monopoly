@@ -7,18 +7,12 @@ Author:         Aidan Bonner
 
 class Event:
 
-    def __init__(self, name: str, screen_change: bool, popup: bool, prompt_input: bool, append_to_feed: bool,
-                 update_info: bool) -> None:
+    def __init__(self, parameters: dict) -> None:
         """
-        Description:    Class holding the name of the event and what will happen on the client because of it.
+        Description:    Class holding the name of the event and information needed for the client side to update.
         :returns:       None.
         """
-        self.name: str = name
-        self.screen_change: bool = screen_change
-        self.popup: bool = popup
-        self.prompt_input: bool = prompt_input
-        self.append_to_feed: bool = append_to_feed
-        self.update_info: bool = update_info
+        self.parameters: dict = parameters
 
     def to_camel_case(self, in_str: str) -> str:
         """
@@ -31,13 +25,8 @@ class Event:
         return out_str
 
     def serialize(self) -> dict:
-        camel_name = self.to_camel_case(self.name)
-        client_bindings = {
-            "name": camel_name,
-            "screenChange": self.screen_change,
-            "popup": self.popup,
-            "promptInput": self.prompt_input,
-            "appendToFeed": self.append_to_feed,
-            "updateInfo": self.update_info
-        }
-        return client_bindings
+        """
+        Description:    Method to serialize Event data into JSON format to be read in client-side.
+        :return:        Dictionary of camelCase keys to the appropriate values
+        """
+        return {self.to_camel_case(key): val for key, val in self.parameters.items()}
