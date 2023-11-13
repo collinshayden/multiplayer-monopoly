@@ -7,18 +7,13 @@ Author:         Aidan Bonner
 
 class Event:
 
-    def __init__(self, name: str, screen_change: bool, popup: bool, prompt_input: bool, append_to_feed: bool,
-                 update_info: bool) -> None:
+    def __init__(self, name: str, info: dict) -> None:
         """
         Description:    Class holding the name of the event and what will happen on the client because of it.
         :returns:       None.
         """
         self.name: str = name
-        self.screen_change: bool = screen_change
-        self.popup: bool = popup
-        self.prompt_input: bool = prompt_input
-        self.append_to_feed: bool = append_to_feed
-        self.update_info: bool = update_info
+        self.info: dict = info
 
     def to_camel_case(self, in_str: str) -> str:
         """
@@ -34,10 +29,7 @@ class Event:
         camel_name = self.to_camel_case(self.name)
         client_bindings = {
             "name": camel_name,
-            "screenChange": self.screen_change,
-            "popup": self.popup,
-            "promptInput": self.prompt_input,
-            "appendToFeed": self.append_to_feed,
-            "updateInfo": self.update_info
         }
+        for i in self.info:
+            client_bindings.update(i)
         return client_bindings
