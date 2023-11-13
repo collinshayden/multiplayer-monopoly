@@ -32,12 +32,12 @@ class EndpointService {
     return gameData;
   }
 
-  Future<Json> registerPlayer({required String displayName}) async {
+  void registerPlayer({required String displayName}) async {
     final response = await server.get(
       Uri.parse('$API_URL/register_player?display_name=$displayName'),
     );
-    final status = jsonDecode(response.body);
-    return status;
+    // final status = jsonDecode(response.body);
+    // return status;
   }
 
   Future<Json> rollDice(String playerId) async {
@@ -111,18 +111,18 @@ class EndpointService {
     return status;
   }
 
-  Future<Json> reset(String playerId) async {
+  void reset(String playerId) async {
     final response = await server.get(
       Uri.parse('$API_URL/reset?player_id=$playerId'),
     );
-    final status = jsonDecode(response.body);
-    return status;
+    // final status = jsonDecode(response.body);
+    // return status;
   }
 }
 
-void main() async {
-  var endpointService = EndpointService();
-  Json registrationResult =
-      await endpointService.registerPlayer(displayName: 'Jason');
-  print(registrationResult);
-}
+// void main() async {
+//   var endpointService = EndpointService();
+//   Json registrationResult =
+//       await endpointService.registerPlayer(displayName: 'Jason');
+//   print(registrationResult);
+// }
