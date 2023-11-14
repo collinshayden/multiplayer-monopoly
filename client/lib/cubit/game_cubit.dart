@@ -41,28 +41,17 @@ class GameCubit extends Cubit<GameState> {
   }
 
   void updateGameData() async {
-    emit(ActionRequesting());
+    // emit(ActionRequesting());
     late Json? gameData;
     try {
       gameData = await endpointService.getGameData();
       game.withJson(gameData);
       print(gameData);
     } catch (e) {
-      emit(ActionRejected());
+      // emit(ActionRejected());
     }
   }
 
-  void updateGameData() async {
-    emit(ActionRequesting());
-    late Json? gameData;
-    try {
-      gameData = await endpointService.getGameData();
-      game.withJson(gameData);
-      print(gameData);
-    } catch (e) {
-      emit(ActionRejected());
-    }
-  }
 
   /// Load remote config from the server and emit the result.
   ///
@@ -102,7 +91,7 @@ class GameCubit extends Cubit<GameState> {
   /// Roll dice during a player's active turn.
   ///
   /// The client should only be able to call this
-  void rollDice({required String playerId}) async {
+  void rollDice({required PlayerId playerId}) async {
     emit(ActiveTurnRollPhase());
     try {
       endpointService.rollDice(playerId);

@@ -98,13 +98,13 @@ class AdminButtons extends StatelessWidget {
                     onPressed: () {
                       BlocProvider.of<GameCubit>(context)
                           .endpointService
-                          .reset("admin");
+                          .reset(playerId: PlayerId("admin"));
                     },
                     child: Text('Reset')),
                 TextButton(
                     onPressed: () {
                       BlocProvider.of<GameCubit>(context)
-                          .joinGame(displayName: "testUser");
+                          .registerPlayer(displayName: "testUser");
                     },
                     child: Text('Join')),
                 TextButton(
