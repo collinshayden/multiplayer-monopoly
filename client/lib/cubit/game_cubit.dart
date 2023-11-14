@@ -40,6 +40,30 @@ class GameCubit extends Cubit<GameState> {
     emit(LocalConfigSuccess(game: game));
   }
 
+  void updateGameData() async {
+    emit(ActionRequesting());
+    late Json? gameData;
+    try {
+      gameData = await endpointService.getGameData();
+      game.withJson(gameData);
+      print(gameData);
+    } catch (e) {
+      emit(ActionRejected());
+    }
+  }
+
+  void updateGameData() async {
+    emit(ActionRequesting());
+    late Json? gameData;
+    try {
+      gameData = await endpointService.getGameData();
+      game.withJson(gameData);
+      print(gameData);
+    } catch (e) {
+      emit(ActionRejected());
+    }
+  }
+
   /// Load remote config from the server and emit the result.
   ///
   /// This function is currently set up to fetch the entire game object from the
