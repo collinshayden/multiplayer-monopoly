@@ -128,35 +128,36 @@ class Game:
         self._apply_updates(updates)
         return player.status != PlayerStatus.INVALID, player.roll_again
 
-    def draw_card(self, player_id: str, card_type: CardType) -> bool:
-        """
-        Description:        Method for rolling the dice.
-        :param player_id:   ID of the player making the request.
-        :param card_type:   Type of card being drawn.
-        :return:            True if the request succeeds. False otherwise.
-        """
-        # Player ID isn't valid
-        if not self._valid_player(player_id):
-            return False
-        # Card type isn't valid
-        if card_type == CardType.INVALID:
-            return False
-        player: Player = self.players[player_id]
-        # Must be within board limits
-        if player.location < START_LOCATION or player.location > NUM_TILES:
-            return False
-        # Check that the tile they are on is a valid chance/community chest tile
-        match card_type:
-            # Valid Chance tile locations
-            case CardType.CHANCE:
-                if player.location not in CHANCE_TILES:
-                    return False
-            case CardType.COMMUNITY_CHEST:
-                if player.location not in COMMUNITY_CHEST_TILES:
-                    return False
-        card_tile: CardTile = self.tiles[player.location]
-        updates: dict[str: PlayerUpdate] = card_tile.land(player, None)
-        return self._apply_updates(updates)
+    # TODO: Remove this once we are confident we won't need it
+    # def draw_card(self, player_id: str, card_type: CardType) -> bool:
+    #     """
+    #     Description:        Method for rolling the dice.
+    #     :param player_id:   ID of the player making the request.
+    #     :param card_type:   Type of card being drawn.
+    #     :return:            True if the request succeeds. False otherwise.
+    #     """
+    #     # Player ID isn't valid
+    #     if not self._valid_player(player_id):
+    #         return False
+    #     # Card type isn't valid
+    #     if card_type == CardType.INVALID:
+    #         return False
+    #     player: Player = self.players[player_id]
+    #     # Must be within board limits
+    #     if player.location < START_LOCATION or player.location > NUM_TILES:
+    #         return False
+    #     # Check that the tile they are on is a valid chance/community chest tile
+    #     match card_type:
+    #         # Valid Chance tile locations
+    #         case CardType.CHANCE:
+    #             if player.location not in CHANCE_TILES:
+    #                 return False
+    #         case CardType.COMMUNITY_CHEST:
+    #             if player.location not in COMMUNITY_CHEST_TILES:
+    #                 return False
+    #     card_tile: CardTile = self.tiles[player.location]
+    #     updates: dict[str: PlayerUpdate] = card_tile.land(player, None)
+    #     return self._apply_updates(updates)
 
     def buy_property(self, player_id: str, tile_id: int) -> bool:
         """
@@ -186,6 +187,13 @@ class Game:
         elif tile.price > player.money:
             return False
         player.update(BuyUpdate(tile))
+        # Purchase went through. Enqueue the showPurchase event.
+        if tile in player.assets:
+            purchase: Event = Event({
+                "name": "showPurchase",
+                "tileId": tile_id
+            })
+            self._enqueue_event(purchase, EventType.UPDATE)
         return True
 
     def improvements(self, player_id: str, tile_id: int, amount: int) -> bool:
@@ -213,7 +221,15 @@ class Game:
         if (tile.status + amount) > PropertyStatus.FIVE_IMPROVEMENTS or (tile.status + amount) < PropertyStatus.MONOPOLY:
             return False
         player: Player = self.players[player_id]
+        start_status: int = tile.status
         player.update(ImprovementUpdate(tile, amount))
+        # This means the upgrade actually went through. Enqueue the Event.
+        if tile.status == start_status + amount:
+            mortgage_event: Event = Event({
+                "name": "showImprovements",
+                "number": amount
+            })
+            self._enqueue_event(mortgage_event, EventType.UPDATE)
         return True
 
     def mortgage(self, player_id: str, tile_id: int, mortgage: bool) -> bool:

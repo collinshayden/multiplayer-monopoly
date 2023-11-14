@@ -125,53 +125,53 @@ class GameTests(unittest.TestCase):
         self.assertFalse(player.roll_again)
         self.assertTrue(player.in_jail)
 
-    # TODO: Expand this test once all Card subclasses are implemented
-    def test_draw_card(self):
-        game: Game = Game()
-        id1: str = game.register_player("player1")
-        id2: str = game.register_player("player2")
-        game.start_game(id1)
-        id1, id2 = game.turn_order
-        self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
-        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS, len(game.community_chest_deck.stack))
-        # Can't draw a card since they aren't on the correct tile type
-        self.assertFalse(game.draw_card(id1, CardType.CHANCE))
-        self.assertFalse(game.draw_card(id1, CardType.COMMUNITY_CHEST))
-        self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
-        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS, len(game.community_chest_deck.stack))
-
-        # Move player to community chest tile and verify they can draw a community chest card
-        player: Player = game.players[id1]
-        player.location = COMMUNITY_CHEST_TILES[0]
-        self.assertFalse(game.draw_card(id1, CardType.CHANCE))
-        self.assertTrue(game.draw_card(id1, CardType.COMMUNITY_CHEST))
-        self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
-        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
-
-        # Move player to chance tile and verify they can draw a chance card
-        player.location = CHANCE_TILES[0]
-        self.assertTrue(game.draw_card(id1, CardType.CHANCE))
-        self.assertFalse(game.draw_card(id1, CardType.COMMUNITY_CHEST))
-        self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
-        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
-
-        # Draw the rest of the cards and verify the deck gets refilled at the final draw
-        for _ in range(NUM_CHANCE_CARDS):
-            self.assertTrue(game.draw_card(id1, CardType.CHANCE))
-        for card in game.chance_deck.discard:
-            self.assertFalse(card.in_use)
-        # Deck is refilled since cards are deactivated as they are drawn
-        self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
-        for card in game.chance_deck.stack:
-            self.assertTrue(card.in_use)
-
-        # Verify non-active player cannot draw a card
-        player2: Player = game.players[id2]
-        player2.location = COMMUNITY_CHEST_TILES[0]
-        self.assertFalse(game.draw_card(id2, CardType.CHANCE))
-        self.assertFalse(game.draw_card(id2, CardType.COMMUNITY_CHEST))
-        self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
-        self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
+    # TODO: Remove this once we are confident we won't need it
+    # def test_draw_card(self):
+    #     game: Game = Game()
+    #     id1: str = game.register_player("player1")
+    #     id2: str = game.register_player("player2")
+    #     game.start_game(id1)
+    #     id1, id2 = game.turn_order
+    #     self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
+    #     self.assertEqual(NUM_COMMUNITY_CHEST_CARDS, len(game.community_chest_deck.stack))
+    #     # Can't draw a card since they aren't on the correct tile type
+    #     self.assertFalse(game.draw_card(id1, CardType.CHANCE))
+    #     self.assertFalse(game.draw_card(id1, CardType.COMMUNITY_CHEST))
+    #     self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
+    #     self.assertEqual(NUM_COMMUNITY_CHEST_CARDS, len(game.community_chest_deck.stack))
+    #
+    #     # Move player to community chest tile and verify they can draw a community chest card
+    #     player: Player = game.players[id1]
+    #     player.location = COMMUNITY_CHEST_TILES[0]
+    #     self.assertFalse(game.draw_card(id1, CardType.CHANCE))
+    #     self.assertTrue(game.draw_card(id1, CardType.COMMUNITY_CHEST))
+    #     self.assertEqual(NUM_CHANCE_CARDS, len(game.chance_deck.stack))
+    #     self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
+    #
+    #     # Move player to chance tile and verify they can draw a chance card
+    #     player.location = CHANCE_TILES[0]
+    #     self.assertTrue(game.draw_card(id1, CardType.CHANCE))
+    #     self.assertFalse(game.draw_card(id1, CardType.COMMUNITY_CHEST))
+    #     self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
+    #     self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
+    #
+    #     # Draw the rest of the cards and verify the deck gets refilled at the final draw
+    #     for _ in range(NUM_CHANCE_CARDS):
+    #         self.assertTrue(game.draw_card(id1, CardType.CHANCE))
+    #     for card in game.chance_deck.discard:
+    #         self.assertFalse(card.in_use)
+    #     # Deck is refilled since cards are deactivated as they are drawn
+    #     self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
+    #     for card in game.chance_deck.stack:
+    #         self.assertTrue(card.in_use)
+    #
+    #     # Verify non-active player cannot draw a card
+    #     player2: Player = game.players[id2]
+    #     player2.location = COMMUNITY_CHEST_TILES[0]
+    #     self.assertFalse(game.draw_card(id2, CardType.CHANCE))
+    #     self.assertFalse(game.draw_card(id2, CardType.COMMUNITY_CHEST))
+    #     self.assertEqual(NUM_CHANCE_CARDS - 1, len(game.chance_deck.stack))
+    #     self.assertEqual(NUM_COMMUNITY_CHEST_CARDS - 1, len(game.community_chest_deck.stack))
 
     def test_buy_property(self):
         game: Game = Game()
@@ -186,21 +186,42 @@ class GameTests(unittest.TestCase):
         id1, id2 = game.turn_order
         player1: Player = game.players[id1]
         player2: Player = game.players[id2]
+        ids: list[str] = [id1, id2]
+        # Clear out event queue
+        for id in ids:
+            game.event_queue[id] = []
+        game.event_history = []
 
         # Verify non-active player cannot buy a property
         self.assertFalse(game.buy_property(id2, 3))
+        # Verify nothing changed
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # Buy Baltic avenue, verify it subtracted funds and added to player assets
         self.assertTrue(game.buy_property(id1, 3))
         self.assertIs(player1, baltic.owner)
         self.assertEqual(STARTING_MONEY - baltic.price, player1.money)
         self.assertIn(baltic, player1.assets)
+        # Verify a showPurchase event was created
+        for id in ids:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
+            self.assertEqual(3, game.event_queue[id][-1].parameters["tileId"])
+        self.assertEqual(1, len(game.event_history))
 
         # Verify property cannot be bought again and that nothing changed
         self.assertFalse(game.buy_property(id1, 3))
         self.assertIs(player1, baltic.owner)
         self.assertEqual(STARTING_MONEY - baltic.price, player1.money)
         self.assertIn(baltic, player1.assets)
+        # Verify nothing has changed
+        for id in ids:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
+            self.assertEqual(3, game.event_queue[id][-1].parameters["tileId"])
+        self.assertEqual(1, len(game.event_history))
 
         # Verify buying a monopoly updates the property status
         self.assertEqual(PropertyStatus.NO_MONOPOLY, baltic.status)
@@ -210,6 +231,12 @@ class GameTests(unittest.TestCase):
         self.assertIn(mediterranean, player1.assets)
         self.assertEqual(PropertyStatus.MONOPOLY, mediterranean.status)
         self.assertEqual(PropertyStatus.MONOPOLY, baltic.status)
+        # Verify purchase is reflected in event queue
+        for id in ids:
+            self.assertEqual(2, len(game.event_queue[id]))
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
+            self.assertEqual(1, game.event_queue[id][-1].parameters["tileId"])
+        self.assertEqual(2, len(game.event_history))
 
         # Verify player cannot buy a property exceeding their money
         player1.money = 0
@@ -225,6 +252,13 @@ class GameTests(unittest.TestCase):
         self.assertNotIn(free_parking, player1.assets)
         self.assertEqual(0, player1.money)
 
+        # Verify nothing changed
+        for id in ids:
+            self.assertEqual(2, len(game.event_queue[id]))
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
+            self.assertEqual(1, game.event_queue[id][-1].parameters["tileId"])
+        self.assertEqual(2, len(game.event_history))
+
     def test_improvements(self):
         game: Game = Game()
         game: Game = Game()
@@ -232,6 +266,12 @@ class GameTests(unittest.TestCase):
         id2: str = game.register_player("player2")
         game.start_game(id1)
         player_id1, player_id2 = game.turn_order
+        ids: list[str] = [player_id1, player_id2]
+        # Clear out event queue
+        for id in ids:
+            game.event_queue[id] = []
+        game.event_history = []
+
         # Buy an improvable monopoly, utility monopoly, and railroad monopoly
         improvable_ids: list[int] = [16, 18, 19]
         utility_ids: list[int] = [12, 28]
@@ -264,13 +304,18 @@ class GameTests(unittest.TestCase):
             self.assertEqual(RailroadStatus.FOUR_OWNED, tile.status)
             self.assertEqual(money, player.money)
 
-        # Verify negative improvements return False when there are no existing improvEments
+        # Verify negative improvements return False when there are no existing improvements
         for id in improvable_ids:
             money = player.money
             tile: improvable_ids = game.tiles[id]
             self.assertFalse(game.improvements(player_id1, id, -1))
             self.assertEqual(PropertyStatus.MONOPOLY, tile.status)
             self.assertEqual(money, player.money)
+
+        # Make sure no events were enqueued throughout all those failed improvements
+        for player_id in ids:
+            self.assertEqual(0, len(game.event_queue[player_id]))
+        self.assertEqual(0, len(game.event_history))
 
         # Verify properties can be upgraded 1-by-1 all the way to max improvements
         for n in range(1, 6):
@@ -280,6 +325,12 @@ class GameTests(unittest.TestCase):
                 self.assertTrue(game.improvements(player_id1, id, 1))
                 self.assertEqual(PropertyStatus.MONOPOLY + n, tile.status)
                 self.assertEqual(money - tile.improvement_cost, player.money)
+        # Verify each improvement enqueued an event to the players and event history
+        for player_id in ids:
+            self.assertEqual(5 * len(improvable_ids), len(game.event_queue[player_id]))
+            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["name"])
+            self.assertEqual(1, game.event_queue[player_id][-1].parameters["number"])
+        self.assertEqual(5 * len(improvable_ids), len(game.event_history))
 
         # Verify non-monopoly property cannot be improved OR degraded
         money = player.money
@@ -295,6 +346,12 @@ class GameTests(unittest.TestCase):
             self.assertIn(baltic, player.assets)
             self.assertEqual(money - baltic.price, player.money)
             self.assertEqual(PropertyStatus.NO_MONOPOLY, baltic.status)
+        # Verify nothing changed
+        for player_id in ids:
+            self.assertEqual(5 * len(improvable_ids), len(game.event_queue[player_id]))
+            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["name"])
+            self.assertEqual(1, game.event_queue[player_id][-1].parameters["number"])
+        self.assertEqual(5 * len(improvable_ids), len(game.event_history))
 
         # Degrade ny_ave to MONOPOLY and verify other 2 properties were degraded to ONE_IMPROVEMENT
         money = player.money
@@ -303,6 +360,12 @@ class GameTests(unittest.TestCase):
         self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, game.tiles[18].status)
         self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, game.tiles[16].status)
         self.assertEqual(money + (5 + 4 + 4) * 50, player.money)
+        # Verify there has been one additional event enqueued.
+        for player_id in ids:
+            self.assertEqual(5 * len(improvable_ids) + 1, len(game.event_queue[player_id]))
+            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["name"])
+            self.assertEqual(-5, game.event_queue[player_id][-1].parameters["number"])
+        self.assertEqual(5 * len(improvable_ids) + 1, len(game.event_history))
 
         # Verify other properties cannot be degraded by 2 since it would drop them below MONOPOLY
         money = player.money
@@ -311,6 +374,12 @@ class GameTests(unittest.TestCase):
         self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, game.tiles[18].status)
         self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, game.tiles[16].status)
         self.assertEqual(money, player.money)
+        # Verify nothing changed.
+        for player_id in ids:
+            self.assertEqual(5 * len(improvable_ids) + 1, len(game.event_queue[player_id]))
+            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["name"])
+            self.assertEqual(-5, game.event_queue[player_id][-1].parameters["number"])
+        self.assertEqual(5 * len(improvable_ids) + 1, len(game.event_history))
 
     def test_mortgage(self):
         game: Game = Game()
