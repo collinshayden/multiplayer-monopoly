@@ -7,6 +7,7 @@ Date:           10/24/23
 from server.game_logic.asset_tile import AssetTile
 from server.game_logic.constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_NUM_PLAYERS, MIN_NUM_PLAYERS,
                                          PLAYER_ID_LENGTH, START_LOCATION, STARTING_MONEY)
+from server.game_logic.event import Event
 from server.game_logic.improvable_tile import ImprovableTile
 from server.game_logic.player import Player
 from server.game_logic.player_updates import BuyUpdate, GoToJailUpdate, LeaveJailUpdate
@@ -110,10 +111,36 @@ class EndpointTests(TestCase):
             self.assertEqual(expected, json.loads(response.data))
 
     def test_state(self):
-        # Verify game state can be retrieved matches game state
-        response = self.client.get("/game/state")
+        endpoint: str = "/game/state"
+        self.fill_players(2)
+        id1, id2 = game.players.keys()
+        args: dict = {
+            "player_id": "bogus"
+        }
+        expected: dict = {
+            "success": False
+        }
+        # Verify game state can't be retrieved without a valid player ID
+        response = self.client.get(endpoint, query_string=args)
         self.assert200(response)
-        self.assertEqual(game.to_dict(), json.loads(response.data))
+        self.assertEqual(expected, json.loads(response.data))
+        # Start the game
+        game.start_game(id2)
+        id1, id2 = game.turn_order
+
+        # Verify game state can't be retrieved without a valid player ID
+        response = self.client.get(endpoint, query_string={"player_id": "Bogus"})
+        self.assert200(response)
+        expected: dict = {"success": False}
+
+        args = {"player_id": id1}
+        # Verify state is received with a valid player ID, and each player gets their expected event queue.
+        player1_queue: list[dict] = [event.serialize() for event in game.event_queue[id1]]
+        player2_queue: list[dict] = [event.serialize() for event in game.event_queue[id2]]
+        response = self.client.get(endpoint, query_string={"player_id": id1})
+        self.assertEqual(player1_queue, json.loads(response.data)["events"])
+        response = self.client.get(endpoint, query_string={"player_id": id2})
+        self.assertEqual(player2_queue, json.loads(response.data)["events"])
 
     def test_start_game(self):
         endpoint: str = "/game/start_game"
@@ -167,58 +194,52 @@ class EndpointTests(TestCase):
     def test_roll_dice(self):
         endpoint: str = "/game/roll_dice"
         event: str = "rollDice"
-        self.authenticate(endpoint, event, expected_args={"rollAgain": False})
 
-        id1, id2 = game.turn_order
-        query_string: dict = {"player_id": id1}
-        expected: dict = {
-            "event": event,
-            "success": True,
-            "rollAgain": False
+        # Since the Game class's roll_dice method has been verified, do some pretty simple verification here.
+        # 1. Verify it doesn't work with no players
+        args: dict = {
+            "player_id": "bogus"
         }
-
-        # Can roll the dice as the active player
-        player: Player = game.players[id1]
-        self.assertEqual(0, player.doubles_streak)
-        self.assertFalse(player.roll_again)
-        response = self.client.get(endpoint, query_string=query_string)
+        expected: dict = {
+            "success": False,
+            "event": event
+        }
+        response = self.client.get(endpoint, query_string=args)
         self.assert200(response)
-        json_data: dict = json.loads(response.data)
+        self.assertEqual(expected, json.loads(response.data))
 
-        # Keep having them roll dice until they get doubles
-        while not game.last_roll.is_doubles:
-            # Just in case they landed on Go To Jail
-            if player.in_jail:
-                player.update(LeaveJailUpdate(JailMethod.DOUBLES))
-            self.assertTrue(json_data["success"])
-            response = self.client.get(endpoint, query_string=query_string)
+        # 2. Add a couple of players and verify it still doesn't work with a valid ID
+        self.fill_players(2)
+        id1, id2 = game.turn_order
+        ids: list = [id1, id2]
+        # Clear the event queue
+        for id in ids:
+            game.event_queue[id] = []
+            args["player_id"] = id
+            response = self.client.get(endpoint, query_string=args)
             self.assert200(response)
-            json_data: dict = json.loads(response.data)
-        self.assertEqual(json_data["rollAgain"], game.last_roll.is_doubles)
-        self.assertEqual(1, player.doubles_streak)
-        self.assertTrue(player.roll_again)
-        self.assertFalse(player.in_jail)
+            self.assertEqual(expected, json.loads(response.data))
+        game.event_history = []
 
-        # Resets doubles condition
-        game.last_roll = Roll(1, 2)
-        player.doubles_streak = 0
-        self.assertFalse(player.in_jail)
+        # Verify no events were enqueued
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
-        while not json_data["rollAgain"]:
-            # Just in case they landed on Go To Jail
-            if player.in_jail:
-                player.update(LeaveJailUpdate(JailMethod.DOUBLES))
-            print(game.last_roll.first, game.last_roll.second)
-            self.assertFalse(player.in_jail)
-            player.doubles_streak = 2
-            response = self.client.get(endpoint, query_string=query_string)
-            self.assert200(response)
-            json_data: dict = json.loads(response.data)
-        print(game.last_roll.first, game.last_roll.second)
-        self.assertEqual(0, player.doubles_streak)
-        self.assertFalse(player.roll_again)
-        self.assertEqual(JAIL_LOCATION, player.location)
-        self.assertTrue(player.in_jail)
+        game.start_game(id1)
+        id1, id2 = game.turn_order
+        self.assertTrue(game.started)
+        # Clear the event queue
+        for id in ids:
+            game.event_history = []
+            game.event_queue[id] = []
+        game.event_history = []
+
+        args["player_id"] = id1
+        expected["success"] = True
+        response = self.client.get(endpoint, query_string=args)
+        self.assert200(response)
+        self.assertEqual(expected, json.loads(response.data))
 
     def test_buy_property(self):
         endpoint: str = "/game/buy_property"

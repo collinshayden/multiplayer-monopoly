@@ -26,15 +26,20 @@ def state():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    # TODO: Test this
     try:
         player_id: str = request.args.get("player_id").lower()
     # No query parameters passed in
     except AttributeError as e:
         player_id: str = ""
+    # TODO: Remove admin string override once it is no longer needed
+    # Can only get the game state if they are a valid player or use the admin override
+    if player_id not in game.players.keys() and player_id.lower() != "admin":
+        return jsonify({"success": False})
     client_bindings: dict = {
+        "success": True,
         "events": game.get_events(player_id)
     }
+    client_bindings.update(game.to_dict())
     return jsonify(client_bindings)
 
 

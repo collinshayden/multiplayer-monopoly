@@ -634,8 +634,8 @@ class Game:
         :return:        Dictionary of class attributes.
         """
         return {
-            "lastRoll": self.last_roll.to_dict() if self.last_roll is not None else {},
             "started": self.started,
+            # TODO: Remove this later once we have fully implemented event queue client-side
             "activePlayerId": self.active_player_id,
             "players": [player.to_dict() for player in self.players.values()],
             "tiles": [tile.to_dict() for tile in self.tiles]
