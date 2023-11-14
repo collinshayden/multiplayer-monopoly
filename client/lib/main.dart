@@ -87,49 +87,55 @@ class AdminButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
-        return Row(
-          children: [
-            TextButton(
-                onPressed: () {
-                  BlocProvider.of<GameCubit>(context)
-                      .endpointService
-                      .reset("admin");
-                },
-                child: Text('Reset')),
-            TextButton(
-                onPressed: () {
-                  BlocProvider.of<GameCubit>(context)
-                      .joinGame(displayName: "testUser");
-                },
-                child: Text('Join')),
-            TextButton(
-                onPressed: () {
-                  var playerId = BlocProvider.of<GameCubit>(context)
-                      .game
-                      .players
-                      .values
-                      .first
-                      .id;
-                  print(playerId);
-                  BlocProvider.of<GameCubit>(context)
-                      .endpointService
-                      .startGame(playerId: playerId);
-                },
-                child: Text('Start Game')),
-            TextButton(
-                onPressed: () {
-                  PlayerId activePlayerId =
-                      BlocProvider.of<GameCubit>(context).game.activePlayerId!;
-                  BlocProvider.of<GameCubit>(context)
-                      .rollDice(playerId: activePlayerId);
-                },
-                child: Text('Roll')),
-            TextButton(
-                onPressed: () {
-                  BlocProvider.of<GameCubit>(context).updateGameData();
-                },
-                child: Text('Update')),
-          ],
+        return Container(
+          child: Align(
+            alignment: Alignment.bottomLeft,
+            child: Row(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      BlocProvider.of<GameCubit>(context)
+                          .endpointService
+                          .reset("admin");
+                    },
+                    child: Text('Reset')),
+                TextButton(
+                    onPressed: () {
+                      BlocProvider.of<GameCubit>(context)
+                          .joinGame(displayName: "testUser");
+                    },
+                    child: Text('Join')),
+                TextButton(
+                    onPressed: () {
+                      BlocProvider.of<GameCubit>(context).updateGameData();
+                      PlayerId playerId = BlocProvider.of<GameCubit>(context)
+                          .game
+                          .players
+                          .values
+                          .first
+                          .id;
+                      print(playerId);
+                      BlocProvider.of<GameCubit>(context)
+                          .endpointService
+                          .startGame(playerId: playerId);
+                    },
+                    child: Text('Start Game')),
+                TextButton(
+                    onPressed: () {
+                      PlayerId activePlayerId =
+                          BlocProvider.of<GameCubit>(context).game.activePlayerId!;
+                      BlocProvider.of<GameCubit>(context)
+                          .rollDice(playerId: activePlayerId);
+                    },
+                    child: Text('Roll')),
+                TextButton(
+                    onPressed: () {
+                      BlocProvider.of<GameCubit>(context).updateGameData();
+                    },
+                    child: Text('Update')),
+              ],
+            ),
+          ),
         );
       },
     );
