@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client/model/player.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/constants.dart';
 import 'package:client/json_utils.dart';
@@ -17,12 +18,10 @@ class EndpointService {
 
   final http.Client server;
 
-  Future<Json> startGame() async {
-    final response = await server.get(
-      Uri.parse('$API_URL/start_game'),
+  void startGame({required PlayerId playerId}) async {
+    server.get(
+      Uri.parse('$API_URL/start_game?player_id=${playerId.value}'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
   Future<Json> getGameData() async {
@@ -30,64 +29,52 @@ class EndpointService {
       Uri.parse('$API_URL/state'),
     );
     final gameData = jsonDecode(response.body);
+    print(gameData);
     return gameData;
   }
 
-  Future<Json> registerPlayer({required String displayName}) async {
-    final response = await server.get(
+  void registerPlayer({required String displayName}) async {
+    server.get(
       Uri.parse('$API_URL/register_player?display_name=$displayName'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> rollDice(String playerId) async {
-    final response = await server.get(
-      Uri.parse('$API_URL/roll_dice?player_id=$playerId'),
+  void rollDice(PlayerId playerId) async {
+    server.get(
+      Uri.parse('$API_URL/roll_dice?player_id=${playerId.value}'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> drawCard(String playerId, String cardType) async {
+  void drawCard(String playerId, String cardType) async {
     assert(cardType == 'chance' || cardType == 'community_chest');
-    final response = await server.get(
+    server.get(
       Uri.parse('$API_URL/draw_card?player_id=$playerId?card_type=$cardType'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> buyProperty(String playerId, int tileId) async {
+  void buyProperty(String playerId, int tileId) async {
     assert(0 <= tileId && tileId <= 39);
-    final response = await server.get(
+    server.get(
       Uri.parse('$API_URL/buy_property?player_id=$playerId?tile_id=$tileId'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> setImprovements(
-      String playerId, int tileId, int quantity) async {
+  void setImprovements(String playerId, int tileId, int quantity) async {
     assert(0 <= tileId && tileId <= 39);
-    final response = await server.get(
+    server.get(
       Uri.parse(
           '$API_URL/set_improvements?player_id=$playerId?tile_id=$tileId?quantity=$quantity'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> setMortgage(String playerId, int tileId, bool mortgage) async {
-    final response = await server.get(
+  void setMortgage(String playerId, int tileId, bool mortgage) async {
+    server.get(
       Uri.parse(
           '$API_URL/set_mortgage?player_id=$playerId?tile_id=$tileId?mortgage=$mortgage'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> getOutOfJail(String playerId, JailMethod jailMethod) async {
+  void getOutOfJail(String playerId, JailMethod jailMethod) async {
     String call = '$API_URL/get_out_of_jail?player_id=$playerId';
     switch (jailMethod) {
       case JailMethod.doubles:
@@ -97,33 +84,27 @@ class EndpointService {
       case JailMethod.card:
         call += '?method=card';
     }
-    final response = await server.get(
+    server.get(
       Uri.parse(call),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> endTurn(String playerId) async {
-    final response = await server.get(
+  void endTurn(String playerId) async {
+    server.get(
       Uri.parse('$API_URL/end_turn?player_id=$playerId'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 
-  Future<Json> reset({required PlayerId playerId}) async {
-    final response = await server.get(
+  void reset({required PlayerId playerId}) async {
+    server.get(
       Uri.parse('$API_URL/reset?player_id=${playerId.value}'),
     );
-    final status = jsonDecode(response.body);
-    return status;
   }
 }
 
-void main() async {
-  var endpointService = EndpointService();
-  Json registrationResult =
-      await endpointService.registerPlayer(displayName: 'Jason');
-  print(registrationResult);
-}
+// void main() async {
+//   var endpointService = EndpointService();
+//   Json registrationResult =
+//       await endpointService.registerPlayer(displayName: 'Jason');
+//   print(registrationResult);
+// }
