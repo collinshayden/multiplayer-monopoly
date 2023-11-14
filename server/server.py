@@ -43,29 +43,6 @@ def state():
     return jsonify(client_bindings)
 
 
-@app.route("/game/start_game", methods=["GET"])
-def start_game():
-    """
-    Description:    Endpoint for starting the game. Requires >= 2 players and <= max to be registered.
-    :return:        Returns json-formatted data with the game state if it starts. Otherwise, simple message it failed to
-                    start.
-    """
-    global game
-    try:
-        player_id: str = request.args.get("player_id").lower()
-    # No query parameters passed in
-    except AttributeError as e:
-        player_id: str = ""
-    if player_id is None:
-        player_id: str = ""
-    success: bool = game.start_game(player_id=player_id)
-    client_bindings: dict[str, Any] = {
-        "event": "startGame",
-        "success": success
-    }
-    return jsonify(client_bindings)
-
-
 @app.route("/game/register_player", methods=["GET"])
 def register_player():
     """
@@ -93,6 +70,29 @@ def register_player():
         "event": "registerPlayer",
         "playerId": player_id,
         "success": player_id != "",
+    }
+    return jsonify(client_bindings)
+
+
+@app.route("/game/start_game", methods=["GET"])
+def start_game():
+    """
+    Description:    Endpoint for starting the game. Requires >= 2 players and <= max to be registered.
+    :return:        Returns json-formatted data with the game state if it starts. Otherwise, simple message it failed to
+                    start.
+    """
+    global game
+    try:
+        player_id: str = request.args.get("player_id").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+    if player_id is None:
+        player_id: str = ""
+    success: bool = game.start_game(player_id=player_id)
+    client_bindings: dict[str, Any] = {
+        "event": "startGame",
+        "success": success
     }
     return jsonify(client_bindings)
 
