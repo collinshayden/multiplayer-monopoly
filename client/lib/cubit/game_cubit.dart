@@ -21,7 +21,7 @@ class GameCubit extends Cubit<GameState> {
   void loadLocalConfig() async {
     // Loaing local config
     emit(LocalConfigLoading());
-    await Future.delayed(Duration(seconds: 1)); // TODO: Remove
+    // await Future.delayed(Duration(seconds:  1)); // TODO: Remove
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
@@ -33,6 +33,18 @@ class GameCubit extends Cubit<GameState> {
     emit(LocalConfigSuccess(game: game));
   }
 
+  void updateGameData() async {
+    emit(ActionRequesting());
+    late Json? gameData;
+    try {
+      gameData = await endpointService.getGameData();
+      game.withJson(gameData);
+      print(gameData);
+    } catch (e) {
+      emit(ActionRejected());
+    }
+  }
+
   void joinGame({required String displayName}) async {
     emit(JoinGameLoading());
     try {
@@ -42,7 +54,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void rollDice({required String playerId}) async {
+  void rollDice({required PlayerId playerId}) async {
     emit(ActionRequesting());
     try {
       endpointService.rollDice(playerId);
