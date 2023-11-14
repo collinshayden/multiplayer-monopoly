@@ -28,7 +28,7 @@ class Player {
   int? getOutOfJailFreeCards;
 
   void withJson(Json json) {
-    assert(json["id"] == id);
+    assert(json["id"] == id.value);
     displayName = json["displayName"] ?? displayName;
     money = json["money"] ?? money;
     location = json["location"] ?? location;

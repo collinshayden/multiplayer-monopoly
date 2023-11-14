@@ -26,7 +26,6 @@ class GameCubit extends Cubit<GameState> {
   /// whether the config was able to be loaded by the file service and
   /// deserialised into a [Game] object.
   void loadLocalConfig() async {
-    // Loading local config
     emit(LocalConfigLoading());
     await Future.delayed(const Duration(seconds: 1)); // TODO: Remove
 
@@ -37,10 +36,50 @@ class GameCubit extends Cubit<GameState> {
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
+
     emit(LocalConfigSuccess(game: game));
   }
 
-  void joinGame({required String displayName}) async {
+  void updateGameData() async {
+    // emit(ActionRequesting());
+    late Json? gameData;
+    try {
+      gameData = await endpointService.getGameData();
+      game.withJson(gameData);
+      print(gameData);
+    } catch (e) {
+      // emit(ActionRejected());
+    }
+  }
+
+
+  /// Load remote config from the server and emit the result.
+  ///
+  /// This function is currently set up to fetch the entire game object from the
+  /// server as JSON which is parsed into the client-side [Game] counterpart
+  /// object.
+  void loadRemoteConfig() async {
+    emit(RemoteConfigLoading());
+
+    late Json? remoteConfig;
+    try {
+      remoteConfig = await endpointService.getGameData();
+      game.withJson(remoteConfig);
+    } catch (e) {
+      emit(RemoteConfigFailure());
+    }
+
+    emit(RemoteConfigSuccess());
+  }
+
+  /// Request to join the active game session.
+  ///
+  /// This function calls the server's `register_player` endpoint with the user-
+  /// inputted [displayName]. This function will only be successful if the
+  /// game has not yet started. Because there is currently only one instance of
+  /// the game running at a time, it is necessary to call [reset] to be able to
+  /// join a game.
+  void registerPlayer({required String displayName}) async {
     emit(JoinGameLoading());
     try {
       endpointService.registerPlayer(displayName: displayName);
@@ -49,27 +88,16 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void rollDice({required String playerId}) async {
-    emit(ActionRequesting());
+  /// Roll dice during a player's active turn.
+  ///
+  /// The client should only be able to call this
+  void rollDice({required PlayerId playerId}) async {
+    emit(ActiveTurnRollPhase());
     try {
       endpointService.rollDice(playerId);
     } catch (e) {
-      emit(ActionRejected());
+      emit(GameErrorState());
     }
-  }
-
-  void loadRemoteConfig() async {
-    // Loaing local config
-    emit(RemoteConfigLoading());
-    late Json? remoteConfig;
-    try {
-      remoteConfig = await endpointService.getGameData();
-      game.withJson(remoteConfig);
-      print(remoteConfig);
-    } catch (e) {
-      emit(RemoteConfigFailure());
-    }
-
-    emit(RemoteConfigSuccess());
+    emit(ActiveTurnRollPhase());
   }
 }
