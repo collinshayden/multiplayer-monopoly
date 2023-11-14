@@ -13,7 +13,7 @@ import unittest
 class CardTests(unittest.TestCase):
     def test_card(self):
         card: Card = Card("test")
-        self.assertEqual(card.name, "test")
+        self.assertEqual(card.description, "test")
         self.assertTrue(card.in_use)
         for _ in range(2):
             card.deactivate()

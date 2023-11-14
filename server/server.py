@@ -26,7 +26,16 @@ def state():
     :return:        Returns json-formatted data with the game state.
     """
     global game
-    return jsonify(game.to_dict())
+    # TODO: Test this
+    try:
+        player_id: str = request.args.get("player_id").lower()
+    # No query parameters passed in
+    except AttributeError as e:
+        player_id: str = ""
+    client_bindings: dict = {
+        "events": game.get_events(player_id)
+    }
+    return jsonify(client_bindings)
 
 
 @app.route("/game/start_game", methods=["GET"])
@@ -106,11 +115,10 @@ def roll_dice():
         4) If the player rolled doubles, increment their doubles streak.
         5) If the player rolled their third pair of doubles, move them to the jail tile and end their turn.
     """
-    success, roll_again = game.roll_dice(player_id=player_id)
+    success = game.roll_dice(player_id=player_id)
     client_bindings: dict[str, Any] = {
         "event": "rollDice",
         "success": success,
-        "rollAgain": roll_again
     }
     return jsonify(client_bindings)
 

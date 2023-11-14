@@ -15,6 +15,19 @@ class Deck:
         random.shuffle(self.stack)
         self.discard: list[Card] = []
 
+    def peek(self) -> Card:
+        """
+        Description:    Method used to peek at the top card of the deck without drawing it. Will reshuffle the deck
+                        if needed.
+        :return:        Card object.
+        """
+        if len(self.stack) == 0:
+            self._shuffle()
+        # All cards are in use. Return None.
+        if len(self.stack) == 0:
+            return
+        return self.stack[-1]
+
     def draw(self) -> Card:
         """
         Description:    Method used to retrieve the top Card object from the stack.

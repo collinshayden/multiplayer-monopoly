@@ -19,6 +19,8 @@ class Tile:
         """
         self.id: int = id
         self.name: str = name
+        # Basic Tile has no owner
+        self.owner: Player = None
 
     def land(self, player: Player, roll: Roll = None) -> dict:
         """

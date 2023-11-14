@@ -220,11 +220,6 @@ class EndpointTests(TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertTrue(player.in_jail)
 
-    def test_draw_card(self):
-        endpoint: str = "/game/draw_card"
-        event: str = "drawCard"
-        self.authenticate(endpoint, event, require_active_game_tests=False)
-
     def test_buy_property(self):
         endpoint: str = "/game/buy_property"
         event: str = "buyProperty"

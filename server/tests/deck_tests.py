@@ -18,6 +18,31 @@ class DeckTests(unittest.TestCase):
             self.assertIn(card, deck.stack)
         self.assertEqual([], deck.discard)
 
+    def test_peek(self):
+        cards = [Card("1"), Card("2"), Card("3"), Card("4")]
+        deck = Deck(cards)
+        cards = [card for card in deck.stack]
+
+        # Test peeking at the top card without drawing
+        top_card = deck.peek()
+        self.assertEqual(top_card, cards[-1])
+        self.assertEqual(len(deck.stack), len(cards))
+        self.assertEqual(0, len(deck.discard))
+
+        # Draw a card and check if peek still works
+        drawn_card = deck.draw()
+        peeked_card = deck.peek()
+        self.assertEqual(peeked_card, cards[-2])
+        self.assertEqual(len(deck.stack), len(cards) - 1)
+        self.assertNotIn(drawn_card, deck.stack)
+
+        # Draw all cards and check if peek returns None when the deck is empty
+        for _ in range(len(cards) - 1):
+            deck.draw()
+        peeked_card_empty_deck = deck.peek()
+        self.assertIsNone(peeked_card_empty_deck)
+        self.assertEqual(len(deck.stack), 0)
+
     def test_draw(self):
         cards: list[Card] = [Card("1"), Card("2"), Card("3"), Card("4")]
         deck: Deck = Deck(cards)

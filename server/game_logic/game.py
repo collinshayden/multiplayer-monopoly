@@ -12,7 +12,6 @@ from .constants import (CHANCE_TILES, COMMUNITY_CHEST_TILES, INCOME_TAX, LUXURY_
 from .deck import Deck
 from .event import Event
 from .improvable_tile import ImprovableTile
-from .go_tile import GoTile
 from .go_to_jail_tile import GoToJailTile
 from .railroad_tile import RailroadTile
 from .player import Player
@@ -25,6 +24,7 @@ from .types import AssetGroups, CardType, EventType, JailMethod, PlayerStatus, P
 from .utility_tile import UtilityTile
 
 
+import functools
 import random
 import secrets
 import string
@@ -57,6 +57,20 @@ class Game:
         self.event_history: list[Event] = []
 
     """ Exposed API Methods """
+
+    def get_events(self, player_id: str) -> list[dict]:
+        """
+        Description:        Method which will return a list of JSON-serialized Event objects to be sent to a specific
+                            player. This will clear a player's event queue.
+        :param player_id:   ID of the player to get events for.
+        :return:            List of Event objects serialized into dictionary (JSON) format.
+        """
+        player_queue: list[Event] = self.event_queue.get(player_id)
+        if player_queue is None:
+            return []
+        events: list[dict] = [event.serialize() for event in player_queue]
+        self._clear_player_queue(player_id)
+        return events
 
     def start_game(self, player_id: str) -> bool:
         """
@@ -107,57 +121,133 @@ class Game:
         self._enqueue_event(ready_prompt, target=player_id)
         return player_id
 
-    def roll_dice(self, player_id: str) -> tuple[bool, bool]:
+    def roll_dice(self, player_id: str, roll: Roll = None) -> bool:
         """
         Description:        Method for rolling the dice.
         :param player_id:   ID of the player making the request.
+        :param roll:        Roll object which can optionally be passed into this method (for testing correctness).
         :return:            True if the request succeeds and True if the player should roll again.
         """
         # Reject requests when there are not enough players
         if len(self.players) < MIN_NUM_PLAYERS:
-            return False, False
+            return False
         if not self._valid_player(player_id, require_game_started=True):
-            return False, False
+            return False
         player: Player = self.players[self.active_player_id]
-        roll: Roll = Roll(random.randint(MIN_DIE, MAX_DIE), random.randint(MIN_DIE, MAX_DIE))
+        if roll is None:
+            roll = Roll(random.randint(MIN_DIE, MAX_DIE), random.randint(MIN_DIE, MAX_DIE))
+        started_in_jail: bool = player.in_jail
+        starting_location: int = player.location
+
+        # Reject a request if the player was the last one to roll but isn't supposed to roll again
+        last_roll_event: Event = self._get_last_roll_event()
+        if last_roll_event is not None and last_roll_event.parameters["playerId"] == player.id and not player.roll_again:
+            return False
+
         # Move the player
         player.update(RollUpdate(roll))
-        self.last_roll = roll
-        # Get updates from the tile then apply them
-        updates: dict[str: PlayerUpdate] = self.tiles[player.location].land(player, roll)
-        self._apply_updates(updates)
-        return player.status != PlayerStatus.INVALID, player.roll_again
 
-    # TODO: Remove this once we are confident we won't need it
-    # def draw_card(self, player_id: str, card_type: CardType) -> bool:
-    #     """
-    #     Description:        Method for rolling the dice.
-    #     :param player_id:   ID of the player making the request.
-    #     :param card_type:   Type of card being drawn.
-    #     :return:            True if the request succeeds. False otherwise.
-    #     """
-    #     # Player ID isn't valid
-    #     if not self._valid_player(player_id):
-    #         return False
-    #     # Card type isn't valid
-    #     if card_type == CardType.INVALID:
-    #         return False
-    #     player: Player = self.players[player_id]
-    #     # Must be within board limits
-    #     if player.location < START_LOCATION or player.location > NUM_TILES:
-    #         return False
-    #     # Check that the tile they are on is a valid chance/community chest tile
-    #     match card_type:
-    #         # Valid Chance tile locations
-    #         case CardType.CHANCE:
-    #             if player.location not in CHANCE_TILES:
-    #                 return False
-    #         case CardType.COMMUNITY_CHEST:
-    #             if player.location not in COMMUNITY_CHEST_TILES:
-    #                 return False
-    #     card_tile: CardTile = self.tiles[player.location]
-    #     updates: dict[str: PlayerUpdate] = card_tile.land(player, None)
-    #     return self._apply_updates(updates)
+        # Enqueue the roll and move to everyone
+        roll_event: Event = Event({
+            "name": "showRoll",
+            "playerId": player.id,
+            "die1": roll.first,
+            "die2": roll.second,
+            "doubles": roll.is_doubles
+        })
+
+        self._enqueue_event(roll_event, EventType.UPDATE)
+        # If they were either sent to jail by the roll or are in jail, don't display them moving or passing Go.
+        if not player.in_jail:
+            move_event: Event = Event({
+                "name": "movePlayer",
+                "spaces": roll.total
+            })
+            self._enqueue_event(move_event, EventType.UPDATE)
+            # They passed Go since their location wrapped around
+            if player.location < starting_location:
+                go_event: Event = Event({"name": "showPassGo"})
+                self._enqueue_event(go_event, EventType.UPDATE)
+
+        # If the player landed on an unowned asset tile, prompt them to purchase it.
+        tile: Tile = self.tiles[player.location]
+        if isinstance(tile, AssetTile) and tile.owner is None:
+            prompt_buy: Event = Event({
+                "name": "promptPurchase",
+                "tileId": tile.id
+            })
+            self._enqueue_event(prompt_buy, EventType.PROMPT)
+        # If the player lands on an owned asset tile, display an event with the rent.
+        elif isinstance(tile, AssetTile) and tile.owner is not player:
+            rent: Event = Event({
+                "name": "showRent",
+                "amount": tile.rent,
+                "tileId": tile.id
+            })
+            self._enqueue_event(rent, EventType.PROMPT)
+        # If they landed on a CardTile, display an event with the card text which will be drawn.
+        elif isinstance(tile, CardTile):
+            card: Card = tile.deck.peek()
+            card_draw: Event = Event({
+                "name": "showCardDraw",
+                "description": card.description
+            })
+            self._enqueue_event(card_draw, EventType.UPDATE)
+        elif isinstance(tile, TaxTile):
+            tax: Event = Event({
+                "name": "showTax",
+                "amount": tile.amount,
+                "tileId": tile.id
+            })
+            self._enqueue_event(tax, EventType.UPDATE)
+
+        # Get updates from the tile and apply them
+        updates: dict[str: PlayerUpdate] = tile.land(player, roll)
+        self._apply_updates(updates)
+
+        # Did the player go to jail due to their roll/tile they landed on?
+        if started_in_jail is False and player.in_jail:
+            go_to_jail: Event = Event({
+                "name": "goToJail",
+                "player": player.display_name
+            })
+            self._enqueue_event(go_to_jail, EventType.UPDATE)
+            # End their turn immediately and return early
+            self.end_turn(player_id)
+            return True
+
+        # Does the player need to liquidate assets to pay for rent/card effect?
+        if player.status == PlayerStatus.IN_THE_HOLE:
+            sell_down: Event = Event({
+                "name": "promptSellDown",
+                "amountNeeded": 0 - player.money
+            })
+            self._enqueue_event(sell_down, EventType.PROMPT)
+        # Did the player lose?
+        elif player.status == PlayerStatus.BANKRUPT:
+            sell_down: Event = Event({
+                "name": "showBankruptcy",
+                "player": player.display_name
+            })
+            self._enqueue_event(sell_down, EventType.UPDATE)
+            # Return early if they lost
+            return True
+
+        # If the player rolled doubles and has a non-zero doubles streak, prompt them to roll again.
+        # Note: If they were sent to jail, their doubles streak would have been reset and this will be ignored
+        if player.doubles_streak > 0:
+            roll_again: Event = Event({
+                "name": "promptRoll"
+            })
+            self._enqueue_event(roll_again, EventType.PROMPT)
+        # If the player is not going again and is still in the game, prompt them to end their turn.
+        else:
+            prompt_end_turn: Event = Event({
+                "name": "promptEndTurn",
+            })
+            self._enqueue_event(prompt_end_turn, EventType.PROMPT)
+
+        return player.status != PlayerStatus.INVALID
 
     def buy_property(self, player_id: str, tile_id: int) -> bool:
         """
@@ -297,12 +387,18 @@ class Game:
         """
         if not self._valid_player(player_id):
             return False
-        end_turn: Event = Event({"name": "endTurn"})
+        end_turn: Event = Event({
+            "name": "endTurn",
+            "player": self.players[player_id].display_name
+        })
         self._enqueue_event(end_turn, EventType.UPDATE)
         # Increment to the next player
         self._next_player()
         # Enqueue new events informing other players of a turn start and prompting player to roll the dice.
-        start_turn: Event = Event({"name": "startTurn"})
+        start_turn: Event = Event({
+            "name": "startTurn",
+            "player": self.players[self.active_player_id].display_name
+        })
         prompt_roll: Event = Event({"name": "promptRoll"})
         self._enqueue_event(start_turn, EventType.UPDATE)
         self._enqueue_event(prompt_roll, EventType.PROMPT)
@@ -358,22 +454,29 @@ class Game:
         queue: list[Event] = self.event_queue.get(player_id)
         if queue is None:
             return
-        queue = []
+        self.event_queue[player_id] = []
 
+    def _get_last_roll_event(self) -> Event:
+        """
+        Description:    Method used to get the last roll event from the event history (None if there isn't one).
+        :return:        Event or None.
+        """
+        for event in reversed(self.event_history):
+            if event.parameters.get("name") == "showRoll":
+                return event
+        return None
 
     def _make_board(self) -> list[Tile]:
         """
         Description:    Method for creating the board tiles from scratch.
         :return:        List of tiles corresponding to the Monopoly board.
         """
-        # TODO: Incorporate chance/community chest tiles
-        # TODO: Incorporate tax tiles
         tiles: list[Tile] = [
-            GoTile(),
+            Tile(0, "Go"),
             ImprovableTile(1, "Mediterranean Avenue", 60, AssetGroups.BROWN),
             CardTile(2, "Community Chest", self.community_chest_deck, self._players),
             ImprovableTile(3, "Baltic Avenue", 60, AssetGroups.BROWN),
-            TaxTile(4, "Income Tax", INCOME_TAX),
+            TaxTile(4, "Income Tax", -200),
             RailroadTile(5, "Reading Railroad"),
             ImprovableTile(6, "Oriental Avenue", 100, AssetGroups.LIGHT_BLUE),
             CardTile(7, "Chance", self.chance_deck, self._players),
@@ -407,7 +510,7 @@ class Game:
             RailroadTile(35, "Short Line Railroad"),
             CardTile(36, "Chance", self.chance_deck, self._players),
             ImprovableTile(37, "Park Place", 350, AssetGroups.DARK_BLUE),
-            TaxTile(38, "Luxury Tax", LUXURY_TAX),
+            TaxTile(38, "Luxury Tax", -75),
             ImprovableTile(39, "Boardwalk", 400, AssetGroups.DARK_BLUE),
         ]
         return tiles

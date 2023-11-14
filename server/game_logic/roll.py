@@ -29,5 +29,6 @@ class Roll:
         """
         client_bindings = {
            "first": self.first,
-           "second": self.second}
+           "second": self.second
+        }
         return client_bindings

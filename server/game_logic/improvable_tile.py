@@ -56,7 +56,7 @@ class ImprovableTile(AssetTile):
             "isMortgaged": self.is_mortgaged,
             "mortgagePrice": self.mortage_price,
             "group": str(self.group),
-            "status": str(self.status.name),
+            "status": str(self.status.description),
             "rent": self.rent,
             "improvementCost": self.improvement_cost
         }

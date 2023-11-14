@@ -6,8 +6,8 @@ Date:           10/30/23
 
 from .asset_tile import AssetTile
 from .types import AssetGroups, JailMethod, PropertyStatus, UtilityStatus, RailroadStatus
-from .constants import (JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE, NUM_TILES,
-                        START_LOCATION, GROUP_SIZE, RENTS)
+from .constants import (GO_MONEY, JAIL_COST, JAIL_LOCATION, JAIL_TURNS, MAX_DIE, MAX_NUM_IMPROVEMENTS, MIN_DIE,
+                        NUM_TILES, START_LOCATION, GROUP_SIZE, RENTS)
 from .player import Player, PlayerStatus
 from .asset_tile import AssetTile
 from .improvable_tile import ImprovableTile
@@ -142,9 +142,12 @@ class RollUpdate(PlayerUpdate):
             player.doubles_streak += 1
         else:
             player.doubles_streak = 0
+        start_location: int = player.location
         # To get here means the player will be getting their movement
         player.update(MoveUpdate(self.roll.total))
-
+        # Player passed Go. Given them their money.
+        if player.location < start_location:
+            player.update(MoneyUpdate(GO_MONEY))
 
 class BuyUpdate(PlayerUpdate):
     def __init__(self, tile: AssetTile):

@@ -365,6 +365,16 @@ class UpdateTests(unittest.TestCase):
         self.assertFalse(player.in_jail)
         self.assertEqual(0, player.turns_in_jail)
 
+        # Verify they get go money for passing Go by landing on it, and by going to it.
+        player.location = 39
+        player.update(RollUpdate(Roll(1, 1)))
+        self.assertEqual(START_LOCATION + 1, player.location)
+        self.assertEqual(STARTING_MONEY + GO_MONEY, player.money)
+        player.location = 38
+        player.update(RollUpdate(Roll(1, 1)))
+        self.assertEqual(START_LOCATION, player.location)
+        self.assertEqual(STARTING_MONEY + 2 * GO_MONEY, player.money)
+
     def test_go_to_jail(self):
         player: Player = self.make_player()
         self.assertEqual(0, player.location)

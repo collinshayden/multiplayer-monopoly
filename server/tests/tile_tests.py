@@ -10,7 +10,6 @@ from server.game_logic.card_tile import CardTile
 from server.game_logic.constants import JAIL_LOCATION, JAIL_TURNS, GO_MONEY, STARTING_MONEY
 from server.game_logic.deck import Deck
 from server.game_logic.go_to_jail_tile import GoToJailTile
-from server.game_logic.go_tile import GoTile
 from server.game_logic.improvable_tile import ImprovableTile
 from server.game_logic.player import Player
 from server.game_logic.player_updates import BuyUpdate, ImprovementUpdate, PlayerUpdate
@@ -92,17 +91,6 @@ class TileTests(unittest.TestCase):
             tile.unmortgage()
             self.assertEqual(100, tile.liquid_value)
             self.assertFalse(tile.is_mortgaged)
-
-    def test_go_tile(self):
-        tile: GoTile = GoTile()
-        player: Player = self.make_player1()
-        self.assertEqual(STARTING_MONEY, player.money)
-        updates: dict[str: PlayerUpdate] = tile.land(player, 7)
-        self.assertEqual(1, len(updates))
-        for id, update in updates.items():
-            if id == player.id:
-                player.update(update)
-        self.assertEqual(STARTING_MONEY + GO_MONEY, player.money)
 
     def test_go_to_jail_tile(self):
         tile: GoToJailTile = GoToJailTile()

@@ -26,7 +26,6 @@ class AssetTile(Tile):
         self.group: AssetGroups = group
 
         # Default values here
-        self.owner: Player = None
         self.is_mortgaged: bool = False
         self.mortage_price: int = int(price / 2)
 

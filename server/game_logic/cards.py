@@ -10,14 +10,14 @@ from .player_updates import PlayerUpdate
 
 class Card:
 
-    def __init__(self, text: str) -> None:
+    def __init__(self, description: str) -> None:
         """
         Description:    Class representing a chance/community chest card.
-        :param text:    String value for the description of the card.
+        :param description:    String value for the description of the card.
         :param deck:    The deck (community chest/chance) that the card belongs to.
         :returns:       None.
         """
-        self.name: str = text
+        self.description: str = description
         self.in_use: bool = True
 
     def on_draw(self, owner: Player, players: list[Player]) -> dict[str, PlayerUpdate]:
