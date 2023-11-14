@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:client/constants.dart';
 import 'package:client/json_utils.dart';
+import 'package:client/model/player.dart';
 
 /// A service which provides access to the server's game API and outputs JSON.
 class EndpointService {
@@ -16,7 +17,7 @@ class EndpointService {
 
   final http.Client server;
 
-    Future<Json> startGame() async {
+  Future<Json> startGame() async {
     final response = await server.get(
       Uri.parse('$API_URL/start_game'),
     );
@@ -111,9 +112,9 @@ class EndpointService {
     return status;
   }
 
-  Future<Json> reset(String playerId) async {
+  Future<Json> reset({required PlayerId playerId}) async {
     final response = await server.get(
-      Uri.parse('$API_URL/reset?player_id=$playerId'),
+      Uri.parse('$API_URL/reset?player_id=${playerId.value}'),
     );
     final status = jsonDecode(response.body);
     return status;

@@ -40,7 +40,6 @@ class _MonopolyAppState extends State<MonopolyApp> {
                   child: Column(
                     children: [
                       Align(),
-                      DiceRollButton(),
                       // Roll(first: 1, second: 4).createWidget(),
                     ],
                   ),
@@ -74,34 +73,6 @@ class CubitTest extends StatelessWidget {
         }
         return const Text('Loaded local config!');
       },
-    );
-  }
-}
-
-class DiceRollButton extends StatelessWidget {
-  const DiceRollButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        BlocProvider.of<GameCubit>(context).endpointService.reset();
-
-        BlocProvider.of<GameCubit>(context).endpointService.startGame();
-        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player1");
-        BlocProvider.of<GameCubit>(context).joinGame(displayName: "player2");
-        BlocProvider.of<GameCubit>(context).loadRemoteConfig();
-        // PlayerId activePlayerId = BlocProvider.of<GameCubit>(context).game.activePlayerId!;
-        BlocProvider.of<GameCubit>(context).rollDice();
-        Roll lastRoll = BlocProvider.of<GameCubit>(context).game.lastRoll;
-        print(lastRoll.first);
-        print(lastRoll.second);
-
-        // String active_player_id = 
-        
-        print('Rolling dice!');
-      },
-      child: const Text('Roll Dice!'),
     );
   }
 }
