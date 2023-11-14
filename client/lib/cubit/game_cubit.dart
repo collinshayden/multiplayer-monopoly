@@ -18,10 +18,18 @@ class GameCubit extends Cubit<GameState> {
   final fileService = FileService();
   final endpointService = EndpointService();
 
+  /// Load local configuration files and emit the result.
+  ///
+  /// This function loads local configuration from persistent memory stored as
+  /// JSON. A [LocalConfigLoading] state is always emitted, and then either a
+  /// [LocalConfigFailure] or [LocalConfigSuccess] will emitted dependent on
+  /// whether the config was able to be loaded by the file service and
+  /// deserialised into a [Game] object.
   void loadLocalConfig() async {
-    // Loaing local config
+    // Loading local config
     emit(LocalConfigLoading());
-    await Future.delayed(Duration(seconds: 1)); // TODO: Remove
+    await Future.delayed(const Duration(seconds: 1)); // TODO: Remove
+
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
@@ -29,7 +37,6 @@ class GameCubit extends Cubit<GameState> {
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
-
     emit(LocalConfigSuccess(game: game));
   }
 
