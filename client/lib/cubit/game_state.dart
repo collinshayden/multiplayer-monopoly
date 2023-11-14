@@ -33,21 +33,18 @@ class RemoteConfigSuccess extends GameState {}
 
 class RemoteConfigFailure extends GameState {}
 
-/// Attempt to register a new player with an active session.
 class JoinGameLoading extends GameState {}
 
 class JoinGameSuccess extends GameState {}
 
 class JoinGameFailure extends GameState {}
 
-/// Most frequently used states for the game.
-class ActiveTurn extends GameState {}
+class ActiveGame extends GameState {}
 
-class InctiveTurn extends GameState {}
+class ActiveTurnRollPhase extends GameState {}
 
-/// Transient states used only when the client requests an actions.
-class ActionRequesting extends GameState {}
+class ActiveTurnUpkeepPhase extends GameState {}
 
-class ActionRejected extends GameState {}
+class OffTurn extends GameState {}
 
-class ActionAccepted extends GameState {}
+class GameErrorState extends GameState {}
