@@ -6,10 +6,11 @@ Date:           10/24/23
 
 from server.game_logic.constants import (CHANCE_TILES, COMMUNITY_CHEST_TILES, MAX_NUM_PLAYERS, NUM_CHANCE_CARDS,
                                          NUM_COMMUNITY_CHEST_CARDS, PLAYER_ID_LENGTH, STARTING_MONEY)
+from server.game_logic.event import Event
 from server.game_logic.game import Game
 from server.game_logic.player_updates import *
 from server.game_logic.tile import Tile
-from server.game_logic.types import CardType, PlayerStatus
+from server.game_logic.types import CardType, EventType, PlayerStatus
 
 import unittest
 
@@ -22,13 +23,26 @@ class GameTests(unittest.TestCase):
         # Can't start game with no players and without valid player ID
         self.assertFalse(game.start_game(""))
         id1: str = game.register_player("test1")
+
         # Valid id but not enough players
         self.assertFalse(game.start_game(id1))
         id2: str = game.register_player("test2")
+
         # Valid number of players but invalid ID
         self.assertFalse(game.start_game(""))
         # Valid start
         self.assertTrue(game.start_game(id1))
+
+        # Verify events are enqueued as expected
+        # 2 from the UPDATE events when each player joined and then 2 from startGame + startTurn
+        self.assertEqual(4, len(game.event_history))
+        event_names: list[str] = ["playerJoin", "playerJoin", "startGame", "startTurn"]
+        for event, name in zip(game.event_history, event_names):
+            self.assertEqual(event.parameters["name"], name)
+        id1, id2 = game.turn_order
+        # Verify the active player's last two events are startTurn and promptRoll
+        last_2: list[Event] = game.event_queue[id1][-2:]
+        self.assertEqual(["startTurn", "promptRoll"], [event.parameters["name"] for event in last_2])
 
         # Verify it creates a turn order with the 2 ids and sets active player id and idx
         self.assertEqual(2, len(game.turn_order))
@@ -51,6 +65,17 @@ class GameTests(unittest.TestCase):
             self.assertEqual(display_name, game.players[id].display_name)
             self.assertEqual(id, game.players[id].id)
             self.assertEqual(i, len(game._players))
+            # Verify new player got a "startGamePrompt" event
+            self.assertEqual(2, len(game.event_queue[id]))
+            self.assertEqual("playerJoin", game.event_queue[id][0].parameters["name"])
+            self.assertEqual("startGamePrompt", game.event_queue[id][1].parameters["name"])
+
+            # For each new player, verify the event queue was updated accordingly for existing ones
+            for n in range(i):
+                old_id: str = list(game.players.keys())[n]
+                # 2 events from when they were created, and then 1 more for every player after
+                self.assertEqual(2 + (i - n - 1), len(game.event_queue[old_id]))
+
         # Can't register a player beyond the maximum
         display_name = f"test{MAX_NUM_PLAYERS + 1}"
         id = game.register_player(display_name)
@@ -287,13 +312,19 @@ class GameTests(unittest.TestCase):
         self.assertEqual(PropertyStatus.ONE_IMPROVEMENT, game.tiles[16].status)
         self.assertEqual(money, player.money)
 
-
     def test_mortgage(self):
         game: Game = Game()
         id1: str = game.register_player("player1")
         id2: str = game.register_player("player2")
         game.start_game(id1)
         id1, id2 = game.turn_order
+        ids: list[str] = [id1, id2]
+
+        # Clear out event queue
+        for id in ids:
+            game.event_queue[id] = []
+        game.event_history = []
+
         # Shouldn't allow the non-active player to go
         self.assertFalse(game.mortgage(id2, 1, True))
         # Don't allow for invalid tile IDs
@@ -302,6 +333,10 @@ class GameTests(unittest.TestCase):
             self.assertFalse(game.mortgage(id1, tile_id, True))
         # Don't allow non-property tiles to be mortgaged
         self.assertFalse(game.mortgage(id1, 0, True))
+
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # Buy Boardwalk
         player1: Player = game.players[id1]
@@ -312,6 +347,9 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # This will do nothing since property is not mortgaged
         game.mortgage(id1, 39, False)
@@ -319,6 +357,9 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
         # This will mortgage the property
         game.mortgage(id1, 39, True)
@@ -327,6 +368,16 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertTrue(boardwalk.is_mortgaged)
+        # Event gets added to the queue
+        for id in ids:
+            self.assertEqual(1, len(game.event_queue[id]))
+            event: Event = game.event_queue[id][-1]
+            self.assertEqual("showMortgageChange", event.parameters["name"])
+            self.assertEqual(True, event.parameters["mortgaged"])
+        self.assertEqual(1, len(game.event_history))
+        event: Event = game.event_history[-1]
+        self.assertEqual("showMortgageChange", event.parameters["name"])
+        self.assertEqual(True, event.parameters["mortgaged"])
 
         # This will unmortgage the property at 10% interest
         game.mortgage(id1, 39, False)
@@ -336,9 +387,23 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        # Event gets added to the queue
+        for id in ids:
+            self.assertEqual(2, len(game.event_queue[id]))
+            event: Event = game.event_queue[id][-1]
+            self.assertEqual("showMortgageChange", event.parameters["name"])
+            self.assertEqual(False, event.parameters["mortgaged"])
+        self.assertEqual(2, len(game.event_history))
+        event: Event = game.event_history[-1]
+        self.assertEqual("showMortgageChange", event.parameters["name"])
+        self.assertEqual(False, event.parameters["mortgaged"])
 
         # Transition to next player
         game.end_turn(id1)
+        # Clear out event queue
+        for id in ids:
+            game.event_queue[id] = []
+        game.event_history = []
         baltic: ImprovableTile = game.tiles[3]
         player2: Player = game.players[id2]
         player2.update(BuyUpdate(baltic))
@@ -353,6 +418,9 @@ class GameTests(unittest.TestCase):
         self.assertIs(player1, boardwalk.owner)
         self.assertIn(boardwalk, player1.assets)
         self.assertFalse(boardwalk.is_mortgaged)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
 
     def test_get_out_of_jail(self):
         game: Game = Game()
@@ -360,18 +428,26 @@ class GameTests(unittest.TestCase):
         id2: str = game.register_player("player2")
         game.start_game(id1)
         id1, id2 = game.turn_order
+        ids: list[str] = [id1, id2]
         player: Player = game.players[id1]
+        for id in ids:
+            game.event_queue[id] = []
+
         # Verify pre-conditions
         self.assertEqual(STARTING_MONEY, player.money)
         self.assertEqual(START_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+
         # Send player to jail and verify it worked
         player.update(GoToJailUpdate())
         self.assertEqual(STARTING_MONEY, player.money)
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(JAIL_TURNS, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+
         # Test get out of jail method with a card
         # Nothing should happen since they have no cards
         game.get_out_of_jail(id1, JailMethod.CARD)
@@ -379,6 +455,9 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(JAIL_TURNS, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        self.assertEqual(0, len(game.event_queue[id1]))
+        self.assertEqual(0, len(game.event_queue[id2]))
+
         # Give them a get out of jail card and try again
         player.jail_cards += 1
         game.get_out_of_jail(id1, JailMethod.CARD)
@@ -386,6 +465,10 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertEqual("showFreeFromJail", game.event_queue[id][0].parameters["name"])
+
         # Send them back to jail then get them out using money
         player.update(GoToJailUpdate())
         game.get_out_of_jail(id1, JailMethod.MONEY)
@@ -393,6 +476,11 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(2, len(game.event_queue[id]))
+            for i in range(2):
+                self.assertEqual("showFreeFromJail", game.event_queue[id][i].parameters["name"])
+
         # Send them back to jail then get them out using 'doubles'
         # Note: roll_dice handles DOUBLES condition.
         player.update(GoToJailUpdate())
@@ -401,6 +489,10 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(0, player.turns_in_jail)
         self.assertEqual(0, player.doubles_streak)
+        for id in ids:
+            self.assertEqual(3, len(game.event_queue[id]))
+            for i in range(3):
+                self.assertEqual("showFreeFromJail", game.event_queue[id][i].parameters["name"])
 
     def test_end_turn(self):
         game: Game = Game()
@@ -409,18 +501,51 @@ class GameTests(unittest.TestCase):
         id3: str = game.register_player("player3")
         game.start_game(id1)
         id1, id2, id3 = game.turn_order
+        ids: list[str] = [id1, id2, id3]
         self.assertEqual(game.active_player_id, id1)
+
+        # Clear event queues
+        game.event_history = []
+        for id in ids:
+            game.event_queue[id] = []
+
         # Nothing should happen since they aren't the active player
         game.end_turn(id2)
         self.assertEqual(game.active_player_id, id1)
+        for id in ids:
+            self.assertEqual(0, len(game.event_queue[id]))
+        self.assertEqual(0, len(game.event_history))
+
         # Progresses the next player
         game.end_turn(id1)
         self.assertEqual(game.active_player_id, id2)
-        # Does nothing since they aren't the active playerR
+
+        # Ensure the endTurn and startTurn events are correctly enqueued
+        for id in [id1, id3]:
+            self.assertEqual(2, len(game.event_queue[id]))  # Two events for the player ending the turn
+            self.assertEqual("endTurn", game.event_queue[id][0].parameters["name"])
+            self.assertEqual("startTurn", game.event_queue[id][1].parameters["name"])
+        self.assertEqual(2, len(game.event_history))
+
+
+        # Verify next player has 1 additional event for the promptRoll
+        self.assertEqual(3, len(game.event_queue[id2]))  # Two events for the player ending the turn
+        self.assertEqual("endTurn", game.event_queue[id2][0].parameters["name"])
+        self.assertEqual("startTurn", game.event_queue[id2][1].parameters["name"])
+        self.assertEqual("promptRoll", game.event_queue[id2][2].parameters["name"])
+
+        # Does nothing since they aren't the active player
         game.end_turn(id1)
         self.assertEqual(game.active_player_id, id2)
+
+        # Ensure no additional events are enqueued
+        self.assertEqual(2, len(game.event_queue[id1]))
+        self.assertEqual(3, len(game.event_queue[id2]))
+        self.assertEqual(2, len(game.event_queue[id3]))
+
         game.end_turn(id2)
         self.assertEqual(game.active_player_id, id3)
+
         # Make sure it wraps back around properly
         game.end_turn(id3)
         self.assertEqual(game.active_player_id, id1)
@@ -444,6 +569,74 @@ class GameTests(unittest.TestCase):
         self.assertEqual(0, len(game.players))
 
     """ Test Private Helper Methods """
+
+    def test_enqueue_event(self):
+        game: Game = Game()
+        # Add players and start the game without calling that method
+        player1: Player = Player("player1", "Player 1")
+        player2: Player = Player("player2", "Player 2")
+        game.players = {
+            "player1": player1,
+            "player2": player2
+        }
+        game.event_queue = {
+            "player1": [],
+            "player2": []
+        }
+        game._players.extend([player1, player2])
+        game.turn_order = ["player1", "player2"]
+        game.active_player_id = "player1"
+        game.active_player_idx = 0
+        game.started = True
+
+        # Test enqueueing an event without a "name" field.
+        event: Event = Event({})
+        game._enqueue_event(event, EventType.STATUS)
+        for id in game.turn_order:
+            self.assertEqual(0, len(game.event_queue[id]))
+        event = Event({"name": "event"})
+        # Test enqueueing a valid STATUS event that players see but is not stored in game history.
+        game._enqueue_event(event, EventType.STATUS)
+        self.assertEqual(0, len(game.event_history))
+        for id in game.turn_order:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertIs(event, game.event_queue[id][0])
+            # Clear out queue to stage for next text
+            game.event_queue[id] = []
+
+        # Test enqueueing a valid UPDATE event which goes to players and the game history.
+        game._enqueue_event(event, EventType.UPDATE)
+        self.assertEqual(1, len(game.event_history))
+        for id in game.turn_order:
+            self.assertEqual(1, len(game.event_queue[id]))
+            self.assertIs(event, game.event_queue[id][0])
+            # Clear out queue to stage for next text
+            game.event_queue[id] = []
+
+        # Test enqueueing a valid PROMPT event which only goes to the active player.
+        game.event_history = []
+        game._enqueue_event(event, EventType.PROMPT)
+        self.assertEqual(0, len(game.event_history))
+        self.assertEqual(1, len(game.event_queue["player1"]))
+        self.assertEqual(0, len(game.event_queue["player2"]))
+        game.event_queue["player1"] = []
+
+        # Test adding another event and verify the order is as expected
+        event1 = Event({"name": "event1"})
+        event2 = Event({"name": "event2"})
+        game._enqueue_event(event1, EventType.STATUS)
+        game._enqueue_event(event2, EventType.STATUS)
+
+        expected_order = [event1, event2]
+        for id in game.turn_order:
+            self.assertEqual(expected_order, game.event_queue[id])
+            game.event_queue[id] = []
+
+        # Test enqueueing an event with a specific target player
+        target_event = Event({"name": "targetEvent"})
+        game._enqueue_event(target_event, EventType.STATUS, target="player2")
+        self.assertEqual(1, len(game.event_queue["player2"]))
+        self.assertIs(target_event, game.event_queue["player2"][0])
 
     def test_apply_updates(self):
         game: Game = Game()
