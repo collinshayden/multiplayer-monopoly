@@ -104,32 +104,33 @@ class AdminButtons extends StatelessWidget {
                 child: Text('Join')),
             TextButton(
                 onPressed: () {
+                  var playerId = BlocProvider.of<GameCubit>(context)
+                      .game
+                      .players
+                      .values
+                      .first
+                      .id;
+                  print(playerId);
                   BlocProvider.of<GameCubit>(context)
                       .endpointService
-                      .startGame();
+                      .startGame(playerId: playerId);
                 },
                 child: Text('Start Game')),
-                TextButton(
+            TextButton(
                 onPressed: () {
+                  PlayerId activePlayerId =
+                      BlocProvider.of<GameCubit>(context).game.activePlayerId!;
                   BlocProvider.of<GameCubit>(context)
-                      .loadRemoteConfig();
+                      .rollDice(playerId: activePlayerId);
+                },
+                child: Text('Roll')),
+            TextButton(
+                onPressed: () {
+                  BlocProvider.of<GameCubit>(context).updateGameData();
                 },
                 child: Text('Update')),
-                
           ],
         );
-        // if (state is GameInitial) {
-        //   return TextButton(
-        //     onPressed: () {
-        //       BlocProvider.of<GameCubit>(context).loadLocalConfig();
-        //     },
-        //     child: Text('Load local config'),
-        //   );
-        // }
-        // if (state is LocalConfigLoading) {
-        //   return const CircularProgressIndicator();
-        // }
-        // return const Text('Loaded local config!');
       },
     );
   }
