@@ -4,9 +4,9 @@ Date:           10/06/23
 Author:         Jordan Bourdeau
 """
 
-from .game_logic.constants import SECRET_KEY
-from .game_logic.game import Game
-from .game_logic.types import CardType, JailMethod
+from game_logic.constants import SECRET_KEY
+from game_logic.game import Game
+from game_logic.types import CardType, JailMethod
 
 # from game_logic.constants import SECRET_KEY
 # from game_logic.game import Game
@@ -29,6 +29,7 @@ def state():
                     No authentication required to receive the game state.
     :return:        Returns json-formatted data with the game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -44,6 +45,7 @@ def state():
         "events": game.flush_events(player_id)
     }
     client_bindings.update(game.to_dict())
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -53,8 +55,8 @@ def register_player():
     Description:    Endpoint for registering a new player in the game. Requires their username and issues player ID.
     :return:        Returns json-formatted data with the game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
-
     try:
         display_name: str = request.args.get("display_name")
     # No query parameters passed in
@@ -75,6 +77,7 @@ def register_player():
         "playerId": player_id,
         "success": player_id != "",
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -85,6 +88,7 @@ def start_game():
     :return:        Returns json-formatted data with the game state if it starts. Otherwise, simple message it failed to
                     start.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -98,6 +102,7 @@ def start_game():
         "event": "startGame",
         "success": success
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -107,6 +112,7 @@ def roll_dice():
     Description:    Endpoint for conducting a die roll. Game object keeps track of current player's turn.
     :return:        Returns json-formatted data with the game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -115,7 +121,7 @@ def roll_dice():
         player_id: str = ""
     if player_id is None:
         player_id: str = ""
-
+    print(f"Player ID: {player_id}")
     """
     Does the following:
         1) Does the player ID correspond to a valid, active player?
@@ -129,49 +135,7 @@ def roll_dice():
         "event": "rollDice",
         "success": success,
     }
-    return jsonify(client_bindings)
-
-
-# TODO: Implement test method for this once it is implemented in Game class.
-@app.route("/game/draw_card", methods=["GET"])
-def draw_card():
-    """
-    Description:    Endpoint which will draw a chance/community chest card for the active player.
-    :return:        Returns json-formatted data with the game state.
-    """
-    global game
-
-    try:
-        player_id: str = request.args.get("player_id").lower()
-        card_arg: str = request.args.get("card_type").lower()
-    # No query parameters passed in
-    except AttributeError as e:
-        player_id: str = ""
-        card_arg: str = ""
-    if player_id is None or card_arg is None:
-        player_id: str = ""
-        card_arg: str = ""
-
-    match card_arg:
-        case "chance":
-            card_type: CardType = CardType.CHANCE
-        case "community_chest":
-            card_type: CardType = CardType.COMMUNITY_CHEST
-        case _:
-            card_type: CardType = CardType.INVALID
-    """
-    Checks the following:
-        1) Does the player ID correspond to a valid, active player?
-        2) Is the active player on one of the associated card tiles?
-        3) Are there cards in the deck?
-            -> If not, mark all cards as active and "reshuffle" the deck.
-    Once this has been completed, the appropriate deterministic action will be taken by the game.
-    """
-    success: bool = game.draw_card(player_id=player_id, card_type=card_type)
-    client_bindings: dict[str, Any] = {
-        "event": "drawCard",
-        "success": success
-    }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -206,6 +170,7 @@ def buy_property():
         "event": "buyProperty",
         "success": success
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -215,6 +180,7 @@ def set_improvements():
     Description:    Endpoint for buying/selling improvements (hotels/houses) for a property.
     :return:        Returns a JSON-serliazable status response.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -246,6 +212,7 @@ def set_improvements():
         "event": "setImprovements",
         "success": success
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -255,6 +222,7 @@ def set_mortgage():
     Description:    Endpoint for mortgaging/unmortgaging a property.
     :return:        Returns json-formatted data with the game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -283,6 +251,7 @@ def set_mortgage():
         "event": "setMortgage",
         "success": success
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -292,6 +261,7 @@ def get_out_of_jail():
     Description:    Endpoint for requesting to get out of jail.
     :return:        Returns json-formatted data with the game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -328,6 +298,7 @@ def get_out_of_jail():
         "event": "getOutOfJail",
         "success": success
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -337,6 +308,7 @@ def end_turn():
     Description:    Endpoint for a player requesting to end their turn.
     :return:        Returns json-formatted data with the game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -356,6 +328,7 @@ def end_turn():
         "event": "endTurn",
         "success": success
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 
@@ -365,6 +338,7 @@ def reset():
     Description:    Endpoint used for resetting a game and clearing all associated state.
     :return:        Returns json-formatted data with the cleared game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -384,6 +358,7 @@ def reset():
         "event": "reset",
         "success": success
     }
+    print(f"Server Response: \n{client_bindings}")
     return jsonify(client_bindings)
 
 

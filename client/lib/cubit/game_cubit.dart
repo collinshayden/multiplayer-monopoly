@@ -46,12 +46,13 @@ class GameCubit extends Cubit<GameState> {
     try {
       gameData = await endpointService.getGameData();
       game.withJson(gameData);
-      print(gameData);
+      emit(GameStateUpdateSuccess());
+      // print(gameData);
     } catch (e) {
+      emit(GameStateUpdateFailure());
       // emit(ActionRejected());
     }
   }
-
 
   /// Load remote config from the server and emit the result.
   ///
@@ -99,5 +100,18 @@ class GameCubit extends Cubit<GameState> {
       emit(GameErrorState());
     }
     emit(ActiveTurnRollPhase());
+  }
+
+  /// End a player's turn.
+  ///
+  /// The client should only be able to call this
+  void endTurn({required PlayerId playerId}) async {
+    // emit(ActiveTurnRollPhase());
+    try {
+      endpointService.endTurn(playerId);
+    } catch (e) {
+      emit(GameErrorState());
+    }
+    // emit(ActiveTurnRollPhase());
   }
 }

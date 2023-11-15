@@ -26,10 +26,10 @@ class EndpointService {
 
   Future<Json> getGameData() async {
     final response = await server.get(
-      Uri.parse('$API_URL/state'),
+      Uri.parse('$API_URL/state?player_id=admin'),
     );
     final gameData = jsonDecode(response.body);
-    print(gameData);
+    // print(gameData);
     return gameData;
   }
 
@@ -89,9 +89,9 @@ class EndpointService {
     );
   }
 
-  void endTurn(String playerId) async {
+  void endTurn(PlayerId playerId) async {
     server.get(
-      Uri.parse('$API_URL/end_turn?player_id=$playerId'),
+      Uri.parse('$API_URL/end_turn?player_id=${playerId.value}'),
     );
   }
 

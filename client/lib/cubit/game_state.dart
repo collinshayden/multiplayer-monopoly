@@ -26,6 +26,11 @@ class LocalConfigFailure extends GameState {
   final dynamic object;
 }
 
+/// Game state update emits
+class GameStateUpdateSuccess extends GameState {}
+
+class GameStateUpdateFailure extends GameState {}
+
 /// Establish a connection with the server.
 class RemoteConfigLoading extends GameState {}
 

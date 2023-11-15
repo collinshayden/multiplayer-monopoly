@@ -109,7 +109,8 @@ class AdminButtons extends StatelessWidget {
                     child: Text('Join')),
                 TextButton(
                     onPressed: () {
-                      BlocProvider.of<GameCubit>(context).updateGameData();
+                      // BlocProvider.of<GameCubit>(context).updateGameData();
+
                       BlocProvider.of<GameCubit>(context)
                           .endpointService
                           .startGame(playerId: PlayerId("admin"));
@@ -117,7 +118,7 @@ class AdminButtons extends StatelessWidget {
                     child: Text('Start Game')),
                 TextButton(
                     onPressed: () {
-                      BlocProvider.of<GameCubit>(context).updateGameData();
+                      // BlocProvider.of<GameCubit>(context).updateGameData();
                       PlayerId activePlayerId =
                           BlocProvider.of<GameCubit>(context)
                               .game
@@ -126,6 +127,17 @@ class AdminButtons extends StatelessWidget {
                           .rollDice(playerId: activePlayerId);
                     },
                     child: Text('Roll')),
+                TextButton(
+                    onPressed: () {
+                      // BlocProvider.of<GameCubit>(context).updateGameData();
+                      PlayerId activePlayerId =
+                          BlocProvider.of<GameCubit>(context)
+                              .game
+                              .activePlayerId!;
+                      BlocProvider.of<GameCubit>(context)
+                          .endTurn(playerId: activePlayerId);
+                    },
+                    child: Text('End Turn')),
                 TextButton(
                     onPressed: () {
                       BlocProvider.of<GameCubit>(context).updateGameData();
@@ -154,7 +166,19 @@ class ShowDice extends StatelessWidget {
                 width: 400,
                 height: 200,
                 child: Row(
-                  children: [Dice(value1: BlocProvider.of<GameCubit>(context).game.lastRoll.first ?? 1, value2: BlocProvider.of<GameCubit>(context).game.lastRoll.second ?? 1)],
+                  children: [
+                    Dice(
+                        value1: BlocProvider.of<GameCubit>(context)
+                                .game
+                                .lastRoll
+                                .first ??
+                            1,
+                        value2: BlocProvider.of<GameCubit>(context)
+                                .game
+                                .lastRoll
+                                .second ??
+                            1)
+                  ],
                 ),
               )),
         );
