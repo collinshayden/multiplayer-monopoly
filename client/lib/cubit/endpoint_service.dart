@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'package:client/model/player.dart';
 import 'package:http/http.dart' as http;
+import 'package:client/model/player.dart';
 import 'package:client/constants.dart';
 import 'package:client/json_utils.dart';
-import 'package:client/model/player.dart';
 
 /// A service which provides access to the server's game API and outputs JSON.
 class EndpointService {
@@ -13,20 +12,15 @@ class EndpointService {
   /// Factory constructor which returns the singleton.
   factory EndpointService() => _instance;
 
-  // Instantiate singleton
+  /// Instantiate singleton
   static final _instance = EndpointService._internal();
 
-  final http.Client server;
+  /// Declare a lazily-loaded server connection
+  late final http.Client server;
 
-  void startGame({required PlayerId playerId}) async {
-    server.get(
-      Uri.parse('$API_URL/start_game?player_id=${playerId.value}'),
-    );
-  }
-
-  Future<Json> getGameData() async {
-    final response = await server.get(
-      Uri.parse('$API_URL/state'),
+  Future<Json> fetchData() async {
+    final response = await http.get(
+      Uri.parse('$API_URL/data'),
     );
     final gameData = jsonDecode(response.body);
     print(gameData);
@@ -34,48 +28,55 @@ class EndpointService {
   }
 
   void registerPlayer({required String displayName}) async {
-    server.get(
+    http.get(
       Uri.parse('$API_URL/register_player?display_name=$displayName'),
     );
   }
 
+  void startGame({required PlayerId playerId}) async {
+    http.get(
+      Uri.parse('$API_URL/start_game?player_id=${playerId.value}'),
+    );
+  }
+
   void rollDice(PlayerId playerId) async {
-    server.get(
+    http.get(
       Uri.parse('$API_URL/roll_dice?player_id=${playerId.value}'),
     );
   }
 
   void drawCard(String playerId, String cardType) async {
     assert(cardType == 'chance' || cardType == 'community_chest');
-    server.get(
+    http.get(
       Uri.parse('$API_URL/draw_card?player_id=$playerId?card_type=$cardType'),
     );
   }
 
   void buyProperty(String playerId, int tileId) async {
     assert(0 <= tileId && tileId <= 39);
-    server.get(
+    http.get(
       Uri.parse('$API_URL/buy_property?player_id=$playerId?tile_id=$tileId'),
     );
   }
 
   void setImprovements(String playerId, int tileId, int quantity) async {
     assert(0 <= tileId && tileId <= 39);
-    server.get(
+    http.get(
       Uri.parse(
           '$API_URL/set_improvements?player_id=$playerId?tile_id=$tileId?quantity=$quantity'),
     );
   }
 
+  /// Set the server-side
   void setMortgage(String playerId, int tileId, bool mortgage) async {
-    server.get(
+    http.get(
       Uri.parse(
           '$API_URL/set_mortgage?player_id=$playerId?tile_id=$tileId?mortgage=$mortgage'),
     );
   }
 
-  void getOutOfJail(String playerId, JailMethod jailMethod) async {
-    String call = '$API_URL/get_out_of_jail?player_id=$playerId';
+  void chooseJailReleaseMethod(String playerId, JailMethod jailMethod) async {
+    String call = '$API_URL/choose_jail_release_method?player_id=$playerId';
     switch (jailMethod) {
       case JailMethod.doubles:
         call += '?method=doubles';
@@ -84,7 +85,7 @@ class EndpointService {
       case JailMethod.card:
         call += '?method=card';
     }
-    server.get(
+    http.get(
       Uri.parse(call),
     );
   }
@@ -101,10 +102,3 @@ class EndpointService {
     );
   }
 }
-
-// void main() async {
-//   var endpointService = EndpointService();
-//   Json registrationResult =
-//       await endpointService.registerPlayer(displayName: 'Jason');
-//   print(registrationResult);
-// }
