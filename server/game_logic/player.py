@@ -28,6 +28,7 @@ class Player:
         self.jail_cards: int = 0
         self.turns_in_jail: int = 0
         self.status: PlayerStatus = PlayerStatus.GOOD
+        # self.event_queue: list[dict] = []
 
     @property
     def in_jail(self) -> bool:

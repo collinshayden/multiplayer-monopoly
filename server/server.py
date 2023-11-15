@@ -41,7 +41,7 @@ def state():
         return jsonify({"success": False})
     client_bindings: dict = {
         "success": True,
-        "events": game.get_events(player_id)
+        "events": game.flush_events(player_id)
     }
     client_bindings.update(game.to_dict())
     return jsonify(client_bindings)

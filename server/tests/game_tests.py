@@ -33,7 +33,7 @@ class GameTests(unittest.TestCase):
         game.event_history = []
 
         # Test case: Empty event queue
-        result_empty_queue: list[dict] = game.get_events(id1)
+        result_empty_queue: list[dict] = game.flush_events(id1)
         self.assertEqual([], result_empty_queue)
         self.assertEqual([], game.event_queue[id1])  # Player1's queue should be empty
 
@@ -43,7 +43,7 @@ class GameTests(unittest.TestCase):
         game._enqueue_event(event1, EventType.UPDATE, target=id1)
         game._enqueue_event(event2, EventType.PROMPT, target=id1)
 
-        result_single_player: list[dict] = game.get_events(id1)
+        result_single_player: list[dict] = game.flush_events(id1)
         expected_result_single_player: list[dict] = [event1.serialize(), event2.serialize()]
         self.assertEqual(expected_result_single_player, result_single_player)
         self.assertEqual([], game.event_queue[id1])  # Player1's queue should be cleared
@@ -54,12 +54,12 @@ class GameTests(unittest.TestCase):
         game._enqueue_event(event3, EventType.UPDATE, target=id1)
         game._enqueue_event(event4, EventType.PROMPT, target=id2)
 
-        result_multiple_players_player1: list[dict] = game.get_events(id1)
+        result_multiple_players_player1: list[dict] = game.flush_events(id1)
         expected_result_multiple_players_player1: list[dict] = [event3.serialize()]
         self.assertEqual(result_multiple_players_player1, expected_result_multiple_players_player1)
         self.assertEqual(game.event_queue[id1], [])  # Player1's queue should be cleared
 
-        result_multiple_players_player2: list[dict] = game.get_events(id2)
+        result_multiple_players_player2: list[dict] = game.flush_events(id2)
         expected_result_multiple_players_player2: list[dict] = [event4.serialize()]
         self.assertEqual(expected_result_multiple_players_player2, result_multiple_players_player2)
         self.assertEqual([], game.event_queue[id2] )  # Player2's queue should be cleared
@@ -92,7 +92,7 @@ class GameTests(unittest.TestCase):
 
         # Verify it creates a turn order with the 2 ids and sets active player id and idx
         self.assertEqual(2, len(game.turn_order))
-        self.assertEqual(0, game.active_player_idx)
+        self.assertEqual(0, game.active_player_index)
         self.assertEqual(game.turn_order[0], game.active_player_id)
 
         # Can't start game again while it is still running
@@ -921,7 +921,7 @@ class GameTests(unittest.TestCase):
         game._players.extend([player1, player2])
         game.turn_order = ["player1", "player2"]
         game.active_player_id = "player1"
-        game.active_player_idx = 0
+        game.active_player_index = 0
         game.started = True
 
         # Test enqueueing an event without a "name" field.
@@ -1041,7 +1041,7 @@ class GameTests(unittest.TestCase):
         for i in range(2, MAX_NUM_PLAYERS):
             id = game.turn_order[i]
             game.players[id].status = PlayerStatus.BANKRUPT
-        game.active_player_idx = 0
+        game.active_player_index = 0
         game.active_player_id = game.turn_order[0]
         # Make sure it just loops between the same two people
         for i in range(3):
