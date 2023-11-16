@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:client/model/tiles.dart';
 import 'package:flutter/material.dart';
-import 'package:client/view/base/tiles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../cubit/game_cubit.dart';
@@ -85,9 +84,9 @@ class CustomLayout extends StatelessWidget {
       BuildContext context, LocalConfigSuccess state) {
     // print('Test!');
     final List<Widget> children = [];
-    for (var tile in state.game.tiles.entries) {
+    for (var id in _ids) {
       children
-          .add(LayoutId(id: tile.key as int, child: tile.value.createWidget()));
+          .add(LayoutId(id: id, child: state.game.tiles[id]!.createWidget()));
     }
     return children;
   }
