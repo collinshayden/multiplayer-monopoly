@@ -212,12 +212,12 @@ class ShowDice extends StatelessWidget {
                     child: Row(
                       children: [
                         Dice(
-                            value1: BlocProvider.of<GameCubit>(context)
+                            first: BlocProvider.of<GameCubit>(context)
                                     .game
                                     .lastRoll
                                     .first ??
                                 1,
-                            value2: BlocProvider.of<GameCubit>(context)
+                            second: BlocProvider.of<GameCubit>(context)
                                     .game
                                     .lastRoll
                                     .second ??
