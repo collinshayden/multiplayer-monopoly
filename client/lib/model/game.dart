@@ -29,14 +29,14 @@ class Game {
     monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
     monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;
     if (json['tierColors'] != null) {
-      tierColors[1] = Color(int.parse(json['tierColors']['1'], radix: 16));
-      tierColors[2] = Color(int.parse(json['tierColors']['2'], radix: 16));
-      tierColors[3] = Color(int.parse(json['tierColors']['3'], radix: 16));
-      tierColors[4] = Color(int.parse(json['tierColors']['4'], radix: 16));
-      tierColors[5] = Color(int.parse(json['tierColors']['5'], radix: 16));
-      tierColors[6] = Color(int.parse(json['tierColors']['6'], radix: 16));
-      tierColors[7] = Color(int.parse(json['tierColors']['7'], radix: 16));
-      tierColors[8] = Color(int.parse(json['tierColors']['8'], radix: 16));
+      tierColors[0] = Color(int.parse(json['tierColors']['1'], radix: 16));
+      tierColors[1] = Color(int.parse(json['tierColors']['2'], radix: 16));
+      tierColors[2] = Color(int.parse(json['tierColors']['3'], radix: 16));
+      tierColors[3] = Color(int.parse(json['tierColors']['4'], radix: 16));
+      tierColors[4] = Color(int.parse(json['tierColors']['5'], radix: 16));
+      tierColors[5] = Color(int.parse(json['tierColors']['6'], radix: 16));
+      tierColors[6] = Color(int.parse(json['tierColors']['7'], radix: 16));
+      tierColors[7] = Color(int.parse(json['tierColors']['8'], radix: 16));
     }
     if (json['activePlayerId'] != null) {
       if (json['activePlayerId'] != '') {
@@ -71,6 +71,8 @@ class Game {
         switch (tile['type']) {
           case 'improvable':
             tiles[id] = ImprovableTile(id: id)..withJson(tile);
+            ImprovableTile improvable = tiles[id] as ImprovableTile;
+            improvable.setTierColor(tierColors);
           case 'railroad':
             tiles[id] = RailroadTile(id: id)..withJson(tile);
           case 'utility':
