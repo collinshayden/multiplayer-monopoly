@@ -11,7 +11,7 @@ class Roll {
   int? first;
   int? second;
 
-  void withJson(Json? json) {
+  void applyJson(Json? json) {
     if (json == null) return;
     first = json['first'] ?? first;
     second = json['second'] ?? second;
@@ -22,10 +22,9 @@ class Roll {
   }
 
   Widget createWidget() {
-    assert(_ensureCompleteRoll(), "Roll value(s) are null");
-
-    return Container(
-      child: Dice(value1: 1, value2: 2,),
+    return const Dice(
+      first: 1,
+      second: 2,
     );
   }
 }

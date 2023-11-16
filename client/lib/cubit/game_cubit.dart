@@ -32,7 +32,7 @@ class GameCubit extends Cubit<GameState> {
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
-      game.withJson(localConfig);
+      game.applyJson(localConfig);
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
@@ -45,13 +45,12 @@ class GameCubit extends Cubit<GameState> {
     late Json? gameData;
     try {
       gameData = await endpointService.getGameData();
-      game.withJson(gameData);
+      game.applyJson(gameData);
       print(gameData);
     } catch (e) {
       // emit(ActionRejected());
     }
   }
-
 
   /// Load remote config from the server and emit the result.
   ///
@@ -64,7 +63,7 @@ class GameCubit extends Cubit<GameState> {
     late Json? remoteConfig;
     try {
       remoteConfig = await endpointService.getGameData();
-      game.withJson(remoteConfig);
+      game.applyJson(remoteConfig);
     } catch (e) {
       emit(RemoteConfigFailure());
     }

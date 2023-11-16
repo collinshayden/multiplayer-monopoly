@@ -154,7 +154,19 @@ class ShowDice extends StatelessWidget {
                 width: 400,
                 height: 200,
                 child: Row(
-                  children: [Dice(value1: BlocProvider.of<GameCubit>(context).game.lastRoll.first ?? 1, value2: BlocProvider.of<GameCubit>(context).game.lastRoll.second ?? 1)],
+                  children: [
+                    Dice(
+                        first: BlocProvider.of<GameCubit>(context)
+                                .game
+                                .lastRoll
+                                .first ??
+                            1,
+                        second: BlocProvider.of<GameCubit>(context)
+                                .game
+                                .lastRoll
+                                .second ??
+                            1)
+                  ],
                 ),
               )),
         );
