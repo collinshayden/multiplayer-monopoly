@@ -16,13 +16,13 @@ class EndpointService {
 
   /// Instantiate singleton
   static final _instance = EndpointService._internal();
-  static final _timerDuration = Duration(seconds: 1);
+  // static final _timerDuration = Duration(seconds: 1);
 
   /// Lazily-loaded object for creating a persistent connection with the server.
   late final http.Client server;
 
   /// Declare timer for making calls as an isolate
-  Timer? _timer;
+  // Timer? _timer;
 
   /// Retrieve a deserialised snapshot of the server's game object.
   ///
@@ -94,7 +94,6 @@ class EndpointService {
     return body['success'];
   }
 
-  /// Set the server-side
   Future<bool> setMortgage(PlayerId playerId, int tileId, bool mortgage) async {
     final response = await http.get(
       Uri.parse(
