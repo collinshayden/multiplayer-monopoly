@@ -38,10 +38,13 @@ class Game:
         :returns:       None.
         """
         self.started: bool = False
-        # Dictionary mapping player IDs to Player objects.
+        # Map from player IDs to Player objects.
         self.players: dict[str: Player] = {}
+        # A list of player ID's representing the turn order.
         self.turn_order: list[str] = []
-        self.active_player_idx: int = -1
+        # Corresponds to the current position in the turn order.
+        self.active_player_index: int = -1
+        # ID of the current player whose turn it is.
         self.active_player_id: str = ""
         # Private variables for the list of Player objects
         # Used in the chance/community chest deck
@@ -58,7 +61,7 @@ class Game:
 
     """ Exposed API Methods """
 
-    def get_events(self, player_id: str) -> list[dict]:
+    def flush_events(self, player_id: str) -> list[dict]:
         """
         Description:        Method which will return a list of JSON-serialized Event objects to be sent to a specific
                             player. This will clear a player's event queue.
@@ -84,7 +87,7 @@ class Game:
             self.started = True
             # Shuffle turn order and set active player idx/id
             random.shuffle(self.turn_order)
-            self.active_player_idx = 0
+            self.active_player_index = 0
             self.active_player_id = self.turn_order[0]
             # Enqueue events to prompt client
             start_game: Event = Event({"name": "startGame"})
@@ -392,6 +395,11 @@ class Game:
             "player": self.players[player_id].display_name
         })
         self._enqueue_event(end_turn, EventType.UPDATE)
+        # Check whether the player has rolled this turn
+        last_roll: Event = self._get_last_roll_event()
+        if last_roll is None or last_roll.parameters.get("playerId", "").lower() != player_id.lower():
+            return False
+
         # Increment to the next player
         self._next_player()
         # Enqueue new events informing other players of a turn start and prompting player to roll the dice.
@@ -612,18 +620,18 @@ class Game:
         """
         if len(self.players) == 0 or not self.started:
             return False
-        idx: int = (self.active_player_idx + 1) % len(self.turn_order)
+        idx: int = (self.active_player_index + 1) % len(self.turn_order)
         id: str = self.turn_order[idx]
         # Keep looping through the array until an active player is found, or it fully wraps around.
-        while not self.players[id].active and idx != self.active_player_idx:
+        while not self.players[id].active and idx != self.active_player_index:
             idx = (idx + 1) % len(self.turn_order)
             id = self.turn_order[idx]
         # No other active players!
-        if idx == self.active_player_idx:
+        if idx == self.active_player_index:
             return False
         else:
             # Set new active player index and id then return True
-            self.active_player_idx = idx
+            self.active_player_index = idx
             self.active_player_id = self.turn_order[idx]
             return True
 

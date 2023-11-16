@@ -26,17 +26,24 @@ class EndpointService {
 
   Future<Json> getGameData() async {
     final response = await server.get(
-      Uri.parse('$API_URL/state'),
+      Uri.parse('$API_URL/state?player_id=admin'),
     );
     final gameData = jsonDecode(response.body);
-    print(gameData);
+    // print(gameData);
     return gameData;
   }
 
-  void registerPlayer({required String displayName}) async {
-    server.get(
+  // Method which registers a player and returns their playerID
+  Future<String> registerPlayer({required String displayName}) async {
+    final response = await server.get(
       Uri.parse('$API_URL/register_player?display_name=$displayName'),
     );
+    final playerData = jsonDecode(response.body);
+    if (playerData["success"] ?? false) {
+      return playerData["playerId"] ?? "";
+    } else {
+      return "";
+    }
   }
 
   void rollDice(PlayerId playerId) async {
@@ -45,37 +52,31 @@ class EndpointService {
     );
   }
 
-  void drawCard(String playerId, String cardType) async {
-    assert(cardType == 'chance' || cardType == 'community_chest');
-    server.get(
-      Uri.parse('$API_URL/draw_card?player_id=$playerId?card_type=$cardType'),
-    );
-  }
-
-  void buyProperty(String playerId, int tileId) async {
-    assert(0 <= tileId && tileId <= 39);
-    server.get(
-      Uri.parse('$API_URL/buy_property?player_id=$playerId?tile_id=$tileId'),
-    );
-  }
-
-  void setImprovements(String playerId, int tileId, int quantity) async {
+  void buyProperty(PlayerId playerId, int tileId) async {
     assert(0 <= tileId && tileId <= 39);
     server.get(
       Uri.parse(
-          '$API_URL/set_improvements?player_id=$playerId?tile_id=$tileId?quantity=$quantity'),
+          '$API_URL/buy_property?player_id=${playerId.value}?tile_id=$tileId'),
     );
   }
 
-  void setMortgage(String playerId, int tileId, bool mortgage) async {
+  void setImprovements(PlayerId playerId, int tileId, int quantity) async {
+    assert(0 <= tileId && tileId <= 39);
     server.get(
       Uri.parse(
-          '$API_URL/set_mortgage?player_id=$playerId?tile_id=$tileId?mortgage=$mortgage'),
+          '$API_URL/set_improvements?player_id=${playerId.value}?tile_id=$tileId?quantity=$quantity'),
     );
   }
 
-  void getOutOfJail(String playerId, JailMethod jailMethod) async {
-    String call = '$API_URL/get_out_of_jail?player_id=$playerId';
+  void setMortgage(PlayerId playerId, int tileId, bool mortgage) async {
+    server.get(
+      Uri.parse(
+          '$API_URL/set_mortgage?player_id=${playerId.value}?tile_id=$tileId?mortgage=$mortgage'),
+    );
+  }
+
+  void getOutOfJail(PlayerId playerId, JailMethod jailMethod) async {
+    String call = '$API_URL/get_out_of_jail?player_id=${playerId.value}';
     switch (jailMethod) {
       case JailMethod.doubles:
         call += '?method=doubles';
@@ -89,9 +90,9 @@ class EndpointService {
     );
   }
 
-  void endTurn(String playerId) async {
+  void endTurn(PlayerId playerId) async {
     server.get(
-      Uri.parse('$API_URL/end_turn?player_id=$playerId'),
+      Uri.parse('$API_URL/end_turn?player_id=${playerId.value}'),
     );
   }
 
