@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 import 'player.dart';
 import 'tiles.dart';
 import 'roll.dart';
@@ -26,16 +28,21 @@ class Game {
     if (json == null) return;
     monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
     monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;
-    tierColors[1] = Color(int.parse(json['tierColors']['1'], radix: 16));
-    tierColors[2] = Color(int.parse(json['tierColors']['2'], radix: 16));
-    tierColors[3] = Color(int.parse(json['tierColors']['3'], radix: 16));
-    tierColors[4] = Color(int.parse(json['tierColors']['4'], radix: 16));
-    tierColors[5] = Color(int.parse(json['tierColors']['5'], radix: 16));
-    tierColors[6] = Color(int.parse(json['tierColors']['6'], radix: 16));
-    tierColors[7] = Color(int.parse(json['tierColors']['7'], radix: 16));
-    tierColors[8] = Color(int.parse(json['tierColors']['8'], radix: 16));
-    if (json['activePlayerId'] != '') {
-      activePlayerId = PlayerId(json['activePlayerId']) ?? activePlayerId;
+    if (json['tierColors'] != null) {
+      tierColors[1] = Color(int.parse(json['tierColors']['1'], radix: 16));
+      tierColors[2] = Color(int.parse(json['tierColors']['2'], radix: 16));
+      tierColors[3] = Color(int.parse(json['tierColors']['3'], radix: 16));
+      tierColors[4] = Color(int.parse(json['tierColors']['4'], radix: 16));
+      tierColors[5] = Color(int.parse(json['tierColors']['5'], radix: 16));
+      tierColors[6] = Color(int.parse(json['tierColors']['6'], radix: 16));
+      tierColors[7] = Color(int.parse(json['tierColors']['7'], radix: 16));
+      tierColors[8] = Color(int.parse(json['tierColors']['8'], radix: 16));
+    }
+    if (json['activePlayerId'] != null) {
+      if (json['activePlayerId'] != '') {
+        // TODO: Remove on server-side
+        activePlayerId = PlayerId(json['activePlayerId'] as String);
+      }
     }
     lastRoll = lastRoll..applyJson(json['lastRoll']);
 

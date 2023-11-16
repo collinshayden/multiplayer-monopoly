@@ -13,7 +13,7 @@ class Dice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey,
+      color: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
@@ -33,9 +33,12 @@ class SingleDie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-        painter: SingleDiePainter(value: value),
-        child: const AspectRatio(aspectRatio: 1 / 1));
+    return Padding(
+      padding: EdgeInsets.only(right: 5, left: 5),
+      child: CustomPaint(
+          painter: SingleDiePainter(value: value),
+          child: const AspectRatio(aspectRatio: 1 / 1)),
+    );
   }
 }
 
