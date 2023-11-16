@@ -20,7 +20,7 @@ class Board extends StatelessWidget {
             angle: 0,
             child: Stack(
               children: [
-                Container(color: Colors.red[100]),
+                Container(color: Color(int.parse('FFD5EFEA', radix: 16))),
                 TileLayout(),
               ],
             ),
