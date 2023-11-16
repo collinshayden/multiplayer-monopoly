@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client/cubit/game_cubit.dart';
 
 class Dice extends StatelessWidget {
   const Dice({
@@ -12,13 +14,16 @@ class Dice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [SingleDie(value: first), SingleDie(value: second)],
+    return AspectRatio(
+      aspectRatio: 2 / 1,
+      child: Container(
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [SingleDie(value: first), SingleDie(value: second)],
+          ),
         ),
       ),
     );
@@ -132,4 +137,34 @@ void main() {
       ),
     ),
   );
+}
+
+class DisplayDice extends StatelessWidget {
+  const DisplayDice({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(builder: (context, state) {
+      return LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        return Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: constraints.maxWidth / 7,
+            child: Dice(
+                first: BlocProvider.of<GameCubit>(context)
+                        .game
+                        .lastRoll
+                        .first ??
+                    1,
+                second: BlocProvider.of<GameCubit>(context)
+                        .game
+                        .lastRoll
+                        .second ??
+                    1),
+          ),
+        );
+      });
+    });
+  }
 }
