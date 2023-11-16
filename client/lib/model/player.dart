@@ -1,9 +1,13 @@
 import 'package:client/json_utils.dart';
 
+/// Thin wrapper class used to specify a player-unique identifier.
 class PlayerId {
   PlayerId(this.value);
 
   final String value;
+
+  @override
+  String toString() => value;
 
   @override
   bool operator ==(Object other) {
@@ -18,6 +22,7 @@ class PlayerId {
   int get hashCode => value.hashCode;
 }
 
+/// Data class for players constructed from JSON.
 class Player {
   Player({required this.id});
 
@@ -27,7 +32,12 @@ class Player {
   int? location;
   int? getOutOfJailFreeCards;
 
-  void withJson(Json json) {
+  /// Apply JSON to this object.
+  ///
+  /// This function will update this object's fields based on input JSON.
+  /// This will overwrite existing fields, and ignore any extra fields present
+  /// in the [Json] object passed to it.
+  void applyJson(Json json) {
     assert(json["id"] == id.value);
     displayName = json["displayName"] ?? displayName;
     money = json["money"] ?? money;

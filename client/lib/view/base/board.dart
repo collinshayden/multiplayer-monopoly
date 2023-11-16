@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:client/model/tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../cubit/game_cubit.dart';
 
+/// Provides a background and container for the board.
 class Board extends StatelessWidget {
   const Board({super.key});
 
@@ -21,7 +21,7 @@ class Board extends StatelessWidget {
             child: Stack(
               children: [
                 Container(color: Colors.red[100]),
-                CustomLayout(),
+                TileLayout(),
               ],
             ),
           ),
@@ -31,27 +31,21 @@ class Board extends StatelessWidget {
   }
 }
 
+/// An enum used to specify the two possible shapes for a tile.
+/// The two possible types are a square (for the corners) or a tall rectangle
+/// (for the sides).
 enum TileFormFactor {
   corner,
   side,
 }
 
-List<int> range(int size) => List.generate(size, (i) => i);
+class TileLayout extends StatelessWidget {
+  TileLayout({super.key});
 
-Color randomColor() {
-  final random = Random();
-  final red = 150; // Generates a random value between 0 and 255.
-  final green = 170 + random.nextInt(86);
-  final blue = 150;
-
-  return Color.fromARGB(255, red, green, blue);
-}
-
-class CustomLayout extends StatelessWidget {
-  /// Constructor populates tiles with local board configuration
-  CustomLayout({super.key});
-
-  static final List<int> _ids = range(40);
+  /// A list of integers used as unique identifiers for the tiles on the board.
+  /// There are always exactly 40 such identifiers. The "GO" tile corresponds to
+  /// `0` and subsequent
+  final List<int> _ids = List.generate(40, (i) => i);
 
   @override
   Widget build(BuildContext context) {

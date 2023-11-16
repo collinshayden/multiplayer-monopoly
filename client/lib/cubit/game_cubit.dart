@@ -36,7 +36,7 @@ class GameCubit extends Cubit<GameState> {
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
-      game.withJson(localConfig);
+      game.applyJson(localConfig);
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
@@ -48,10 +48,9 @@ class GameCubit extends Cubit<GameState> {
     // emit(ActionRequesting());
     late Json? gameData;
     try {
-      gameData = await endpointService.getGameData();
-      game.withJson(gameData);
-      emit(GameStateUpdateSuccess());
-      // print(gameData);
+      gameData = await endpointService.fetchData();
+      game.applyJson(gameData);
+      print(gameData);
     } catch (e) {
       emit(GameStateUpdateFailure());
       // emit(ActionRejected());
@@ -63,19 +62,19 @@ class GameCubit extends Cubit<GameState> {
   /// This function is currently set up to fetch the entire game object from the
   /// server as JSON which is parsed into the client-side [Game] counterpart
   /// object.
-  void loadRemoteConfig() async {
-    // emit(RemoteConfigLoading());
+  // void loadRemoteConfig() async {
+  //   // emit(RemoteConfigLoading());
 
-    // late Json? remoteConfig;
-    // try {
-    //   remoteConfig = await endpointService.getGameData();
-    //   game.withJson(remoteConfig);
-    // } catch (e) {
-    //   emit(RemoteConfigFailure());
-    // }
+  //   late Json? remoteConfig;
+  //   try {
+  //     remoteConfig = await endpointService.getGameData();
+  //     game.applyJson(remoteConfig);
+  //   } catch (e) {
+  //     emit(RemoteConfigFailure());
+  //   }
 
-    // emit(RemoteConfigSuccess());
-  }
+  //   // emit(RemoteConfigSuccess());
+  // }
 
   /// Request to join the active game session.
   ///
@@ -90,7 +89,7 @@ class GameCubit extends Cubit<GameState> {
       final playerId =
           await endpointService.registerPlayer(displayName: displayName);
       // Set the activte player to be what is returned from register_player.
-      clientPlayerId = PlayerId(playerId);
+      clientPlayerId = playerId;
     } catch (e) {
       emit(JoinGameFailure());
     }
