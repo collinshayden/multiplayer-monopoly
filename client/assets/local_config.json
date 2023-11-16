@@ -113,7 +113,7 @@
       "quarterTurns": 2,
       "price": 150,
       "title": "ELECTRIC\nCOMPANY",
-      "image": "electric-company.png"
+      "image": "electric_company.png"
     },
     {
       "id": 13,
@@ -239,7 +239,7 @@
       "quarterTurns": 3,
       "price": 150,
       "title": "WATER\nWORKS",
-      "image" : "water-works.png"
+      "image" : "water_works.png"
     },
     {
       "id": 29,

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class Dice extends StatelessWidget {
   const Dice({
     super.key,
-    required this.value1,
-    required this.value2,
+    required this.first,
+    required this.second,
   });
 
-  final int value1;
-  final int value2;
+  final int first;
+  final int second;
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +18,7 @@ class Dice extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SingleDie(value: value1),
-            SingleDie(value: value2),
-          ],
+          children: [SingleDie(value: first), SingleDie(value: second)],
         ),
       ),
     );
@@ -29,7 +26,7 @@ class Dice extends StatelessWidget {
 }
 
 class SingleDie extends StatelessWidget {
-  SingleDie({super.key, required this.value})
+  const SingleDie({super.key, required this.value})
       : assert(0 <= value && value <= 6);
 
   final int value;
@@ -128,8 +125,8 @@ void main() {
               width: 400,
               height: 200,
               child: Dice(
-                value1: 2,
-                value2: 4,
+                first: 2,
+                second: 4,
               )),
         ),
       ),

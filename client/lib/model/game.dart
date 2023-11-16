@@ -22,7 +22,7 @@ class Game {
   Map<int, Tile> tiles;
 
   /// Update game data to match provided JSON values.
-  void withJson(Json? json) {
+  void applyJson(Json? json) {
     if (json == null) return;
     monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
     monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;
@@ -37,17 +37,17 @@ class Game {
     if (json['activePlayerId'] != '') {
       activePlayerId = PlayerId(json['activePlayerId']) ?? activePlayerId;
     }
-    lastRoll = lastRoll..withJson(json['lastRoll']);
+    lastRoll = lastRoll..applyJson(json['lastRoll']);
 
     // Load and update players
     if (json['players'] != null) {
       for (Json player in json['players']) {
         final id = PlayerId(player['id']);
         if (players[id] != null) {
-          players[id]!.withJson(player);
+          players[id]!.applyJson(player);
           continue;
         }
-        players[id] = Player(id: id)..withJson(player);
+        players[id] = Player(id: id)..applyJson(player);
       }
     }
 
