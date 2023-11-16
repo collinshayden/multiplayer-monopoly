@@ -29,3 +29,4 @@ flutter:
   assets:
     - assets/local_config.json
     - assets/playerdata.json
+    - assets/images/
