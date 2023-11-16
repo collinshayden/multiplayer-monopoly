@@ -44,7 +44,6 @@ Color randomColor() {
   final red = 150; // Generates a random value between 0 and 255.
   final green = 170 + random.nextInt(86);
   final blue = 150;
-
   return Color.fromARGB(255, red, green, blue);
 }
 

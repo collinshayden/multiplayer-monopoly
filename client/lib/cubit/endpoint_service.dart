@@ -24,9 +24,9 @@ class EndpointService {
     );
   }
 
-  Future<Json> getGameData() async {
+  Future<Json> getGameData({required PlayerId playerId}) async {
     final response = await server.get(
-      Uri.parse('$API_URL/state?player_id=admin'),
+      Uri.parse('$API_URL/state?player_id=${playerId.value}'),
     );
     final gameData = jsonDecode(response.body);
     // print(gameData);

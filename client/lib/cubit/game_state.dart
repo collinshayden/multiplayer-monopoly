@@ -27,6 +27,8 @@ class LocalConfigFailure extends GameState {
 }
 
 /// Game state update emits
+class GameStateUpdateLoading extends GameState {}
+
 class GameStateUpdateSuccess extends GameState {}
 
 class GameStateUpdateFailure extends GameState {}

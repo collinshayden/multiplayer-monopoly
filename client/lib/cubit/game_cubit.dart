@@ -40,15 +40,14 @@ class GameCubit extends Cubit<GameState> {
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
-
     emit(LocalConfigSuccess(game: game));
   }
 
-  void updateGameData(PlayerId playerId) async {
-    // emit(ActionRequesting());
+  void updateGameData() async {
+    emit(GameStateUpdateLoading());
     late Json? gameData;
     try {
-      gameData = await endpointService.getGameData(playerId: playerId);
+      gameData = await endpointService.getGameData(playerId: clientPlayerId);
       game.withJson(gameData);
       emit(GameStateUpdateSuccess());
       // print(gameData);
@@ -77,6 +76,11 @@ class GameCubit extends Cubit<GameState> {
     // emit(RemoteConfigSuccess());
   }
 
+  /// Method to get the location of the active player.
+  int? getActivePlayerLocation() {
+    return game.getPlayerLocation(clientPlayerId);
+  }
+
   /// Request to join the active game session.
   ///
   /// This function calls the server's `register_player` endpoint with the user-
@@ -91,6 +95,7 @@ class GameCubit extends Cubit<GameState> {
           await endpointService.registerPlayer(displayName: displayName);
       // Set the activte player to be what is returned from register_player.
       clientPlayerId = PlayerId(playerId);
+      updateGameData();
     } catch (e) {
       emit(JoinGameFailure());
     }
@@ -99,33 +104,36 @@ class GameCubit extends Cubit<GameState> {
   /// Roll dice during a player's active turn.
   ///
   /// The client should only be able to call this
-  void rollDice({required PlayerId playerId}) async {
-    emit(ActiveTurnRollPhase());
+  void rollDice() async {
+    emit(GameActionLoading());
     try {
-      endpointService.rollDice(playerId);
+      endpointService.rollDice(clientPlayerId);
+      updateGameData();
+      emit(GameActionSuccess());
     } catch (e) {
       emit(GameErrorState());
     }
-    emit(ActiveTurnRollPhase());
   }
 
   /// End a player's turn.
   ///
   /// The client should only be able to call this
-  void endTurn({required PlayerId playerId}) async {
-    // emit(ActiveTurnRollPhase());
+  void endTurn() async {
+    emit(GameActionLoading());
     try {
-      endpointService.endTurn(playerId);
+      endpointService.endTurn(clientPlayerId);
+      updateGameData();
+      emit(GameActionSuccess());
     } catch (e) {
-      emit(GameErrorState());
+      emit(GameActionFailure());
     }
-    // emit(ActiveTurnRollPhase());
   }
 
   void startGame() async {
     emit(GameActionLoading());
     try {
-      endpointService.startGame(playerId: game.activePlayerId!);
+      endpointService.startGame(playerId: clientPlayerId);
+      updateGameData();
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -135,7 +143,8 @@ class GameCubit extends Cubit<GameState> {
   void buyProperty(int tileId) async {
     emit(GameActionLoading());
     try {
-      endpointService.buyProperty(game.activePlayerId!, tileId);
+      endpointService.buyProperty(clientPlayerId, tileId);
+      updateGameData();
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -145,7 +154,8 @@ class GameCubit extends Cubit<GameState> {
   void setImprovements(int tileId, int quantity) async {
     emit(GameActionLoading());
     try {
-      endpointService.setImprovements(game.activePlayerId!, tileId, quantity);
+      endpointService.setImprovements(clientPlayerId, tileId, quantity);
+      updateGameData();
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -155,7 +165,8 @@ class GameCubit extends Cubit<GameState> {
   void setMortgage(int tileId, bool mortgage) async {
     emit(GameActionLoading());
     try {
-      endpointService.setMortgage(game.activePlayerId!, tileId, mortgage);
+      endpointService.setMortgage(clientPlayerId, tileId, mortgage);
+      updateGameData();
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -165,7 +176,8 @@ class GameCubit extends Cubit<GameState> {
   void getOutOfJail(JailMethod jailMethod) async {
     emit(GameActionLoading());
     try {
-      endpointService.getOutOfJail(game.activePlayerId!, jailMethod);
+      endpointService.getOutOfJail(clientPlayerId, jailMethod);
+      updateGameData();
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());

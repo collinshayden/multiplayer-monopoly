@@ -1,5 +1,23 @@
+import 'package:client/cubit/game_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:client/model/player.dart'; // Make sure to import your Player class
+import 'package:client/model/player.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // Make sure to import your Player class
+
+class PlayerDisplay extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(
+      builder: (context, state) {
+        return PlayerInfoScreens(
+            players: BlocProvider.of<GameCubit>(context)
+                .game
+                .players
+                .values
+                .toList());
+      },
+    );
+  }
+}
 
 class PlayerInfoScreens extends StatefulWidget {
   final List<Player> players;

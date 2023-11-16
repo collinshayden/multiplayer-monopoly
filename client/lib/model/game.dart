@@ -21,6 +21,11 @@ class Game {
   Map<PlayerId, Player> players;
   Map<int, Tile> tiles;
 
+  /// Method used to retrieve a player's location if they are a valid player.
+  int? getPlayerLocation(PlayerId playerId) {
+    return players[playerId]?.location;
+  }
+
   /// Update game data to match provided JSON values.
   void withJson(Json? json) {
     if (json == null) return;

@@ -37,7 +37,7 @@ class _MonopolyAppState extends State<MonopolyApp> {
           child: Stack(
             children: [
               const CubitTest(),
-              Board(),
+              const Board(),
               Center(
                 child: SizedBox.fromSize(
                   size: const Size(100.0, 150.0),
@@ -49,8 +49,8 @@ class _MonopolyAppState extends State<MonopolyApp> {
                   ),
                 ),
               ),
-              // TODO admin buttons will go here
               // const Spacer(),
+              Align(alignment: Alignment.topLeft, child: PlayerDisplay()),
               const AdminButtons(),
               // ShowDice(),
             ],
@@ -85,22 +85,6 @@ class CubitTest extends StatelessWidget {
   }
 }
 
-class PlayerDisplay extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      builder: (context, state) {
-        return PlayerInfoScreens(
-            players: BlocProvider.of<GameCubit>(context)
-                .game
-                .players
-                .values
-                .toList());
-      },
-    );
-  }
-}
-
 class AdminButtons extends StatelessWidget {
   const AdminButtons({super.key});
 
@@ -127,22 +111,12 @@ class AdminButtons extends StatelessWidget {
                   child: const Text('Join')),
               ElevatedButton(
                   onPressed: () {
-                    // BlocProvider.of<GameCubit>(context).updateGameData();
-
-                    BlocProvider.of<GameCubit>(context)
-                        .endpointService
-                        .startGame(playerId: PlayerId("admin"));
+                    BlocProvider.of<GameCubit>(context).startGame();
                   },
                   child: const Text('Start Game')),
               ElevatedButton(
                   onPressed: () {
-                    // BlocProvider.of<GameCubit>(context).updateGameData();
-                    PlayerId activePlayerId =
-                        BlocProvider.of<GameCubit>(context)
-                            .game
-                            .activePlayerId!;
-                    BlocProvider.of<GameCubit>(context)
-                        .rollDice(playerId: activePlayerId);
+                    BlocProvider.of<GameCubit>(context).rollDice();
                   },
                   child: const Text('Roll')),
               ElevatedButton(
@@ -152,12 +126,13 @@ class AdminButtons extends StatelessWidget {
                         BlocProvider.of<GameCubit>(context)
                             .game
                             .activePlayerId!;
-                    BlocProvider.of<GameCubit>(context)
-                        .endTurn(playerId: activePlayerId);
+                    BlocProvider.of<GameCubit>(context).endTurn();
                   },
                   child: const Text('End Turn')),
               ElevatedButton(
                   onPressed: () async {
+                    PlayerId clientPlayerId =
+                        BlocProvider.of<GameCubit>(context).clientPlayerId;
                     BlocProvider.of<GameCubit>(context).updateGameData();
                   },
                   child: const Text('Update State')),
@@ -166,11 +141,18 @@ class AdminButtons extends StatelessWidget {
                     BlocProvider.of<GameCubit>(context).switchActivePlayerId();
                   },
                   child: const Text('Change to Active Player')),
-              // Hardcoded as 0 for now. How can I get the tile ID the current player is on?
-
+              // Hardcoded as 0 for now. Will need to adjust this to use
+              // a tile and its selected ID.
               ElevatedButton(
                   onPressed: () {
-                    BlocProvider.of<GameCubit>(context).buyProperty(0);
+                    PlayerId clientPlayerId =
+                        BlocProvider.of<GameCubit>(context).clientPlayerId;
+                    final playerLocation = BlocProvider.of<GameCubit>(context)
+                        .game
+                        .players[clientPlayerId]
+                        ?.location;
+                    BlocProvider.of<GameCubit>(context)
+                        .buyProperty(playerLocation!);
                   },
                   child: const Text('Buy Property')),
               MultiOptionWidget(
