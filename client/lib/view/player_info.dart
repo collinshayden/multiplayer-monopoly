@@ -1,53 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:client/model/player.dart'; // Make sure to import your Player class
 
-class PlayerInfoScreen extends StatelessWidget {
-  final Player player;
+class PlayerInfoScreens extends StatefulWidget {
+  final List<Player> players;
 
-  PlayerInfoScreen({required this.player});
+  PlayerInfoScreens({required this.players});
 
+  @override
+  _PlayerInfoScreensState createState() => _PlayerInfoScreensState();
+}
+
+class _PlayerInfoScreensState extends State<PlayerInfoScreens> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.black.withOpacity(0.8), // Adjust the opacity as needed
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
+      appBar: AppBar(
+        title: const Text('Players'),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10.0),
             color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildText("Name", true),
+                _buildText("Money", true),
+                _buildText("Properties", true),
+                _buildText("Get Out Of Jail Free Cards", true),
+                _buildText("Active", true),
+              ],
+            ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Player Information',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              // TODO: Remove ID once we no longer want it
-              Text('ID: ${player.id.value}'),
-              Text('Display Name: ${player.displayName ?? 'N/A'}'),
-              Text('Money: ${player.money ?? 0}'),
-              Text('Location: ${player.location ?? 0}'),
-              Text(
-                  'Get Out of Jail Free Cards: ${player.getOutOfJailFreeCards ?? 0}'),
-              // Add more information as needed
-              SizedBox(height: 10.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close the player info screen
-                },
-                child: Text('Close'),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(10.0),
+            color: Colors.white,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: widget.players.length,
+              itemBuilder: (context, index) {
+                return _buildPlayerData(widget.players[index]);
+              },
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
+
+  Widget _buildPlayerData(Player player) {
+    return Container(
+      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildText(player.displayName ?? 'N/A', false),
+          _buildText('${player.money ?? 0}', false),
+          // TODO: Make clickable widget which shows all their properties
+          _buildText('None', false),
+          _buildText('${player.getOutOfJailFreeCards ?? 0}', false),
+          _buildText('Yes', false),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _buildText(String text, bool bold) {
+  return Flexible(
+    child: Text(
+      textAlign: TextAlign.center,
+      text,
+      style: TextStyle(
+        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+      ),
+    ),
+  );
 }

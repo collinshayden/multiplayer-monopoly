@@ -12,6 +12,7 @@ from game_logic.types import CardType, JailMethod
 # from game_logic.game import Game
 # from game_logic.types import CardType, JailMethod
 
+from pprint import pprint
 from flask import Flask, jsonify, request
 from random import randint
 from typing import Any
@@ -45,7 +46,9 @@ def state():
         "events": game.flush_events(player_id)
     }
     client_bindings.update(game.to_dict())
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings["events"])
+    pprint(client_bindings["players"])
     return jsonify(client_bindings)
 
 
@@ -77,7 +80,8 @@ def register_player():
         "playerId": player_id,
         "success": player_id != "",
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -102,7 +106,8 @@ def start_game():
         "event": "startGame",
         "success": success
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -135,7 +140,8 @@ def roll_dice():
         "event": "rollDice",
         "success": success,
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -146,6 +152,7 @@ def buy_property():
                     state.
     :return:        Returns json-formatted data with the game state.
     """
+    print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -170,7 +177,8 @@ def buy_property():
         "event": "buyProperty",
         "success": success
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -212,7 +220,8 @@ def set_improvements():
         "event": "setImprovements",
         "success": success
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -251,7 +260,8 @@ def set_mortgage():
         "event": "setMortgage",
         "success": success
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -298,7 +308,8 @@ def get_out_of_jail():
         "event": "getOutOfJail",
         "success": success
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -328,7 +339,8 @@ def end_turn():
         "event": "endTurn",
         "success": success
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
@@ -358,7 +370,8 @@ def reset():
         "event": "reset",
         "success": success
     }
-    print(f"Server Response: \n{client_bindings}")
+    print(f"Server Response:")
+    pprint(client_bindings)
     return jsonify(client_bindings)
 
 
