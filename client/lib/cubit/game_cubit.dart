@@ -44,11 +44,11 @@ class GameCubit extends Cubit<GameState> {
     emit(LocalConfigSuccess(game: game));
   }
 
-  void updateGameData(PlayerId playerId) async {
+  void updateGameData() async {
     // emit(ActionRequesting());
     late Json? gameData;
     try {
-      gameData = await endpointService.getGameData(playerId: playerId);
+      gameData = await endpointService.getGameData();
       game.withJson(gameData);
       emit(GameStateUpdateSuccess());
       // print(gameData);
