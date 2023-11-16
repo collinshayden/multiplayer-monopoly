@@ -38,21 +38,8 @@ class _MonopolyAppState extends State<MonopolyApp> {
             children: [
               const CubitTest(),
               Board(),
-              Center(
-                child: SizedBox.fromSize(
-                  size: const Size(100.0, 150.0),
-                  child: const Column(
-                    children: [
-                      Align(),
-                      // Roll(first: 1, second: 4).createWidget(),
-                    ],
-                  ),
-                ),
-              ),
-              // TODO admin buttons will go here
-              // const Spacer(),
               const AdminButtons(),
-              // ShowDice(),
+              ShowDice(),
             ],
           ),
         ),
@@ -213,29 +200,35 @@ class ShowDice extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
-        return Container(
-          child: Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 400,
-                height: 200,
-                child: Row(
-                  children: [
-                    Dice(
-                        value1: BlocProvider.of<GameCubit>(context)
-                                .game
-                                .lastRoll
-                                .first ??
-                            1,
-                        value2: BlocProvider.of<GameCubit>(context)
-                                .game
-                                .lastRoll
-                                .second ??
-                            1)
-                  ],
-                ),
-              )),
-        );
+        return Column(children: [
+          Flexible(
+            flex: 1,
+            child: Container(
+              child: Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: 230,
+                    height: 120,
+                    child: Row(
+                      children: [
+                        Dice(
+                            value1: BlocProvider.of<GameCubit>(context)
+                                    .game
+                                    .lastRoll
+                                    .first ??
+                                1,
+                            value2: BlocProvider.of<GameCubit>(context)
+                                    .game
+                                    .lastRoll
+                                    .second ??
+                                1)
+                      ],
+                    ),
+                  )),
+            ),
+          ),
+          Flexible(flex: 2, child: Spacer())
+        ]);
       },
     );
   }
