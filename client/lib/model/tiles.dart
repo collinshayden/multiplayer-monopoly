@@ -93,13 +93,15 @@ class ImprovableTile extends Tile {
                     )),
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
-                      child: Text('Price: \$$price', textAlign: TextAlign.center),
+                      child:
+                          Text('Price: \$$price', textAlign: TextAlign.center),
                     )
                   ],
                 ))
           ])),
     );
   }
+
   void setTierColor(Map<int, Color> colorMap) {
     tierColor = colorMap[tier];
   }
