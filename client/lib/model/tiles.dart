@@ -141,6 +141,7 @@ class RailroadTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
             Flexible(
               flex: 0,
               child: Padding(
@@ -234,6 +235,7 @@ class ChanceTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -272,6 +274,7 @@ class CommunityChestTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -312,6 +315,7 @@ class TaxTile extends Tile {
               title ?? "Placeholder title",
               textAlign: TextAlign.center,
             )),
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
             Flexible(
               child: Text(
                 payCommandText ?? "Placeholder price",
@@ -361,6 +365,8 @@ class GoTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$goImage')),
+            Flexible(flex: 0, child: Image.asset('assets/images/$arrowImage')),
           ])),
     );
   }
@@ -416,7 +422,8 @@ class JailTile extends Tile {
                 textAlign: TextAlign.center,
               ),
               // TODO image
-            )
+            ),
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -464,6 +471,7 @@ class FreeParkingTile extends Tile {
               ),
             ),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -511,6 +519,7 @@ class GoToJailTile extends Tile {
               ),
             ),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
