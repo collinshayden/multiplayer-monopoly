@@ -395,6 +395,11 @@ class Game:
             "player": self.players[player_id].display_name
         })
         self._enqueue_event(end_turn, EventType.UPDATE)
+        # Check whether the player has rolled this turn
+        last_roll: Event = self._get_last_roll_event()
+        if last_roll is None or last_roll.parameters.get("playerId", "").lower() != player_id.lower():
+            return False
+
         # Increment to the next player
         self._next_player()
         # Enqueue new events informing other players of a turn start and prompting player to roll the dice.

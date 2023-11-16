@@ -1,3 +1,4 @@
+import 'package:client/constants.dart';
 import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,6 +14,9 @@ class GameCubit extends Cubit<GameState> {
 
   // Initialise game
   final game = Game();
+  // Player ID used to authenticate requests.
+  // Gathered from register_player()
+  PlayerId clientPlayerId = PlayerId("");
 
   // Initialise services
   final fileService = FileService();
@@ -44,10 +48,11 @@ class GameCubit extends Cubit<GameState> {
     // emit(ActionRequesting());
     late Json? gameData;
     try {
-      gameData = await endpointService.getGameData();
+      gameData = await endpointService.fetchData();
       game.applyJson(gameData);
       print(gameData);
     } catch (e) {
+      emit(GameStateUpdateFailure());
       // emit(ActionRejected());
     }
   }
@@ -57,19 +62,19 @@ class GameCubit extends Cubit<GameState> {
   /// This function is currently set up to fetch the entire game object from the
   /// server as JSON which is parsed into the client-side [Game] counterpart
   /// object.
-  void loadRemoteConfig() async {
-    emit(RemoteConfigLoading());
+  // void loadRemoteConfig() async {
+  //   // emit(RemoteConfigLoading());
 
-    late Json? remoteConfig;
-    try {
-      remoteConfig = await endpointService.getGameData();
-      game.applyJson(remoteConfig);
-    } catch (e) {
-      emit(RemoteConfigFailure());
-    }
+  //   late Json? remoteConfig;
+  //   try {
+  //     remoteConfig = await endpointService.getGameData();
+  //     game.applyJson(remoteConfig);
+  //   } catch (e) {
+  //     emit(RemoteConfigFailure());
+  //   }
 
-    emit(RemoteConfigSuccess());
-  }
+  //   // emit(RemoteConfigSuccess());
+  // }
 
   /// Request to join the active game session.
   ///
@@ -81,7 +86,10 @@ class GameCubit extends Cubit<GameState> {
   void registerPlayer({required String displayName}) async {
     emit(JoinGameLoading());
     try {
-      endpointService.registerPlayer(displayName: displayName);
+      final playerId =
+          await endpointService.registerPlayer(displayName: displayName);
+      // Set the activte player to be what is returned from register_player.
+      clientPlayerId = playerId;
     } catch (e) {
       emit(JoinGameFailure());
     }
@@ -98,5 +106,78 @@ class GameCubit extends Cubit<GameState> {
       emit(GameErrorState());
     }
     emit(ActiveTurnRollPhase());
+  }
+
+  /// End a player's turn.
+  ///
+  /// The client should only be able to call this
+  void endTurn({required PlayerId playerId}) async {
+    // emit(ActiveTurnRollPhase());
+    try {
+      endpointService.endTurn(playerId);
+    } catch (e) {
+      emit(GameErrorState());
+    }
+    // emit(ActiveTurnRollPhase());
+  }
+
+  void startGame() async {
+    emit(GameActionLoading());
+    try {
+      endpointService.startGame(playerId: game.activePlayerId!);
+      emit(GameActionSuccess());
+    } catch (e) {
+      emit(GameActionFailure());
+    }
+  }
+
+  void buyProperty(int tileId) async {
+    emit(GameActionLoading());
+    try {
+      endpointService.buyProperty(game.activePlayerId!, tileId);
+      emit(GameActionSuccess());
+    } catch (e) {
+      emit(GameActionFailure());
+    }
+  }
+
+  void setImprovements(int tileId, int quantity) async {
+    emit(GameActionLoading());
+    try {
+      endpointService.setImprovements(game.activePlayerId!, tileId, quantity);
+      emit(GameActionSuccess());
+    } catch (e) {
+      emit(GameActionFailure());
+    }
+  }
+
+  void setMortgage(int tileId, bool mortgage) async {
+    emit(GameActionLoading());
+    try {
+      endpointService.setMortgage(game.activePlayerId!, tileId, mortgage);
+      emit(GameActionSuccess());
+    } catch (e) {
+      emit(GameActionFailure());
+    }
+  }
+
+  void getOutOfJail(JailMethod jailMethod) async {
+    emit(GameActionLoading());
+    try {
+      endpointService.getOutOfJail(game.activePlayerId!, jailMethod);
+      emit(GameActionSuccess());
+    } catch (e) {
+      emit(GameActionFailure());
+    }
+  }
+
+  /// Method used in the admin buttons to change the clientPlayerId to the
+  /// Game object's active player ID. Allows you to simulate multiple users.
+  void switchActivePlayerId() {
+    try {
+      final originalId = clientPlayerId.value;
+      clientPlayerId = game.activePlayerId!;
+      print("ID was ${originalId} and is now ${clientPlayerId.value}");
+    } catch (e) {}
   }
 }

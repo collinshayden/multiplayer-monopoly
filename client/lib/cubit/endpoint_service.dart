@@ -26,22 +26,22 @@ class EndpointService {
 
   /// Retrieve a deserialised snapshot of the server's game object.
   ///
-  /// This function calls the remote API's `state` endpoint
-  void fetchData(Timer t) async {
+  /// This function calls the remote API's `state` endpoint.
+  Future<Json> fetchData() async {
     final response = await server.get(
-      Uri.parse('$API_URL/state'),
+      Uri.parse('$API_URL/state?player_id=admin'),
     );
     final Json gameData = jsonDecode(response.body);
-    // return gameData;
+    return gameData;
   }
 
-  Future<bool> registerPlayer({required String displayName}) async {
+  Future<PlayerId> registerPlayer({required String displayName}) async {
     final response = await http.get(
       Uri.parse('$API_URL/register_player?display_name=$displayName'),
     );
     final Json body = jsonDecode(response.body);
     assert(body['event'] == 'registerPlayer');
-    return body['success'];
+    return PlayerId(body['playerId']);
   }
 
   Future<bool> startGame({required PlayerId playerId}) async {
@@ -62,7 +62,7 @@ class EndpointService {
     return body['success'];
   }
 
-  Future<bool> drawCard(String playerId, String cardType) async {
+  Future<bool> drawCard(PlayerId playerId, String cardType) async {
     assert(cardType == 'chance' || cardType == 'community_chest');
     final response = await http.get(
       Uri.parse('$API_URL/draw_card?player_id=$playerId?card_type=$cardType'),
@@ -72,7 +72,7 @@ class EndpointService {
     return body['success'];
   }
 
-  Future<bool> buyProperty(String playerId, int tileId) async {
+  Future<bool> buyProperty(PlayerId playerId, int tileId) async {
     assert(0 <= tileId && tileId <= 39);
     final response = await http.get(
       Uri.parse('$API_URL/buy_property?player_id=$playerId?tile_id=$tileId'),
@@ -83,11 +83,11 @@ class EndpointService {
   }
 
   Future<bool> setImprovements(
-      String playerId, int tileId, int quantity) async {
+      PlayerId playerId, int tileId, int quantity) async {
     assert(0 <= tileId && tileId <= 39);
     final response = await http.get(
       Uri.parse(
-          '$API_URL/set_improvements?player_id=$playerId?tile_id=$tileId?quantity=$quantity'),
+          '$API_URL/set_improvements?player_id=${playerId.value}?tile_id=$tileId?quantity=$quantity'),
     );
     final Json body = jsonDecode(response.body);
     assert(body['event'] == 'setImprovement');
@@ -95,17 +95,17 @@ class EndpointService {
   }
 
   /// Set the server-side
-  Future<bool> setMortgage(String playerId, int tileId, bool mortgage) async {
+  Future<bool> setMortgage(PlayerId playerId, int tileId, bool mortgage) async {
     final response = await http.get(
       Uri.parse(
-          '$API_URL/set_mortgage?player_id=$playerId?tile_id=$tileId?mortgage=$mortgage'),
+          '$API_URL/set_mortgage?player_id=${playerId.value}?tile_id=$tileId?mortgage=$mortgage'),
     );
     final Json body = jsonDecode(response.body);
     assert(body['event'] == 'setMortgage');
     return body['success'];
   }
 
-  Future<bool> getOutOfJail(String playerId, JailMethod jailMethod) async {
+  Future<bool> getOutOfJail(PlayerId playerId, JailMethod jailMethod) async {
     String call = '$API_URL/get_out_of_jail?player_id=$playerId';
     switch (jailMethod) {
       case JailMethod.doubles:
@@ -123,7 +123,7 @@ class EndpointService {
     return body['success'];
   }
 
-  Future<bool> endTurn(String playerId) async {
+  Future<bool> endTurn(PlayerId playerId) async {
     final response = await http.get(
       Uri.parse('$API_URL/end_turn?player_id=$playerId'),
     );

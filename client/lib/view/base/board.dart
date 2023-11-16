@@ -78,9 +78,9 @@ class TileLayout extends StatelessWidget {
       BuildContext context, LocalConfigSuccess state) {
     // print('Test!');
     final List<Widget> children = [];
-    for (var tile in state.game.tiles.entries) {
+    for (var id in _ids) {
       children
-          .add(LayoutId(id: tile.key as int, child: tile.value.createWidget()));
+          .add(LayoutId(id: id, child: state.game.tiles[id]!.createWidget()));
     }
     return children;
   }
