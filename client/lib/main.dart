@@ -32,6 +32,7 @@ class _MonopolyAppState extends State<MonopolyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Color(int.parse('FF11202D', radix: 16)),
         body: BlocProvider(
           create: (context) => GameCubit(),
           child: Stack(
@@ -39,7 +40,7 @@ class _MonopolyAppState extends State<MonopolyApp> {
               const CubitTest(),
               Board(),
               const AdminButtons(),
-              ShowDice(),
+              DisplayDice(),
             ],
           ),
         ),
@@ -193,43 +194,4 @@ class AdminButtons extends StatelessWidget {
   }
 }
 
-class ShowDice extends StatelessWidget {
-  const ShowDice({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      builder: (context, state) {
-        return Column(children: [
-          Flexible(
-            flex: 1,
-            child: Container(
-              child: Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    width: 230,
-                    height: 120,
-                    child: Row(
-                      children: [
-                        Dice(
-                            first: BlocProvider.of<GameCubit>(context)
-                                    .game
-                                    .lastRoll
-                                    .first ??
-                                1,
-                            second: BlocProvider.of<GameCubit>(context)
-                                    .game
-                                    .lastRoll
-                                    .second ??
-                                1)
-                      ],
-                    ),
-                  )),
-            ),
-          ),
-          Flexible(flex: 2, child: Spacer())
-        ]);
-      },
-    );
-  }
-}
