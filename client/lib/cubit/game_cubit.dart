@@ -40,11 +40,11 @@ class GameCubit extends Cubit<GameState> {
     emit(LocalConfigSuccess(game: game));
   }
 
-  void updateGameData() async {
+  void updateGameData(PlayerId playerId) async {
     // emit(ActionRequesting());
     late Json? gameData;
     try {
-      gameData = await endpointService.getGameData();
+      gameData = await endpointService.getGameData(playerId: playerId);
       game.withJson(gameData);
       print(gameData);
     } catch (e) {
@@ -59,17 +59,17 @@ class GameCubit extends Cubit<GameState> {
   /// server as JSON which is parsed into the client-side [Game] counterpart
   /// object.
   void loadRemoteConfig() async {
-    emit(RemoteConfigLoading());
+    // emit(RemoteConfigLoading());
 
-    late Json? remoteConfig;
-    try {
-      remoteConfig = await endpointService.getGameData();
-      game.withJson(remoteConfig);
-    } catch (e) {
-      emit(RemoteConfigFailure());
-    }
+    // late Json? remoteConfig;
+    // try {
+    //   remoteConfig = await endpointService.getGameData();
+    //   game.withJson(remoteConfig);
+    // } catch (e) {
+    //   emit(RemoteConfigFailure());
+    // }
 
-    emit(RemoteConfigSuccess());
+    // emit(RemoteConfigSuccess());
   }
 
   /// Request to join the active game session.
