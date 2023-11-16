@@ -44,8 +44,11 @@ class Game {
     }
     lastRoll = lastRoll..withJson(json['lastRoll']);
 
-    // Load and update players
+    // Load and update players to make client/server agree.
     if (json['players'] != null) {
+      // TODO: Find a more optimized way to do this
+      // Clear out player information each time it is loaded.
+      players.clear();
       for (Json player in json['players']) {
         final id = PlayerId(player['id']);
         if (players[id] != null) {

@@ -99,16 +99,17 @@ class AdminButtons extends StatelessWidget {
               ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<GameCubit>(context)
-                        .endpointService
-                        .reset(playerId: PlayerId("admin"));
+                        .resetGame(useAdmin: true);
                   },
                   child: const Text('Reset')),
-              ElevatedButton(
-                  onPressed: () {
+              TextInputWidget(
+                  width: 200.0,
+                  labelText: "Display Name",
+                  buttonText: "Join Game",
+                  onPressed: (input) {
                     BlocProvider.of<GameCubit>(context)
-                        .registerPlayer(displayName: "testUser");
-                  },
-                  child: const Text('Join')),
+                        .registerPlayer(displayName: input);
+                  }),
               ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<GameCubit>(context).startGame();
@@ -133,7 +134,8 @@ class AdminButtons extends StatelessWidget {
                   onPressed: () async {
                     PlayerId clientPlayerId =
                         BlocProvider.of<GameCubit>(context).clientPlayerId;
-                    BlocProvider.of<GameCubit>(context).updateGameData();
+                    BlocProvider.of<GameCubit>(context)
+                        .updateGameData(useAdmin: true);
                   },
                   child: const Text('Update State')),
               ElevatedButton(

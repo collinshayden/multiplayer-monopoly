@@ -43,11 +43,16 @@ class GameCubit extends Cubit<GameState> {
     emit(LocalConfigSuccess(game: game));
   }
 
-  void updateGameData() async {
+  // Hardcoded to use admin ID for now
+  void updateGameData({bool useAdmin = false}) async {
     emit(GameStateUpdateLoading());
     late Json? gameData;
+    var playerId = clientPlayerId;
+    if (useAdmin) {
+      playerId = PlayerId('admin');
+    }
     try {
-      gameData = await endpointService.getGameData(playerId: clientPlayerId);
+      gameData = await endpointService.getGameData(playerId: playerId);
       game.withJson(gameData);
       emit(GameStateUpdateSuccess());
       // print(gameData);
@@ -134,6 +139,22 @@ class GameCubit extends Cubit<GameState> {
     try {
       endpointService.startGame(playerId: clientPlayerId);
       updateGameData();
+      emit(GameActionSuccess());
+    } catch (e) {
+      emit(GameActionFailure());
+    }
+  }
+
+  // Hardcoded to use admin ID for now
+  void resetGame({bool useAdmin = false}) async {
+    var playerId = clientPlayerId;
+    emit(GameActionLoading());
+    if (useAdmin) {
+      playerId = PlayerId('admin');
+    }
+    try {
+      endpointService.reset(playerId: playerId);
+      updateGameData(useAdmin: true);
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());

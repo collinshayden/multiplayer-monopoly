@@ -9,26 +9,21 @@ class PlayerDisplay extends StatelessWidget {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
         return PlayerInfoScreens(
-            players: BlocProvider.of<GameCubit>(context)
-                .game
-                .players
-                .values
-                .toList());
+          key: UniqueKey(), // Add this line
+          players:
+              BlocProvider.of<GameCubit>(context).game.players.values.toList(),
+        );
       },
     );
   }
 }
 
-class PlayerInfoScreens extends StatefulWidget {
+class PlayerInfoScreens extends StatelessWidget {
   final List<Player> players;
+  final Key? key;
 
-  PlayerInfoScreens({required this.players});
+  PlayerInfoScreens({required this.players, this.key}) : super(key: key);
 
-  @override
-  _PlayerInfoScreensState createState() => _PlayerInfoScreensState();
-}
-
-class _PlayerInfoScreensState extends State<PlayerInfoScreens> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,9 +52,9 @@ class _PlayerInfoScreensState extends State<PlayerInfoScreens> {
             color: Colors.white,
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.players.length,
+              itemCount: players.length,
               itemBuilder: (context, index) {
-                return _buildPlayerData(widget.players[index]);
+                return _buildPlayerData(players[index]);
               },
             ),
           ),
@@ -85,16 +80,16 @@ class _PlayerInfoScreensState extends State<PlayerInfoScreens> {
       ),
     );
   }
-}
 
-Widget _buildText(String text, bool bold) {
-  return Flexible(
-    child: Text(
-      textAlign: TextAlign.center,
-      text,
-      style: TextStyle(
-        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+  Widget _buildText(String text, bool bold) {
+    return Flexible(
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
