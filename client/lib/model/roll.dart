@@ -11,17 +11,17 @@ class Roll {
   int? first;
   int? second;
 
+  /// Determines whether this all values necessary for display are non-null.
+  bool get _canCreateWidget => first != null && second != null;
+
   void applyJson(Json? json) {
     if (json == null) return;
     first = json['first'] ?? first;
     second = json['second'] ?? second;
   }
 
-  bool _ensureCompleteRoll() {
-    return (first != null && second != null);
-  }
-
   Widget createWidget() {
+    assert(_canCreateWidget);
     return const Dice(
       first: 1,
       second: 2,
