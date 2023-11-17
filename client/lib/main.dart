@@ -1,8 +1,6 @@
 import 'package:client/constants.dart';
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/player.dart';
-import 'package:client/model/roll.dart';
-import 'package:client/model/tiles.dart';
 import 'package:client/view/base/board.dart';
 import 'package:client/view/dice.dart';
 import 'package:client/view/player_info.dart';
@@ -11,64 +9,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MonopolyApp(),
-    ),
-  );
+  runApp(MonopolyApp());
 }
 
-class MonopolyApp extends StatefulWidget {
-  const MonopolyApp({super.key});
+class MonopolyApp extends StatelessWidget {
+  MonopolyApp({super.key});
 
-  @override
-  State<MonopolyApp> createState() => _MonopolyAppState();
-}
+  final backgroundColor = Color(int.parse('FF11202D', radix: 16));
 
-class _MonopolyAppState extends State<MonopolyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Color(int.parse('FF11202D', radix: 16)),
+        backgroundColor: backgroundColor,
         body: BlocProvider(
           create: (context) => GameCubit(),
-          child: Stack(
-            children: [
-              const CubitTest(),
-              Board(),
-              const AdminButtons(),
-              DisplayDice(),
-            ],
-          ),
+          child: GameScreen(),
         ),
       ),
     );
   }
 }
 
-class CubitTest extends StatelessWidget {
-  const CubitTest({super.key});
+class StartScreen extends StatelessWidget {
+  const StartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      builder: (context, state) {
-        if (state is GameInitial) {
-          return TextButton(
-            onPressed: () {
-              BlocProvider.of<GameCubit>(context).loadLocalConfig();
-            },
-            child: const Text('Load local config'),
-          );
-        }
-        if (state is LocalConfigLoading) {
-          return const CircularProgressIndicator();
-        }
-        return const Text('Loaded local config!');
-      },
+    return const Placeholder();
+  }
+}
+
+/// This widget contains the screen on which the game is played.
+class GameScreen extends StatelessWidget {
+  const GameScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Load or reload local configuration whenever the game screen is rebuilt.
+    BlocProvider.of<GameCubit>(context).loadLocalConfig();
+
+    return const Stack(
+      children: [
+        Board(),
+        AdminButtons(),
+        DisplayDice(),
+      ],
     );
   }
 }
