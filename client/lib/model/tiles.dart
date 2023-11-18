@@ -47,6 +47,7 @@ class ImprovableTile extends Tile {
   int? tier;
   int? quarterTurns;
   int? price;
+  Color? tierColor;
 
   /// Returns whether this object's display configuration has been fully set.
   bool get _displayConfigurationComplete {
@@ -75,11 +76,11 @@ class ImprovableTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Flexible(
               flex: 1,
-              child: Container(color: Colors.red),
+              child: Container(color: tierColor),
             ),
             Flexible(
                 flex: 3,
@@ -92,12 +93,17 @@ class ImprovableTile extends Tile {
                     )),
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
-                      child: Text('Price: $price', textAlign: TextAlign.center),
+                      child:
+                          Text('Price: \$$price', textAlign: TextAlign.center),
                     )
                   ],
                 ))
           ])),
     );
+  }
+
+  void setTierColor(Map<int, Color> colorMap) {
+    tierColor = colorMap[tier];
   }
 }
 
@@ -129,7 +135,7 @@ class RailroadTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -137,11 +143,12 @@ class RailroadTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
             Flexible(
               flex: 0,
               child: Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: Text('Price: $price', textAlign: TextAlign.center),
+                child: Text('Price: \$$price', textAlign: TextAlign.center),
               ),
             )
           ])),
@@ -177,7 +184,7 @@ class UtilityTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -189,7 +196,7 @@ class UtilityTile extends Tile {
               flex: 0,
               child: Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: Text('Price: $price', textAlign: TextAlign.center),
+                child: Text('Price: \$$price', textAlign: TextAlign.center),
               ),
             )
           ])),
@@ -222,7 +229,7 @@ class ChanceTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -230,6 +237,7 @@ class ChanceTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -260,7 +268,7 @@ class CommunityChestTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -268,6 +276,7 @@ class CommunityChestTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -301,13 +310,14 @@ class TaxTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
               title ?? "Placeholder title",
               textAlign: TextAlign.center,
             )),
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
             Flexible(
               child: Text(
                 payCommandText ?? "Placeholder price",
@@ -349,7 +359,7 @@ class GoTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -357,6 +367,8 @@ class GoTile extends Tile {
               textAlign: TextAlign.center,
             )),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$goImage')),
+            Flexible(flex: 0, child: Image.asset('assets/images/$arrowImage')),
           ])),
     );
   }
@@ -393,7 +405,7 @@ class JailTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -412,7 +424,8 @@ class JailTile extends Tile {
                 textAlign: TextAlign.center,
               ),
               // TODO image
-            )
+            ),
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -446,7 +459,7 @@ class FreeParkingTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -460,6 +473,7 @@ class FreeParkingTile extends Tile {
               ),
             ),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }
@@ -493,7 +507,7 @@ class GoToJailTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.grey,
+          color: Colors.transparent,
           child: Column(children: [
             Expanded(
                 child: Text(
@@ -507,6 +521,7 @@ class GoToJailTile extends Tile {
               ),
             ),
             // TODO image
+            Flexible(flex: 0, child: Image.asset('assets/images/$image')),
           ])),
     );
   }

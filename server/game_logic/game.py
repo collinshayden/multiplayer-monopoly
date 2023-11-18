@@ -641,6 +641,15 @@ class Game:
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
+        game_dict: dict = {}
+        game_dict["started"] = self.started
+        if self.active_player_id != "":
+            game_dict["activePlayerID"] = self.active_player_id
+        game_dict["players"] = [player.to_dict() for player in self.players.values()]
+        game_dict["tiles"] = [tile.to_dict() for tile in self.tiles]
+        return game_dict
+        
+        """
         return {
             "started": self.started,
             # TODO: Remove this later once we have fully implemented event queue client-side
@@ -648,3 +657,4 @@ class Game:
             "players": [player.to_dict() for player in self.players.values()],
             "tiles": [tile.to_dict() for tile in self.tiles]
         }
+        """

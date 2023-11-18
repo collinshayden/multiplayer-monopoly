@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 import 'player.dart';
 import 'tiles.dart';
 import 'roll.dart';
@@ -27,22 +29,27 @@ class Game {
   }
 
   /// Update game data to match provided JSON values.
-  void withJson(Json? json) {
+  void applyJson(Json? json) {
     if (json == null) return;
     monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
     monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;
-    // tierColors[1] = Color(int.parse(json['tierColors']['1'], radix: 16));
-    // tierColors[2] = Color(int.parse(json['tierColors']['2'], radix: 16));
-    // tierColors[3] = Color(int.parse(json['tierColors']['3'], radix: 16));
-    // tierColors[4] = Color(int.parse(json['tierColors']['4'], radix: 16));
-    // tierColors[5] = Color(int.parse(json['tierColors']['5'], radix: 16));
-    // tierColors[6] = Color(int.parse(json['tierColors']['6'], radix: 16));
-    // tierColors[7] = Color(int.parse(json['tierColors']['7'], radix: 16));
-    // tierColors[8] = Color(int.parse(json['tierColors']['8'], radix: 16));
-    if (json['activePlayerId'] != '') {
-      activePlayerId = PlayerId(json['activePlayerId']) ?? activePlayerId;
+    if (json['tierColors'] != null) {
+      tierColors[0] = Color(int.parse(json['tierColors']['1'], radix: 16));
+      tierColors[1] = Color(int.parse(json['tierColors']['2'], radix: 16));
+      tierColors[2] = Color(int.parse(json['tierColors']['3'], radix: 16));
+      tierColors[3] = Color(int.parse(json['tierColors']['4'], radix: 16));
+      tierColors[4] = Color(int.parse(json['tierColors']['5'], radix: 16));
+      tierColors[5] = Color(int.parse(json['tierColors']['6'], radix: 16));
+      tierColors[6] = Color(int.parse(json['tierColors']['7'], radix: 16));
+      tierColors[7] = Color(int.parse(json['tierColors']['8'], radix: 16));
     }
-    lastRoll = lastRoll..withJson(json['lastRoll']);
+    if (json['activePlayerId'] != null) {
+      if (json['activePlayerId'] != '') {
+        // TODO: Remove on server-side
+        activePlayerId = PlayerId(json['activePlayerId'] as String);
+      }
+    }
+    lastRoll = lastRoll..applyJson(json['lastRoll']);
 
     // Load and update players to make client/server agree.
     if (json['players'] != null) {
@@ -52,10 +59,10 @@ class Game {
       for (Json player in json['players']) {
         final id = PlayerId(player['id']);
         if (players[id] != null) {
-          players[id]!.withJson(player);
+          players[id]!.applyJson(player);
           continue;
         }
-        players[id] = Player(id: id)..withJson(player);
+        players[id] = Player(id: id)..applyJson(player);
       }
     }
 
@@ -72,6 +79,8 @@ class Game {
         switch (tile['type']) {
           case 'improvable':
             tiles[id] = ImprovableTile(id: id)..withJson(tile);
+            ImprovableTile improvable = tiles[id] as ImprovableTile;
+            improvable.setTierColor(tierColors);
           case 'railroad':
             tiles[id] = RailroadTile(id: id)..withJson(tile);
           case 'utility':

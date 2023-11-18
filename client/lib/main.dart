@@ -1,8 +1,6 @@
 import 'package:client/constants.dart';
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/player.dart';
-import 'package:client/model/roll.dart';
-import 'package:client/model/tiles.dart';
 import 'package:client/view/base/board.dart';
 import 'package:client/view/dice.dart';
 import 'package:client/view/player_info.dart';
@@ -11,75 +9,68 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MonopolyApp(),
-    ),
-  );
+  runApp(MonopolyApp());
 }
 
-class MonopolyApp extends StatefulWidget {
-  const MonopolyApp({super.key});
+class MonopolyApp extends StatelessWidget {
+  MonopolyApp({super.key});
 
-  @override
-  State<MonopolyApp> createState() => _MonopolyAppState();
-}
+  final backgroundColor = Color(int.parse('FF11202D', radix: 16));
 
-class _MonopolyAppState extends State<MonopolyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: backgroundColor,
         body: BlocProvider(
           create: (context) => GameCubit(),
-          child: Stack(
-            children: [
-              const CubitTest(),
-              const Board(),
-              Center(
-                child: SizedBox.fromSize(
-                  size: const Size(100.0, 150.0),
-                  child: const Column(
-                    children: [
-                      Align(),
-                      // Roll(first: 1, second: 4).createWidget(),
-                    ],
-                  ),
-                ),
-              ),
-              // const Spacer(),
-              Align(alignment: Alignment.topLeft, child: PlayerDisplay()),
-              const AdminButtons(),
-              // ShowDice(),
-            ],
-          ),
+          child: GameScreen(),
         ),
       ),
     );
   }
 }
 
-class CubitTest extends StatelessWidget {
-  const CubitTest({super.key});
+class StartScreen extends StatelessWidget {
+  const StartScreen({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+/// This widget contains the screen on which the game is played.
+class GameScreen extends StatelessWidget {
+  const GameScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Load or reload local configuration whenever the game screen is rebuilt.
+    BlocProvider.of<GameCubit>(context).loadLocalConfig();
+
+    return const Stack(
+      children: [
+        Board(),
+        AdminButtons(),
+        DisplayDice(),
+      ],
+    );
+  }
+}
+
+class PlayerDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
-        if (state is GameInitial) {
-          return TextButton(
-            onPressed: () {
-              BlocProvider.of<GameCubit>(context).loadLocalConfig();
-            },
-            child: const Text('Load local config'),
-          );
-        }
-        if (state is LocalConfigLoading) {
-          return const CircularProgressIndicator();
-        }
-        return const Text('Loaded local config!');
+        return PlayerInfoScreens(
+            players: BlocProvider.of<GameCubit>(context)
+                .game
+                .players
+                .values
+                .toList());
       },
     );
   }
@@ -99,25 +90,34 @@ class AdminButtons extends StatelessWidget {
               ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<GameCubit>(context)
-                        .resetGame(useAdmin: true);
+                        .endpointService
+                        .reset(playerId: PlayerId("admin"));
                   },
                   child: const Text('Reset')),
-              TextInputWidget(
-                  width: 200.0,
-                  labelText: "Display Name",
-                  buttonText: "Join Game",
-                  onPressed: (input) {
-                    BlocProvider.of<GameCubit>(context)
-                        .registerPlayer(displayName: input);
-                  }),
               ElevatedButton(
                   onPressed: () {
-                    BlocProvider.of<GameCubit>(context).startGame();
+                    BlocProvider.of<GameCubit>(context)
+                        .registerPlayer(displayName: "testUser");
+                  },
+                  child: const Text('Join')),
+              ElevatedButton(
+                  onPressed: () {
+                    // BlocProvider.of<GameCubit>(context).updateGameData();
+
+                    BlocProvider.of<GameCubit>(context)
+                        .endpointService
+                        .startGame(playerId: PlayerId("admin"));
                   },
                   child: const Text('Start Game')),
               ElevatedButton(
                   onPressed: () {
-                    BlocProvider.of<GameCubit>(context).rollDice();
+                    // BlocProvider.of<GameCubit>(context).updateGameData();
+                    PlayerId activePlayerId =
+                        BlocProvider.of<GameCubit>(context)
+                            .game
+                            .activePlayerId!;
+                    BlocProvider.of<GameCubit>(context)
+                        .rollDice(playerId: activePlayerId);
                   },
                   child: const Text('Roll')),
               ElevatedButton(
@@ -127,15 +127,13 @@ class AdminButtons extends StatelessWidget {
                         BlocProvider.of<GameCubit>(context)
                             .game
                             .activePlayerId!;
-                    BlocProvider.of<GameCubit>(context).endTurn();
+                    BlocProvider.of<GameCubit>(context)
+                        .endTurn(playerId: activePlayerId);
                   },
                   child: const Text('End Turn')),
               ElevatedButton(
                   onPressed: () async {
-                    PlayerId clientPlayerId =
-                        BlocProvider.of<GameCubit>(context).clientPlayerId;
-                    BlocProvider.of<GameCubit>(context)
-                        .updateGameData(useAdmin: true);
+                    BlocProvider.of<GameCubit>(context).updateGameData();
                   },
                   child: const Text('Update State')),
               ElevatedButton(
@@ -143,18 +141,11 @@ class AdminButtons extends StatelessWidget {
                     BlocProvider.of<GameCubit>(context).switchActivePlayerId();
                   },
                   child: const Text('Change to Active Player')),
-              // Hardcoded as 0 for now. Will need to adjust this to use
-              // a tile and its selected ID.
+              // Hardcoded as 0 for now. How can I get the tile ID the current player is on?
+
               ElevatedButton(
                   onPressed: () {
-                    PlayerId clientPlayerId =
-                        BlocProvider.of<GameCubit>(context).clientPlayerId;
-                    final playerLocation = BlocProvider.of<GameCubit>(context)
-                        .game
-                        .players[clientPlayerId]
-                        ?.location;
-                    BlocProvider.of<GameCubit>(context)
-                        .buyProperty(playerLocation!);
+                    BlocProvider.of<GameCubit>(context).buyProperty(0);
                   },
                   child: const Text('Buy Property')),
               MultiOptionWidget(
@@ -184,41 +175,6 @@ class AdminButtons extends StatelessWidget {
                   }),
             ],
           ),
-        );
-      },
-    );
-  }
-}
-
-class ShowDice extends StatelessWidget {
-  const ShowDice({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      builder: (context, state) {
-        return Container(
-          child: Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 400,
-                height: 200,
-                child: Row(
-                  children: [
-                    Dice(
-                        value1: BlocProvider.of<GameCubit>(context)
-                                .game
-                                .lastRoll
-                                .first ??
-                            1,
-                        value2: BlocProvider.of<GameCubit>(context)
-                                .game
-                                .lastRoll
-                                .second ??
-                            1)
-                  ],
-                ),
-              )),
         );
       },
     );

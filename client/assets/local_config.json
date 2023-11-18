@@ -102,7 +102,7 @@
     {
       "id": 11,
       "type": "improvable",
-      "tier": 3,
+      "tier": 2,
       "quarterTurns": 2,
       "price": 140,
       "title": "ST. CHARLES\nPLACE"
@@ -113,12 +113,12 @@
       "quarterTurns": 2,
       "price": 150,
       "title": "ELECTRIC\nCOMPANY",
-      "image": "electric-company.png"
+      "image": "electric_company.png"
     },
     {
       "id": 13,
       "type": "improvable",
-      "tier": 3,
+      "tier": 2,
       "quarterTurns": 2,
       "price": 140,
       "title": "STATES\nAVENUE"
@@ -126,7 +126,7 @@
     {
       "id": 14,
       "type": "improvable",
-      "tier": 3,
+      "tier": 2,
       "quarterTurns": 2,
       "price": 160,
       "title": "VIRGINIA\nAVENUE"
@@ -142,7 +142,7 @@
     {
       "id": 16,
       "type": "improvable",
-      "tier": 4,
+      "tier": 3,
       "quarterTurns": 2,
       "price": 180,
       "title": "ST. JAMES\nPLACE"
@@ -157,7 +157,7 @@
     {
       "id": 18,
       "type": "improvable",
-      "tier": 4,
+      "tier": 3,
       "quarterTurns": 2,
       "price": 180,
       "title": "TENNESSEE\nAVENUE"
@@ -165,7 +165,7 @@
     {
       "id": 19,
       "type": "improvable",
-      "tier": 4,
+      "tier": 3,
       "quarterTurns": 2,
       "price": 200,
       "title": "NEW YORK\nAVENUE"
@@ -181,7 +181,7 @@
     {
       "id": 21,
       "type": "improvable",
-      "tier": 5,
+      "tier": 4,
       "quarterTurns": 3,
       "price": 220,
       "title": "KENTUCKY\nAVENUE"
@@ -196,7 +196,7 @@
     {
       "id": 23,
       "type": "improvable",
-      "tier": 5,
+      "tier": 4,
       "quarterTurns": 3,
       "price": 220,
       "title": "INDIANA\nAVENUE"
@@ -204,7 +204,7 @@
     {
       "id": 24,
       "type": "improvable",
-      "tier": 5,
+      "tier": 4,
       "quarterTurns": 3,
       "price": 240,
       "title": "ILLINOIS\nAVENUE"
@@ -220,7 +220,7 @@
     {
       "id": 26,
       "type": "improvable",
-      "tier": 6,
+      "tier": 5,
       "quarterTurns": 3,
       "price": 260,
       "title": "ATLANTIC\nAVENUE"
@@ -239,7 +239,7 @@
       "quarterTurns": 3,
       "price": 150,
       "title": "WATER\nWORKS",
-      "image" : "water-works.png"
+      "image" : "water_works.png"
     },
     {
       "id": 29,

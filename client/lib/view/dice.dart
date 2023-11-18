@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client/cubit/game_cubit.dart';
 
 class Dice extends StatelessWidget {
   const Dice({
     super.key,
-    required this.value1,
-    required this.value2,
+    required this.first,
+    required this.second,
   });
 
-  final int value1;
-  final int value2;
+  final int first;
+  final int second;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [SingleDie(value: value1), SingleDie(value: value2)],
+    return AspectRatio(
+      aspectRatio: 2 / 1,
+      child: Container(
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [SingleDie(value: first), SingleDie(value: second)],
+          ),
         ),
       ),
     );
@@ -26,16 +31,19 @@ class Dice extends StatelessWidget {
 }
 
 class SingleDie extends StatelessWidget {
-  SingleDie({super.key, required this.value})
+  const SingleDie({super.key, required this.value})
       : assert(0 <= value && value <= 6);
 
   final int value;
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-        painter: SingleDiePainter(value: value),
-        child: const AspectRatio(aspectRatio: 1 / 1));
+    return Padding(
+      padding: EdgeInsets.only(right: 5, left: 5),
+      child: CustomPaint(
+          painter: SingleDiePainter(value: value),
+          child: const AspectRatio(aspectRatio: 1 / 1)),
+    );
   }
 }
 
@@ -118,9 +126,45 @@ void main() {
       home: Scaffold(
         backgroundColor: Colors.red[200],
         body: Center(
-          child: SizedBox(width: 400, height: 200, child: Dice(value1: 2, value2: 4,)),
+          child: SizedBox(
+              width: 400,
+              height: 200,
+              child: Dice(
+                first: 2,
+                second: 4,
+              )),
         ),
       ),
     ),
   );
+}
+
+class DisplayDice extends StatelessWidget {
+  const DisplayDice({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(builder: (context, state) {
+      return LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        return Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: constraints.maxWidth / 7,
+            child: Dice(
+                first: BlocProvider.of<GameCubit>(context)
+                        .game
+                        .lastRoll
+                        .first ??
+                    1,
+                second: BlocProvider.of<GameCubit>(context)
+                        .game
+                        .lastRoll
+                        .second ??
+                    1),
+          ),
+        );
+      });
+    });
+  }
 }

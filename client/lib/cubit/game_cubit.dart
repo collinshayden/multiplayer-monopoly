@@ -36,26 +36,21 @@ class GameCubit extends Cubit<GameState> {
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
-      game.withJson(localConfig);
+      game.applyJson(localConfig);
     } catch (e) {
       emit(LocalConfigFailure(e));
     }
+
     emit(LocalConfigSuccess(game: game));
   }
 
-  // Hardcoded to use admin ID for now
-  void updateGameData({bool useAdmin = false}) async {
-    emit(GameStateUpdateLoading());
+  void updateGameData() async {
+    // emit(ActionRequesting());
     late Json? gameData;
-    var playerId = clientPlayerId;
-    if (useAdmin) {
-      playerId = PlayerId('admin');
-    }
     try {
-      gameData = await endpointService.getGameData(playerId: playerId);
-      game.withJson(gameData);
-      emit(GameStateUpdateSuccess());
-      // print(gameData);
+      gameData = await endpointService.fetchData();
+      game.applyJson(gameData);
+      print(gameData);
     } catch (e) {
       emit(GameStateUpdateFailure());
       // emit(ActionRejected());
@@ -67,24 +62,19 @@ class GameCubit extends Cubit<GameState> {
   /// This function is currently set up to fetch the entire game object from the
   /// server as JSON which is parsed into the client-side [Game] counterpart
   /// object.
-  void loadRemoteConfig() async {
-    // emit(RemoteConfigLoading());
+  // void loadRemoteConfig() async {
+  //   // emit(RemoteConfigLoading());
 
-    // late Json? remoteConfig;
-    // try {
-    //   remoteConfig = await endpointService.getGameData();
-    //   game.withJson(remoteConfig);
-    // } catch (e) {
-    //   emit(RemoteConfigFailure());
-    // }
+  //   late Json? remoteConfig;
+  //   try {
+  //     remoteConfig = await endpointService.getGameData();
+  //     game.applyJson(remoteConfig);
+  //   } catch (e) {
+  //     emit(RemoteConfigFailure());
+  //   }
 
-    // emit(RemoteConfigSuccess());
-  }
-
-  /// Method to get the location of the active player.
-  int? getActivePlayerLocation() {
-    return game.getPlayerLocation(clientPlayerId);
-  }
+  //   // emit(RemoteConfigSuccess());
+  // }
 
   /// Request to join the active game session.
   ///
@@ -99,8 +89,7 @@ class GameCubit extends Cubit<GameState> {
       final playerId =
           await endpointService.registerPlayer(displayName: displayName);
       // Set the activte player to be what is returned from register_player.
-      clientPlayerId = PlayerId(playerId);
-      updateGameData();
+      clientPlayerId = playerId;
     } catch (e) {
       emit(JoinGameFailure());
     }
@@ -109,52 +98,33 @@ class GameCubit extends Cubit<GameState> {
   /// Roll dice during a player's active turn.
   ///
   /// The client should only be able to call this
-  void rollDice() async {
-    emit(GameActionLoading());
+  void rollDice({required PlayerId playerId}) async {
+    emit(ActiveTurnRollPhase());
     try {
-      endpointService.rollDice(clientPlayerId);
-      updateGameData();
-      emit(GameActionSuccess());
+      endpointService.rollDice(playerId);
     } catch (e) {
       emit(GameErrorState());
     }
+    emit(ActiveTurnRollPhase());
   }
 
   /// End a player's turn.
   ///
   /// The client should only be able to call this
-  void endTurn() async {
-    emit(GameActionLoading());
+  void endTurn({required PlayerId playerId}) async {
+    // emit(ActiveTurnRollPhase());
     try {
-      endpointService.endTurn(clientPlayerId);
-      updateGameData();
-      emit(GameActionSuccess());
+      endpointService.endTurn(playerId);
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameErrorState());
     }
+    // emit(ActiveTurnRollPhase());
   }
 
   void startGame() async {
     emit(GameActionLoading());
     try {
-      endpointService.startGame(playerId: clientPlayerId);
-      updateGameData();
-      emit(GameActionSuccess());
-    } catch (e) {
-      emit(GameActionFailure());
-    }
-  }
-
-  // Hardcoded to use admin ID for now
-  void resetGame({bool useAdmin = false}) async {
-    var playerId = clientPlayerId;
-    emit(GameActionLoading());
-    if (useAdmin) {
-      playerId = PlayerId('admin');
-    }
-    try {
-      endpointService.reset(playerId: playerId);
-      updateGameData(useAdmin: true);
+      endpointService.startGame(playerId: game.activePlayerId!);
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -164,8 +134,7 @@ class GameCubit extends Cubit<GameState> {
   void buyProperty(int tileId) async {
     emit(GameActionLoading());
     try {
-      endpointService.buyProperty(clientPlayerId, tileId);
-      updateGameData();
+      endpointService.buyProperty(game.activePlayerId!, tileId);
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -175,8 +144,7 @@ class GameCubit extends Cubit<GameState> {
   void setImprovements(int tileId, int quantity) async {
     emit(GameActionLoading());
     try {
-      endpointService.setImprovements(clientPlayerId, tileId, quantity);
-      updateGameData();
+      endpointService.setImprovements(game.activePlayerId!, tileId, quantity);
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -186,8 +154,7 @@ class GameCubit extends Cubit<GameState> {
   void setMortgage(int tileId, bool mortgage) async {
     emit(GameActionLoading());
     try {
-      endpointService.setMortgage(clientPlayerId, tileId, mortgage);
-      updateGameData();
+      endpointService.setMortgage(game.activePlayerId!, tileId, mortgage);
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -197,8 +164,7 @@ class GameCubit extends Cubit<GameState> {
   void getOutOfJail(JailMethod jailMethod) async {
     emit(GameActionLoading());
     try {
-      endpointService.getOutOfJail(clientPlayerId, jailMethod);
-      updateGameData();
+      endpointService.getOutOfJail(game.activePlayerId!, jailMethod);
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
