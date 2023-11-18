@@ -22,10 +22,16 @@ class MonopolyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: Color(int.parse('FF11202D', radix: 16)),
         body: BlocProvider(
           create: (context) => GameCubit(),
-          child: GameScreen(),
+          child: Stack(
+            children: [
+              //const CubitTest(),
+              GameScreen(),
+              AdminButtons(),
+            ],
+          ),
         ),
       ),
     );
@@ -50,10 +56,10 @@ class GameScreen extends StatelessWidget {
     // Load or reload local configuration whenever the game screen is rebuilt.
     BlocProvider.of<GameCubit>(context).loadLocalConfig();
 
-    return const Stack(
+    return Stack(
       children: [
-        Board(),
-        AdminButtons(),
+        PlayerDisplay(),
+        // Board(),
         DisplayDice(),
       ],
     );
@@ -90,54 +96,40 @@ class AdminButtons extends StatelessWidget {
               ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<GameCubit>(context)
-                        .endpointService
-                        .reset(playerId: PlayerId("admin"));
+                        .resetGame(useAdmin: true);
                   },
                   child: const Text('Reset')),
+              TextInputWidget(
+                  width: 200,
+                  labelText: "Enter Name",
+                  buttonText: "Join Game",
+                  onPressed: (value) async {
+                    BlocProvider.of<GameCubit>(context)
+                        .registerPlayer(displayName: value);
+                  }),
               ElevatedButton(
                   onPressed: () {
-                    BlocProvider.of<GameCubit>(context)
-                        .registerPlayer(displayName: "testUser");
-                  },
-                  child: const Text('Join')),
-              ElevatedButton(
-                  onPressed: () {
-                    // BlocProvider.of<GameCubit>(context).updateGameData();
-
-                    BlocProvider.of<GameCubit>(context)
-                        .endpointService
-                        .startGame(playerId: PlayerId("admin"));
+                    BlocProvider.of<GameCubit>(context).startGame();
                   },
                   child: const Text('Start Game')),
               ElevatedButton(
                   onPressed: () {
-                    // BlocProvider.of<GameCubit>(context).updateGameData();
-                    PlayerId activePlayerId =
-                        BlocProvider.of<GameCubit>(context)
-                            .game
-                            .activePlayerId!;
-                    BlocProvider.of<GameCubit>(context)
-                        .rollDice(playerId: activePlayerId);
+                    BlocProvider.of<GameCubit>(context).rollDice();
                   },
                   child: const Text('Roll')),
               ElevatedButton(
                   onPressed: () {
-                    // BlocProvider.of<GameCubit>(context).updateGameData();
-                    PlayerId activePlayerId =
-                        BlocProvider.of<GameCubit>(context)
-                            .game
-                            .activePlayerId!;
-                    BlocProvider.of<GameCubit>(context)
-                        .endTurn(playerId: activePlayerId);
+                    BlocProvider.of<GameCubit>(context).endTurn();
                   },
                   child: const Text('End Turn')),
               ElevatedButton(
-                  onPressed: () async {
-                    BlocProvider.of<GameCubit>(context).updateGameData();
+                  onPressed: () {
+                    BlocProvider.of<GameCubit>(context)
+                        .updateGameData(useAdmin: true);
                   },
                   child: const Text('Update State')),
               ElevatedButton(
-                  onPressed: () async {
+                  onPressed: () {
                     BlocProvider.of<GameCubit>(context).switchActivePlayerId();
                   },
                   child: const Text('Change to Active Player')),

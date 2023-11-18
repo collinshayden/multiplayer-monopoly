@@ -27,9 +27,9 @@ class EndpointService {
   /// Retrieve a deserialised snapshot of the server's game object.
   ///
   /// This function calls the remote API's `state` endpoint.
-  Future<Json> fetchData() async {
+  Future<Json> fetchData({required PlayerId playerId}) async {
     final response = await server.get(
-      Uri.parse('$API_URL/state?player_id=admin'),
+      Uri.parse('$API_URL/state?player_id=${playerId.value}'),
     );
     final Json gameData = jsonDecode(response.body);
     return gameData;

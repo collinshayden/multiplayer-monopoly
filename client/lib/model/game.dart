@@ -43,6 +43,7 @@ class Game {
       tierColors[6] = Color(int.parse(json['tierColors']['7'], radix: 16));
       tierColors[7] = Color(int.parse(json['tierColors']['8'], radix: 16));
     }
+
     if (json['activePlayerId'] != null) {
       if (json['activePlayerId'] != '') {
         // TODO: Remove on server-side

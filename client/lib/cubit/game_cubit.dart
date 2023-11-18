@@ -44,13 +44,17 @@ class GameCubit extends Cubit<GameState> {
     emit(LocalConfigSuccess(game: game));
   }
 
-  void updateGameData() async {
+  void updateGameData({useAdmin = false}) async {
     // emit(ActionRequesting());
     late Json? gameData;
+    var playerId = clientPlayerId;
+    if (useAdmin) {
+      playerId = PlayerId('admin');
+    }
     try {
-      gameData = await endpointService.fetchData();
+      gameData = await endpointService.fetchData(playerId: playerId);
       game.applyJson(gameData);
-      print(gameData);
+      // print(gameData);
     } catch (e) {
       emit(GameStateUpdateFailure());
       // emit(ActionRejected());
@@ -73,8 +77,13 @@ class GameCubit extends Cubit<GameState> {
   //     emit(RemoteConfigFailure());
   //   }
 
-  //   // emit(RemoteConfigSuccess());
+  // emit(RemoteConfigSuccess());
   // }
+
+  /// Method to get the location of the active player.
+  int? getActivePlayerLocation() {
+    return game.getPlayerLocation(clientPlayerId);
+  }
 
   /// Request to join the active game session.
   ///
@@ -90,6 +99,9 @@ class GameCubit extends Cubit<GameState> {
           await endpointService.registerPlayer(displayName: displayName);
       // Set the activte player to be what is returned from register_player.
       clientPlayerId = playerId;
+      print("Player ID: ${playerId.value}");
+      updateGameData();
+      print("Game data updated");
     } catch (e) {
       emit(JoinGameFailure());
     }
@@ -98,10 +110,14 @@ class GameCubit extends Cubit<GameState> {
   /// Roll dice during a player's active turn.
   ///
   /// The client should only be able to call this
-  void rollDice({required PlayerId playerId}) async {
+  void rollDice() async {
     emit(ActiveTurnRollPhase());
     try {
-      endpointService.rollDice(playerId);
+      final result = await endpointService.rollDice(clientPlayerId);
+      print("Result: ${result}");
+      // updateGameData();
+      print("Game data updated");
+      emit(GameActionSuccess());
     } catch (e) {
       emit(GameErrorState());
     }
@@ -111,10 +127,14 @@ class GameCubit extends Cubit<GameState> {
   /// End a player's turn.
   ///
   /// The client should only be able to call this
-  void endTurn({required PlayerId playerId}) async {
+  void endTurn() async {
     // emit(ActiveTurnRollPhase());
     try {
-      endpointService.endTurn(playerId);
+      final result = await endpointService.endTurn(clientPlayerId);
+      print("Result: ${result}");
+      updateGameData();
+      print("Game data updated");
+      emit(GameActionSuccess());
     } catch (e) {
       emit(GameErrorState());
     }
@@ -124,7 +144,28 @@ class GameCubit extends Cubit<GameState> {
   void startGame() async {
     emit(GameActionLoading());
     try {
-      endpointService.startGame(playerId: game.activePlayerId!);
+      final result = await endpointService.startGame(playerId: clientPlayerId);
+      print("Result: ${result}");
+      updateGameData();
+      print("Game data updated");
+      emit(GameActionSuccess());
+    } catch (e) {
+      emit(GameActionFailure());
+    }
+  }
+
+  // Hardcoded to use admin ID for now
+  void resetGame({bool useAdmin = false}) async {
+    var playerId = clientPlayerId;
+    emit(GameActionLoading());
+    if (useAdmin) {
+      playerId = PlayerId('admin');
+    }
+    try {
+      final result = await endpointService.reset(playerId: playerId);
+      print("Result: ${result}");
+      updateGameData(useAdmin: true);
+      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -134,7 +175,10 @@ class GameCubit extends Cubit<GameState> {
   void buyProperty(int tileId) async {
     emit(GameActionLoading());
     try {
-      endpointService.buyProperty(game.activePlayerId!, tileId);
+      final result = await endpointService.buyProperty(clientPlayerId, tileId);
+      print("Result: ${result}");
+      updateGameData();
+      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -144,7 +188,11 @@ class GameCubit extends Cubit<GameState> {
   void setImprovements(int tileId, int quantity) async {
     emit(GameActionLoading());
     try {
-      endpointService.setImprovements(game.activePlayerId!, tileId, quantity);
+      final result = await endpointService.setImprovements(
+          clientPlayerId, tileId, quantity);
+      print("Result: ${result}");
+      updateGameData();
+      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -154,7 +202,11 @@ class GameCubit extends Cubit<GameState> {
   void setMortgage(int tileId, bool mortgage) async {
     emit(GameActionLoading());
     try {
-      endpointService.setMortgage(game.activePlayerId!, tileId, mortgage);
+      final result =
+          await endpointService.setMortgage(clientPlayerId, tileId, mortgage);
+      print("Result: ${result}");
+      updateGameData();
+      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -164,7 +216,11 @@ class GameCubit extends Cubit<GameState> {
   void getOutOfJail(JailMethod jailMethod) async {
     emit(GameActionLoading());
     try {
-      endpointService.getOutOfJail(game.activePlayerId!, jailMethod);
+      final result =
+          await endpointService.getOutOfJail(clientPlayerId, jailMethod);
+      print("Result: ${result}");
+      updateGameData();
+      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
