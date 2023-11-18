@@ -26,7 +26,6 @@ class PlayerInfoScreens extends StatelessWidget {
         title: const Text('Players'),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(10.0),

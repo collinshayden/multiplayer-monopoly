@@ -9,9 +9,14 @@ import 'package:flutter/material.dart';
 ///
 /// [children] are the list of widgets which are contained in the tooltray.
 class ExpandableTooltray extends StatefulWidget {
+  final CrossAxisAlignment crossAlignment;
+  final MainAxisAlignment mainAlignment;
   final List<Widget> children;
 
-  ExpandableTooltray({required this.children});
+  ExpandableTooltray(
+      {required this.children,
+      this.crossAlignment = CrossAxisAlignment.end,
+      this.mainAlignment = MainAxisAlignment.end});
 
   @override
   _ExpandableTooltrayState createState() => _ExpandableTooltrayState();

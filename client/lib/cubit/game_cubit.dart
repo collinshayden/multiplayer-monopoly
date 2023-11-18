@@ -31,7 +31,7 @@ class GameCubit extends Cubit<GameState> {
   /// deserialised into a [Game] object.
   void loadLocalConfig() async {
     emit(LocalConfigLoading());
-    await Future.delayed(const Duration(seconds: 1)); // TODO: Remove
+    // await Future.delayed(const Duration(seconds: 1)); // TODO: Remove
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();

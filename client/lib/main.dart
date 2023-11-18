@@ -25,11 +25,10 @@ class MonopolyApp extends StatelessWidget {
         backgroundColor: Color(int.parse('FF11202D', radix: 16)),
         body: BlocProvider(
           create: (context) => GameCubit(),
-          child: Stack(
+          child: const Stack(
             children: [
               //const CubitTest(),
               GameScreen(),
-              AdminButtons(),
             ],
           ),
         ),
@@ -48,25 +47,109 @@ class StartScreen extends StatelessWidget {
 }
 
 /// This widget contains the screen on which the game is played.
-class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+class GameScreen extends StatefulWidget {
+  const GameScreen({Key? key}) : super(key: key);
+
+  @override
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  bool isPlayerDisplayExpanded = true;
+  bool areAdminButtonsExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     // Load or reload local configuration whenever the game screen is rebuilt.
     BlocProvider.of<GameCubit>(context).loadLocalConfig();
 
-    return Stack(
-      children: [
-        BlocBuilder<GameCubit, GameState>(
-          builder: (context, state) {
-            // Rebuild PlayerDisplay when game state changes
-            return PlayerDisplay();
-          },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Monopoly'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Player Display',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: isPlayerDisplayExpanded,
+                        onChanged: (value) {
+                          setState(() {
+                            isPlayerDisplayExpanded = value;
+                          });
+                        },
+                        activeColor: Colors.white,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Admin Buttons',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: areAdminButtonsExpanded,
+                        onChanged: (value) {
+                          setState(() {
+                            areAdminButtonsExpanded = value;
+                          });
+                        },
+                        activeColor: Colors.white,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Add more items as needed
+          ],
         ),
-        // Board(),
-        DisplayDice(),
-      ],
+      ),
+      body: Row(
+        children: [
+          Visibility(
+            visible: isPlayerDisplayExpanded,
+            child: Expanded(
+              flex: 1,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: PlayerDisplay(),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: isPlayerDisplayExpanded ? 2 : 3,
+            child: const Board(),
+          ),
+          Visibility(
+            visible: areAdminButtonsExpanded,
+            child: Expanded(
+              flex: 1,
+              child: AdminButtons(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -94,9 +177,11 @@ class AdminButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
-        return Align(
-          alignment: Alignment.topRight,
-          child: ExpandableTooltray(
+        return Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               ElevatedButton(
                   onPressed: () {
@@ -139,7 +224,6 @@ class AdminButtons extends StatelessWidget {
                   },
                   child: const Text('Change to Active Player')),
               // Hardcoded as 0 for now. How can I get the tile ID the current player is on?
-
               ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<GameCubit>(context).buyProperty(0);
