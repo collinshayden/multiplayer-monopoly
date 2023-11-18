@@ -1,13 +1,13 @@
 import 'package:client/cubit/game_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/player.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // Make sure to import your Player class
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PlayerDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlayerInfoScreens(
-      key: UniqueKey(), // Add this line
+      key: UniqueKey(),
       players: BlocProvider.of<GameCubit>(context).game.players.values.toList(),
     );
   }
@@ -25,75 +25,64 @@ class PlayerInfoScreens extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Players'),
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10.0),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildText("Name", true),
-                _buildText("Money", true),
-                _buildText("Properties", true),
-                _buildText("Get Out Of Jail Free Cards", true),
-                _buildText("Active", true),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(10.0),
-            color: Colors.white,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: players.length,
-              itemBuilder: (context, index) {
-                return _buildPlayerData(players[index], context);
-              },
-            ),
-          ),
-        ],
+      body: ListView.builder(
+        itemCount: players.length,
+        itemBuilder: (context, index) {
+          return PlayerInfoExpansionTile(players[index], context);
+        },
       ),
     );
   }
+}
 
-  Widget _buildPlayerData(Player player, BuildContext context) {
+class PlayerInfoExpansionTile extends StatelessWidget {
+  final Player player;
+  final BuildContext context;
+
+  PlayerInfoExpansionTile(this.player, this.context);
+
+  @override
+  Widget build(BuildContext context) {
     final isClientPlayer =
         player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
     final isActivePlayer =
         player.id == BlocProvider.of<GameCubit>(context).game.activePlayerId;
 
-    return Container(
-      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-      color: isActivePlayer ? Colors.yellow[100] : Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isClientPlayer) ...[
-            const Icon(Icons.star, color: Colors.amber),
-            SizedBox(width: 4),
-          ],
-          _buildText(player.displayName ?? 'N/A', false),
-          _buildText('${player.money ?? 0}', false),
-          // TODO: Make clickable widget which shows all their properties
-          _buildText('None', false),
-          _buildText('${player.getOutOfJailFreeCards ?? 0}', false),
-          _buildText('Yes', false),
-        ],
-      ),
+    return ExpansionTile(
+      title: _buildTitle(
+          isClientPlayer, isActivePlayer, player.displayName ?? 'N/A'),
+      children: [
+        _buildText('Money: ${player.money ?? 0}'),
+        // TODO: Make clickable widget which shows all their properties
+        _buildText('Properties: None'),
+        _buildText(
+            'Get Out Of Jail Free Cards: ${player.getOutOfJailFreeCards ?? 0}'),
+        _buildText('Active: ${isActivePlayer ? 'Yes' : 'No'}'),
+      ],
     );
   }
 
-  Widget _buildText(String text, bool bold) {
-    return Flexible(
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
+  Widget _buildTitle(
+      bool isClientPlayer, bool isActivePlayer, String displayName) {
+    return Row(
+      children: [
+        if (isActivePlayer) ...[
+          const Icon(Icons.arrow_forward, color: Colors.black),
+          SizedBox(width: 4),
+        ],
+        if (isClientPlayer) ...[
+          const Icon(Icons.star, color: Colors.amber),
+          SizedBox(width: 4),
+        ],
+        Text(displayName),
+      ],
+    );
+  }
+
+  Widget _buildText(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Text(text),
     );
   }
 }
