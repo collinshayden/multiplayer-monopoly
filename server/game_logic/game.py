@@ -644,7 +644,7 @@ class Game:
         game_dict: dict = {}
         game_dict["started"] = self.started
         if self.active_player_id != "":
-            game_dict["activePlayerID"] = self.active_player_id
+            game_dict["activePlayerId"] = self.active_player_id
         game_dict["players"] = [player.to_dict() for player in self.players.values()]
         game_dict["tiles"] = [tile.to_dict() for tile in self.tiles]
         return game_dict

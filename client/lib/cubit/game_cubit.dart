@@ -32,7 +32,6 @@ class GameCubit extends Cubit<GameState> {
   void loadLocalConfig() async {
     emit(LocalConfigLoading());
     await Future.delayed(const Duration(seconds: 1)); // TODO: Remove
-
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
@@ -55,7 +54,6 @@ class GameCubit extends Cubit<GameState> {
       gameData = await endpointService.fetchData(playerId: playerId);
       game.applyJson(gameData);
       emit(GameStateUpdateSuccess());
-      // print(gameData);
     } catch (e) {
       emit(GameStateUpdateFailure());
     }
@@ -99,9 +97,7 @@ class GameCubit extends Cubit<GameState> {
           await endpointService.registerPlayer(displayName: displayName);
       // Set the activte player to be what is returned from register_player.
       clientPlayerId = playerId;
-      print("Player ID: ${playerId.value}");
-      // updateGameData();
-      print("Game data updated");
+      updateGameData();
     } catch (e) {
       emit(JoinGameFailure());
     }
@@ -114,9 +110,7 @@ class GameCubit extends Cubit<GameState> {
     emit(ActiveTurnRollPhase());
     try {
       final result = await endpointService.rollDice(clientPlayerId);
-      print("Result: ${result}");
       updateGameData();
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameErrorState());
@@ -128,15 +122,13 @@ class GameCubit extends Cubit<GameState> {
   ///
   /// The client should only be able to call this
   void endTurn() async {
-    // emit(ActiveTurnRollPhase());
+    emit(GameActionLoading());
     try {
       final result = await endpointService.endTurn(clientPlayerId);
-      print("Result: ${result}");
       updateGameData();
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
-      emit(GameErrorState());
+      emit(GameActionFailure());
     }
     // emit(ActiveTurnRollPhase());
   }
@@ -145,9 +137,7 @@ class GameCubit extends Cubit<GameState> {
     emit(GameActionLoading());
     try {
       final result = await endpointService.startGame(playerId: clientPlayerId);
-      print("Result: ${result}");
       updateGameData();
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -163,9 +153,7 @@ class GameCubit extends Cubit<GameState> {
     }
     try {
       final result = await endpointService.reset(playerId: playerId);
-      print("Result: ${result}");
       updateGameData(useAdmin: true);
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -176,9 +164,7 @@ class GameCubit extends Cubit<GameState> {
     emit(GameActionLoading());
     try {
       final result = await endpointService.buyProperty(clientPlayerId, tileId);
-      print("Result: ${result}");
       updateGameData();
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -190,9 +176,7 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result = await endpointService.setImprovements(
           clientPlayerId, tileId, quantity);
-      print("Result: ${result}");
       updateGameData();
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -204,9 +188,7 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result =
           await endpointService.setMortgage(clientPlayerId, tileId, mortgage);
-      print("Result: ${result}");
       updateGameData();
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -218,9 +200,7 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result =
           await endpointService.getOutOfJail(clientPlayerId, jailMethod);
-      print("Result: ${result}");
       updateGameData();
-      print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
       emit(GameActionFailure());
@@ -230,6 +210,9 @@ class GameCubit extends Cubit<GameState> {
   /// Method used in the admin buttons to change the clientPlayerId to the
   /// Game object's active player ID. Allows you to simulate multiple users.
   void switchActivePlayerId() {
+    print("Switching active player!");
+    print(clientPlayerId.value);
+    print(game.activePlayerId!);
     try {
       final originalId = clientPlayerId.value;
       clientPlayerId = game.activePlayerId!;
