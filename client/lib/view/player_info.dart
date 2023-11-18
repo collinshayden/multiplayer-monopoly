@@ -32,6 +32,7 @@ class PlayerInfoScreens extends StatelessWidget {
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _buildText("Name", true),
                 _buildText("Money", true),
@@ -48,7 +49,7 @@ class PlayerInfoScreens extends StatelessWidget {
               shrinkWrap: true,
               itemCount: players.length,
               itemBuilder: (context, index) {
-                return _buildPlayerData(players[index]);
+                return _buildPlayerData(players[index], context);
               },
             ),
           ),
@@ -57,13 +58,23 @@ class PlayerInfoScreens extends StatelessWidget {
     );
   }
 
-  Widget _buildPlayerData(Player player) {
+  Widget _buildPlayerData(Player player, BuildContext context) {
+    final isClientPlayer =
+        player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
+    final isActivePlayer =
+        player.id == BlocProvider.of<GameCubit>(context).game.activePlayerId;
+
     return Container(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-      color: Colors.white,
+      color: isActivePlayer ? Colors.yellow[100] : Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (isClientPlayer) ...[
+            const Icon(Icons.star, color: Colors.amber),
+            SizedBox(width: 4),
+          ],
           _buildText(player.displayName ?? 'N/A', false),
           _buildText('${player.money ?? 0}', false),
           // TODO: Make clickable widget which shows all their properties
@@ -79,7 +90,6 @@ class PlayerInfoScreens extends StatelessWidget {
     return Flexible(
       child: Text(
         text,
-        textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: bold ? FontWeight.bold : FontWeight.normal,
         ),

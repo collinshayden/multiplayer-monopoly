@@ -218,6 +218,7 @@ class GameCubit extends Cubit<GameState> {
       final originalId = clientPlayerId.value;
       clientPlayerId = game.activePlayerId!;
       print("ID was ${originalId} and is now ${clientPlayerId.value}");
+      updateGameData();
     } catch (e) {}
   }
 }
