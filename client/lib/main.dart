@@ -70,20 +70,42 @@ class _GameScreenState extends State<GameScreen> {
       drawer: Drawer(
         child: ListView(
           children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blue,
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.blue,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  Text(
+                    'Back',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  SizedBox(width: 48.0), // Adjust the width as needed
+                ],
               ),
+            ),
+            SizedBox(height: 16.0), // Add spacing between header and switches
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.white,
               child: Column(
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
-                        child: Text(
-                          'Player Display',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
+                      Text(
+                        'Player Display',
+                        style: TextStyle(
+                          color: Colors.black,
                         ),
                       ),
                       Switch(
@@ -93,18 +115,18 @@ class _GameScreenState extends State<GameScreen> {
                             isPlayerDisplayExpanded = value;
                           });
                         },
-                        activeColor: Colors.white,
+                        activeColor: Colors.black,
                       ),
                     ],
                   ),
+                  SizedBox(height: 16.0), // Add spacing between switches
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
-                        child: Text(
-                          'Admin Buttons',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
+                      Text(
+                        'Admin Buttons',
+                        style: TextStyle(
+                          color: Colors.black,
                         ),
                       ),
                       Switch(
@@ -114,7 +136,7 @@ class _GameScreenState extends State<GameScreen> {
                             areAdminButtonsExpanded = value;
                           });
                         },
-                        activeColor: Colors.white,
+                        activeColor: Colors.black,
                       ),
                     ],
                   ),
