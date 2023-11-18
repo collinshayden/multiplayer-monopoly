@@ -52,14 +52,14 @@ class TileLayout extends StatelessWidget {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
         switch (state) {
-          case LocalConfigLoading():
+          case LoadingState():
             return const CircularProgressIndicator();
-          case LocalConfigFailure():
+          case FailureState():
             return const Placeholder(
-              child: Text('Failed to load local configuration!'),
+              child: Text('Failed to load state!'),
             );
-          case LocalConfigSuccess():
-            return _buildBoard(context, state as LocalConfigSuccess);
+          case SuccessState():
+            return _buildBoard(context, state);
           case _:
             return const Placeholder(child: Text('Invalid state.'));
         }
@@ -67,15 +67,14 @@ class TileLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildBoard(BuildContext context, LocalConfigSuccess state) {
+  Widget _buildBoard(BuildContext context, SuccessState state) {
     return CustomMultiChildLayout(
       delegate: _CustomLayoutDelegate(ids: _ids),
       children: _buildLayoutChildren(context, state),
     );
   }
 
-  List<Widget> _buildLayoutChildren(
-      BuildContext context, LocalConfigSuccess state) {
+  List<Widget> _buildLayoutChildren(BuildContext context, SuccessState state) {
     // print('Test!');
     final List<Widget> children = [];
     for (var id in _ids) {

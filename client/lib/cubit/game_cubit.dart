@@ -37,7 +37,7 @@ class GameCubit extends Cubit<GameState> {
       localConfig = await fileService.getLocalConfig();
       game.applyJson(localConfig);
     } catch (e) {
-      emit(LocalConfigFailure(e));
+      emit(LocalConfigFailure(object: e));
     }
 
     emit(LocalConfigSuccess(game: game));
@@ -50,12 +50,13 @@ class GameCubit extends Cubit<GameState> {
     if (useAdmin) {
       playerId = PlayerId('admin');
     }
+    late Json? localConfig;
     try {
       gameData = await endpointService.fetchData(playerId: playerId);
       game.applyJson(gameData);
-      emit(GameStateUpdateSuccess());
+      emit(GameStateUpdateSuccess(game: game));
     } catch (e) {
-      emit(GameStateUpdateFailure());
+      emit(GameStateUpdateFailure(object: e));
     }
   }
 
@@ -98,8 +99,9 @@ class GameCubit extends Cubit<GameState> {
       // Set the activte player to be what is returned from register_player.
       clientPlayerId = playerId;
       updateGameData();
+      emit(JoinGameSuccess(game: game));
     } catch (e) {
-      emit(JoinGameFailure());
+      emit(JoinGameFailure(object: e));
     }
   }
 
@@ -107,15 +109,14 @@ class GameCubit extends Cubit<GameState> {
   ///
   /// The client should only be able to call this
   void rollDice() async {
-    emit(ActiveTurnRollPhase());
+    emit(GameActionLoading());
     try {
       final result = await endpointService.rollDice(clientPlayerId);
       updateGameData();
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameErrorState());
+      emit(GameActionFailure(object: e));
     }
-    emit(ActiveTurnRollPhase());
   }
 
   /// End a player's turn.
@@ -126,9 +127,9 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result = await endpointService.endTurn(clientPlayerId);
       updateGameData();
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameActionFailure(object: e));
     }
     // emit(ActiveTurnRollPhase());
   }
@@ -138,9 +139,9 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result = await endpointService.startGame(playerId: clientPlayerId);
       updateGameData();
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameActionFailure(object: e));
     }
   }
 
@@ -154,9 +155,9 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result = await endpointService.reset(playerId: playerId);
       updateGameData(useAdmin: true);
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameActionFailure(object: e));
     }
   }
 
@@ -165,9 +166,9 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result = await endpointService.buyProperty(clientPlayerId, tileId);
       updateGameData();
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameActionFailure(object: e));
     }
   }
 
@@ -177,9 +178,9 @@ class GameCubit extends Cubit<GameState> {
       final result = await endpointService.setImprovements(
           clientPlayerId, tileId, quantity);
       updateGameData();
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameActionFailure(object: e));
     }
   }
 
@@ -189,9 +190,9 @@ class GameCubit extends Cubit<GameState> {
       final result =
           await endpointService.setMortgage(clientPlayerId, tileId, mortgage);
       updateGameData();
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameActionFailure(object: e));
     }
   }
 
@@ -201,9 +202,9 @@ class GameCubit extends Cubit<GameState> {
       final result =
           await endpointService.getOutOfJail(clientPlayerId, jailMethod);
       updateGameData();
-      emit(GameActionSuccess());
+      emit(GameActionSuccess(game: game));
     } catch (e) {
-      emit(GameActionFailure());
+      emit(GameActionFailure(object: e));
     }
   }
 

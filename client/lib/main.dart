@@ -56,7 +56,7 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   bool isPlayerDisplayExpanded = true;
-  bool areAdminButtonsExpanded = false;
+  bool areAdminButtonsExpanded = true;
 
   @override
   Widget build(BuildContext context) {
@@ -175,11 +175,13 @@ class AdminButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      builder: (context, state) {
-        return Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
+    return Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Admin Buttons'),
+          ),
+          body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -256,8 +258,6 @@ class AdminButtons extends StatelessWidget {
                   }),
             ],
           ),
-        );
-      },
-    );
+        ));
   }
 }

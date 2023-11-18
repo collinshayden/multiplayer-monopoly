@@ -359,17 +359,23 @@ class GoTile extends Tile {
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Container(
-          color: Colors.transparent,
-          child: Column(children: [
+        color: Colors.transparent,
+        child: Column(
+          children: [
             Expanded(
+              child: Center(
                 child: Text(
-              upperText ?? "Placeholder title",
-              textAlign: TextAlign.center,
-            )),
+                  upperText ?? "Placeholder title",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
             // TODO image
-            Flexible(flex: 0, child: Image.asset('assets/images/$goImage')),
-            Flexible(flex: 0, child: Image.asset('assets/images/$arrowImage')),
-          ])),
+            Image.asset('assets/images/$goImage', fit: BoxFit.scaleDown),
+            Image.asset('assets/images/$arrowImage', fit: BoxFit.scaleDown),
+          ],
+        ),
+      ),
     );
   }
 }
