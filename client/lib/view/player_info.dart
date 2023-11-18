@@ -6,14 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart'; // Make sure to import your Pla
 class PlayerDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      builder: (context, state) {
-        return PlayerInfoScreens(
-          key: UniqueKey(), // Add this line
-          players:
-              BlocProvider.of<GameCubit>(context).game.players.values.toList(),
-        );
-      },
+    return PlayerInfoScreens(
+      key: UniqueKey(), // Add this line
+      players: BlocProvider.of<GameCubit>(context).game.players.values.toList(),
     );
   }
 }

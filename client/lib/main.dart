@@ -58,7 +58,12 @@ class GameScreen extends StatelessWidget {
 
     return Stack(
       children: [
-        PlayerDisplay(),
+        BlocBuilder<GameCubit, GameState>(
+          builder: (context, state) {
+            // Rebuild PlayerDisplay when game state changes
+            return PlayerDisplay();
+          },
+        ),
         // Board(),
         DisplayDice(),
       ],
@@ -103,7 +108,7 @@ class AdminButtons extends StatelessWidget {
                   width: 200,
                   labelText: "Enter Name",
                   buttonText: "Join Game",
-                  onPressed: (value) async {
+                  onPressed: (value) {
                     BlocProvider.of<GameCubit>(context)
                         .registerPlayer(displayName: value);
                   }),

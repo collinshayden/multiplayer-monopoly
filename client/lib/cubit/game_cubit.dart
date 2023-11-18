@@ -45,7 +45,7 @@ class GameCubit extends Cubit<GameState> {
   }
 
   void updateGameData({useAdmin = false}) async {
-    // emit(ActionRequesting());
+    emit(GameStateUpdateLoading());
     late Json? gameData;
     var playerId = clientPlayerId;
     if (useAdmin) {
@@ -54,10 +54,10 @@ class GameCubit extends Cubit<GameState> {
     try {
       gameData = await endpointService.fetchData(playerId: playerId);
       game.applyJson(gameData);
+      emit(GameStateUpdateSuccess());
       // print(gameData);
     } catch (e) {
       emit(GameStateUpdateFailure());
-      // emit(ActionRejected());
     }
   }
 
@@ -100,7 +100,7 @@ class GameCubit extends Cubit<GameState> {
       // Set the activte player to be what is returned from register_player.
       clientPlayerId = playerId;
       print("Player ID: ${playerId.value}");
-      updateGameData();
+      // updateGameData();
       print("Game data updated");
     } catch (e) {
       emit(JoinGameFailure());
@@ -115,7 +115,7 @@ class GameCubit extends Cubit<GameState> {
     try {
       final result = await endpointService.rollDice(clientPlayerId);
       print("Result: ${result}");
-      // updateGameData();
+      updateGameData();
       print("Game data updated");
       emit(GameActionSuccess());
     } catch (e) {
