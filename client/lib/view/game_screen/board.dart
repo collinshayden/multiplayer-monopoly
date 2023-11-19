@@ -66,7 +66,7 @@ class TileLayout extends StatelessWidget {
           case LoadingState():
             return const Center(child: CircularProgressIndicator());
           case FailureState():
-            return const Placeholder(
+            return const Placeholder( 
               child: Text('Failed to load game action!'),
             );
           case SuccessState():

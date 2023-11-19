@@ -8,10 +8,6 @@ from game_logic.constants import SECRET_KEY
 from game_logic.game import Game
 from game_logic.types import CardType, JailMethod
 
-# from game_logic.constants import SECRET_KEY
-# from game_logic.game import Game
-# from game_logic.types import CardType, JailMethod
-
 from pprint import pprint
 from flask import Flask, jsonify, request
 from random import randint
