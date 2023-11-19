@@ -154,3 +154,9 @@ Note: Want not a need
 	"displayName": String
 }
 ```
+20.  `promptRoll`: Prompt event for when a player needs to roll.
+```
+{
+	"type": "promptRoll"
+}
+```
