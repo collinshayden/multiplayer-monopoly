@@ -156,7 +156,6 @@ class _GameScreenState extends State<GameScreen> {
             child: Expanded(
               flex: 1,
               child: AdminPanel(),
-              child: AdminPanel(),
             ),
           ),
         ],
