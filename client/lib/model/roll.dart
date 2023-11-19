@@ -1,5 +1,5 @@
 import 'package:client/json_utils.dart';
-import 'package:client/view/dice.dart';
+import 'package:client/view/game_screen/dice.dart';
 import 'package:flutter/material.dart';
 
 class Roll {
