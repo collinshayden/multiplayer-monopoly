@@ -1,11 +1,9 @@
-/// Author: Alex Hall
-/// Date: 11/18/2023
-
+import 'package:client/constants.dart';
 import 'package:client/cubit/game_cubit.dart';
+import 'package:client/view/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// A widget which creates the admin panel.
 class AdminPanel extends StatefulWidget {
   const AdminPanel({super.key});
 
@@ -13,7 +11,6 @@ class AdminPanel extends StatefulWidget {
   State<AdminPanel> createState() => _AdminPanelState();
 }
 
-/// Builds the admin panel and handles interactions.
 class _AdminPanelState extends State<AdminPanel> {
   /// Whether the admin panel is currently open or not.
   bool _isExpanded = false;

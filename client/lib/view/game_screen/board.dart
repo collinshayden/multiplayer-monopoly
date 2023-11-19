@@ -1,3 +1,4 @@
+import 'package:client/model/tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,7 +45,7 @@ class TileLayout extends StatelessWidget {
   /// This function uses the tile ID's ([int]s) to tell the
   /// [_TileLayoutDelegate] how tiles can be identified in the enclosing
   /// [CustomMultiChildLayout]'s child list.
-  Widget _buildBoard(BuildContext context, LocalConfigSuccess state) {
+  Widget _buildBoard(BuildContext context, SuccessState state) {
     var tiles = state.game.tiles;
     return CustomMultiChildLayout(
       delegate: _TileLayoutDelegate(tileIds: tiles.keys.toList()),
@@ -62,13 +63,13 @@ class TileLayout extends StatelessWidget {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
         switch (state) {
-          case LocalConfigLoading():
+          case LoadingState():
             return const Center(child: CircularProgressIndicator());
-          case LocalConfigFailure():
-            return const Placeholder(
-              child: Text('Failed to load configuration!'),
+          case FailureState():
+            return const Placeholder( 
+              child: Text('Failed to load game action!'),
             );
-          case LocalConfigSuccess():
+          case SuccessState():
             return _buildBoard(context, state);
           case _:
             return const Placeholder(child: Text('Invalid state.'));

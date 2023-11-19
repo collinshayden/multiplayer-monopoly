@@ -144,6 +144,7 @@ class GameCubit extends Cubit<GameState> {
       final result = await endpointService.startGame(playerId: clientPlayerId!);
       updateGameData();
       emit(GameActionSuccess(game: game));
+      updateGameData();
     } catch (e) {
       emit(GameActionFailure(object: e));
     }

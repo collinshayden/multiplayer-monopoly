@@ -29,7 +29,7 @@ class Game {
 
   /// Update game data to match provided JSON values.
   void applyJson(Json? json) {
-    print('Applying JSON: \n${json}');
+    // print("Applying JSON: \n${json}");
     if (json == null) return;
     monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
     monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;

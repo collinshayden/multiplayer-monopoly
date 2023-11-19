@@ -6,9 +6,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PlayerDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PlayerInfoScreens(
-      key: UniqueKey(),
-      players: BlocProvider.of<GameCubit>(context).game.players.values.toList(),
+    return BlocBuilder<GameCubit, GameState>(
+      builder: (context, state) {
+        return PlayerInfoScreens(
+            players: BlocProvider.of<GameCubit>(context)
+                .game
+                .players
+                .values
+                .toList());
+      },
     );
   }
 }

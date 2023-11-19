@@ -4,7 +4,6 @@ import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/game.dart';
 import 'package:client/view/admin_panel.dart';
 import 'package:client/view/game_screen/board.dart';
-import 'package:client/view/game_screen/dice.dart';
 import 'package:client/view/player_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -167,22 +166,6 @@ class _GameScreenState extends State<GameScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class PlayerDisplay extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      builder: (context, state) {
-        return PlayerInfoScreens(
-            players: BlocProvider.of<GameCubit>(context)
-                .game
-                .players
-                .values
-                .toList());
-      },
     );
   }
 }

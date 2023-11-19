@@ -90,9 +90,15 @@ class Game:
             self.active_player_index = 0
             self.active_player_id = self.turn_order[0]
             # Enqueue events to prompt client
-            start_game: Event = Event({"name": "startGame"})
-            start_turn: Event = Event({"name": "startTurn"})
-            prompt_roll: Event = Event({"name": "promptRoll"})
+            start_game: Event = Event({
+                "type": "showStartGame",
+                "displayName": self.players[player_id].display_name
+            })
+            start_turn: Event = Event({
+                "type": "showStartTurn",
+                "displayName": self.players[self.active_player_id].display_name
+            })
+            prompt_roll: Event = Event({"type": "promptRoll"})
             self._enqueue_event(start_game, EventType.UPDATE)
             self._enqueue_event(start_turn, EventType.UPDATE)
             self._enqueue_event(prompt_roll, EventType.PROMPT)
@@ -118,8 +124,11 @@ class Game:
 
         # Create a list in the event queue for the player and add some events
         self.event_queue[player_id] = []
-        player_join: Event = Event({"name": "playerJoin"})
-        ready_prompt: Event = Event({"name": "startGamePrompt"})
+        player_join: Event = Event({
+            "type": "showPlayerJoin",
+            "displayName": display_name
+        })
+        ready_prompt: Event = Event({"type": "promptStartGame"})
         self._enqueue_event(player_join, EventType.UPDATE)
         self._enqueue_event(ready_prompt, target=player_id)
         return player_id
@@ -144,63 +153,72 @@ class Game:
 
         # Reject a request if the player was the last one to roll but isn't supposed to roll again
         last_roll_event: Event = self._get_last_roll_event()
-        if last_roll_event is not None and last_roll_event.parameters["playerId"] == player.id and not player.roll_again:
-            return False
+        if last_roll_event is not None:
+            print(last_roll_event.parameters)
+            if last_roll_event.parameters["playerId"] == player.id and not player.roll_again:
+                return False
 
         # Move the player
         player.update(RollUpdate(roll))
 
         # Enqueue the roll and move to everyone
         roll_event: Event = Event({
-            "name": "showRoll",
-            "playerId": player.id,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "type": "showRoll",
+            "displayName": player.display_name,
+            "playerId": player_id,
+            "first": roll.first,
+            "second": roll.second,
         })
 
         self._enqueue_event(roll_event, EventType.UPDATE)
         # If they were either sent to jail by the roll or are in jail, don't display them moving or passing Go.
         if not player.in_jail:
             move_event: Event = Event({
-                "name": "movePlayer",
-                "spaces": roll.total
+                "type": "showMovePlayer",
+                "displayName": player.display_name,
+                "directMovement": False,
+                "intoJail": False,
+                "outOfJail": False
             })
             self._enqueue_event(move_event, EventType.UPDATE)
             # They passed Go since their location wrapped around
             if player.location < starting_location:
-                go_event: Event = Event({"name": "showPassGo"})
+                go_event: Event = Event({"type": "showPassGo"})
                 self._enqueue_event(go_event, EventType.UPDATE)
 
         # If the player landed on an unowned asset tile, prompt them to purchase it.
         tile: Tile = self.tiles[player.location]
         if isinstance(tile, AssetTile) and tile.owner is None:
             prompt_buy: Event = Event({
-                "name": "promptPurchase",
+                "type": "promptPurchase",
+                "propertyName": tile.name,
                 "tileId": tile.id
             })
             self._enqueue_event(prompt_buy, EventType.PROMPT)
         # If the player lands on an owned asset tile, display an event with the rent.
         elif isinstance(tile, AssetTile) and tile.owner is not player:
             rent: Event = Event({
-                "name": "showRent",
-                "amount": tile.rent,
-                "tileId": tile.id
+                "type": "showRent",
+                "propertyName": tile.name,
+                "activePlayerName": player.display_name,
+                "landlordName": tile.owner.display_name,
+                "amount": tile.rent
             })
-            self._enqueue_event(rent, EventType.PROMPT)
+            self._enqueue_event(rent, EventType.UPDATE)
         # If they landed on a CardTile, display an event with the card text which will be drawn.
         elif isinstance(tile, CardTile):
             card: Card = tile.deck.peek()
             card_draw: Event = Event({
-                "name": "showCardDraw",
+                "type": "showCardDraw",
                 "description": card.description
             })
             self._enqueue_event(card_draw, EventType.UPDATE)
         elif isinstance(tile, TaxTile):
             tax: Event = Event({
-                "name": "showTax",
+                "type": "showTax",
+                "displayName": player.display_name,
                 "amount": tile.amount,
-                "tileId": tile.id
+                "taxType": tile.name
             })
             self._enqueue_event(tax, EventType.UPDATE)
 
@@ -211,8 +229,11 @@ class Game:
         # Did the player go to jail due to their roll/tile they landed on?
         if started_in_jail is False and player.in_jail:
             go_to_jail: Event = Event({
-                "name": "goToJail",
-                "player": player.display_name
+                "type": "showMovePlayer",
+                "displayName": player.display_name,
+                "directMovement": True,
+                "intoJail": True,
+                "outOfJail": False
             })
             self._enqueue_event(go_to_jail, EventType.UPDATE)
             # End their turn immediately and return early
@@ -222,15 +243,15 @@ class Game:
         # Does the player need to liquidate assets to pay for rent/card effect?
         if player.status == PlayerStatus.IN_THE_HOLE:
             sell_down: Event = Event({
-                "name": "promptSellDown",
+                "type": "promptLiquidate",
                 "amountNeeded": 0 - player.money
             })
             self._enqueue_event(sell_down, EventType.PROMPT)
         # Did the player lose?
         elif player.status == PlayerStatus.BANKRUPT:
             sell_down: Event = Event({
-                "name": "showBankruptcy",
-                "player": player.display_name
+                "type": "showBankruptcy",
+                "displayName": player.display_name
             })
             self._enqueue_event(sell_down, EventType.UPDATE)
             # Return early if they lost
@@ -240,13 +261,13 @@ class Game:
         # Note: If they were sent to jail, their doubles streak would have been reset and this will be ignored
         if player.doubles_streak > 0:
             roll_again: Event = Event({
-                "name": "promptRoll"
+                "type": "promptRoll"
             })
             self._enqueue_event(roll_again, EventType.PROMPT)
         # If the player is not going again and is still in the game, prompt them to end their turn.
         else:
             prompt_end_turn: Event = Event({
-                "name": "promptEndTurn",
+                "type": "promptEndTurn",
             })
             self._enqueue_event(prompt_end_turn, EventType.PROMPT)
 
@@ -283,8 +304,9 @@ class Game:
         # Purchase went through. Enqueue the showPurchase event.
         if tile in player.assets:
             purchase: Event = Event({
-                "name": "showPurchase",
-                "tileId": tile_id
+                "type": "showPurchase",
+                "displayName": player.display_name,
+                "propertyName": tile.name
             })
             self._enqueue_event(purchase, EventType.UPDATE)
         return True
@@ -319,8 +341,10 @@ class Game:
         # This means the upgrade actually went through. Enqueue the Event.
         if tile.status == start_status + amount:
             mortgage_event: Event = Event({
-                "name": "showImprovements",
-                "number": amount
+                "type": "showImprovements",
+                "displayName": player.display_name,
+                "propertyName": tile.name,
+                "changeInImprovements": amount
             })
             self._enqueue_event(mortgage_event, EventType.UPDATE)
         return True
@@ -352,8 +376,10 @@ class Game:
             return False
         player.update(MortgageUpdate(tile, mortgage))
         mortgage_event: Event = Event({
-            "name": "showMortgageChange",
-            "mortgaged": tile.is_mortgaged
+            "type": "showMortgage",
+            "displayName": player.display_name,
+            "propertyName": tile.name,
+            "isMortgaged": tile.is_mortgaged
         })
         self._enqueue_event(mortgage_event, EventType.UPDATE)
         return True
@@ -377,7 +403,13 @@ class Game:
         player.update(LeaveJailUpdate(method))
         if not player.in_jail:
             # Create an event showing the player has left jail
-            leave_jail: Event = Event({"name": "showFreeFromJail"})
+            leave_jail: Event = Event({
+                "type": "showMovePlayer",
+                "displayName": player.display_name,
+                "directMovement": False,
+                "intoJail": False,
+                "outOfJail": True
+            })
             self._enqueue_event(leave_jail, EventType.UPDATE)
             return True
         return False
@@ -391,8 +423,8 @@ class Game:
         if not self._valid_player(player_id):
             return False
         end_turn: Event = Event({
-            "name": "endTurn",
-            "player": self.players[player_id].display_name
+            "type": "showEndTurn",
+            "displayName": self.players[player_id].display_name
         })
         self._enqueue_event(end_turn, EventType.UPDATE)
         # Check whether the player has rolled this turn
@@ -404,10 +436,10 @@ class Game:
         self._next_player()
         # Enqueue new events informing other players of a turn start and prompting player to roll the dice.
         start_turn: Event = Event({
-            "name": "startTurn",
-            "player": self.players[self.active_player_id].display_name
+            "type": "showStartTurn",
+            "displayName": self.players[self.active_player_id].display_name
         })
-        prompt_roll: Event = Event({"name": "promptRoll"})
+        prompt_roll: Event = Event({"type": "promptRoll"})
         self._enqueue_event(start_turn, EventType.UPDATE)
         self._enqueue_event(prompt_roll, EventType.PROMPT)
         return True
@@ -434,7 +466,7 @@ class Game:
         :return:            None.
         """
         # Event must have a name in its parameters
-        if event.parameters.get("name") is None:
+        if event.parameters.get("type") is None:
             return
         if target is not None:
             self.event_queue[target].append(event)
@@ -470,7 +502,7 @@ class Game:
         :return:        Event or None.
         """
         for event in reversed(self.event_history):
-            if event.parameters.get("name") == "showRoll":
+            if event.parameters.get("type") == "showRoll":
                 return event
         return None
 
