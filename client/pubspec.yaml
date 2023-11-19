@@ -17,6 +17,7 @@ dependencies:
   http: ^1.1.0
   json_annotation: ^4.8.1
   json_serializable: ^6.7.1
+  mocktail: ^1.0.1
   socket_io_client: ^2.0.3+1
 
 dev_dependencies:
