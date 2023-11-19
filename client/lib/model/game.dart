@@ -8,7 +8,6 @@ import 'roll.dart';
 import 'package:client/json_utils.dart';
 
 class Game {
-  /// Constructs an empty GameData object.
   Game()
       : tierColors = {},
         lastRoll = Roll(),
@@ -64,33 +63,33 @@ class Game {
         final id = tile['id'];
         // Updates if the tile already exists.
         if (tiles[id] != null) {
-          tiles[id]!.withJson(json);
+          tiles[id]!.applyJson(json);
           continue;
         }
         // Instantiates new tiles.
         switch (tile['type']) {
           case 'improvable':
-            tiles[id] = ImprovableTile(id: id)..withJson(tile);
+            tiles[id] = ImprovableTile(id: id)..applyJson(tile);
             ImprovableTile improvable = tiles[id] as ImprovableTile;
             improvable.setTierColor(tierColors);
           case 'railroad':
-            tiles[id] = RailroadTile(id: id)..withJson(tile);
+            tiles[id] = RailroadTile(id: id)..applyJson(tile);
           case 'utility':
-            tiles[id] = UtilityTile(id: id)..withJson(tile);
+            tiles[id] = UtilityTile(id: id)..applyJson(tile);
           case 'chance':
-            tiles[id] = ChanceTile(id: id)..withJson(tile);
+            tiles[id] = ChanceTile(id: id)..applyJson(tile);
           case 'communityChest':
-            tiles[id] = CommunityChestTile(id: id)..withJson(tile);
+            tiles[id] = CommunityChestTile(id: id)..applyJson(tile);
           case 'tax':
-            tiles[id] = TaxTile(id: id)..withJson(tile);
+            tiles[id] = TaxTile(id: id)..applyJson(tile);
           case 'go':
-            tiles[id] = GoTile(id: id)..withJson(tile);
+            tiles[id] = GoTile(id: id)..applyJson(tile);
           case 'jail':
-            tiles[id] = JailTile(id: id)..withJson(tile);
+            tiles[id] = JailTile(id: id)..applyJson(tile);
           case 'freeParking':
-            tiles[id] = FreeParkingTile(id: id)..withJson(tile);
+            tiles[id] = FreeParkingTile(id: id)..applyJson(tile);
           case 'goToJail':
-            tiles[id] = GoToJailTile(id: id)..withJson(tile);
+            tiles[id] = GoToJailTile(id: id)..applyJson(tile);
         }
       }
     }
