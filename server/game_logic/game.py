@@ -8,7 +8,7 @@ from .asset_tile import AssetTile
 from .cards import Card
 from .card_tile import CardTile
 from .constants import (CHANCE_TILES, COMMUNITY_CHEST_TILES, INCOME_TAX, LUXURY_TAX, MAX_DIE, MIN_DIE, MAX_NUM_PLAYERS,
-                        MIN_NUM_PLAYERS, NUM_TILES, PLAYER_ID_LENGTH, START_LOCATION)
+                        MIN_NUM_PLAYERS, NUM_TILES, PLAYER_ID_LENGTH, RENTS, START_LOCATION)
 from .deck import Deck
 from .event import Event
 from .improvable_tile import ImprovableTile
@@ -679,6 +679,7 @@ class Game:
             game_dict["activePlayerId"] = self.active_player_id
         game_dict["players"] = [self.players[id].to_dict() for id in self.turn_order]
         game_dict["tiles"] = [tile.to_dict() for tile in self.tiles]
+        game_dict["rents"] = RENTS
         return game_dict
         
         """
