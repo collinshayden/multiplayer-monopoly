@@ -38,11 +38,11 @@ class Player {
   /// This will overwrite existing fields, and ignore any extra fields present
   /// in the [Json] object passed to it.
   void applyJson(Json json) {
-    assert(json["id"] == id.value);
-    displayName = json["displayName"] ?? displayName;
-    money = json["money"] ?? money;
-    location = json["location"] ?? location;
+    assert(json['id'] == id.value);
+    displayName = json['displayName'] ?? displayName;
+    money = json['money'] ?? money;
+    location = json['location'] ?? location;
     getOutOfJailFreeCards =
-        json["getOutOfJailFreeCards"] ?? getOutOfJailFreeCards;
+        json['getOutOfJailFreeCards'] ?? getOutOfJailFreeCards;
   }
 }
