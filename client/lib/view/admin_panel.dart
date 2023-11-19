@@ -5,6 +5,7 @@ import 'package:client/cubit/game_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// A widget which creates the admin panel.
 class AdminPanel extends StatefulWidget {
   const AdminPanel({super.key});
 
@@ -12,13 +13,17 @@ class AdminPanel extends StatefulWidget {
   State<AdminPanel> createState() => _AdminPanelState();
 }
 
+/// Builds the admin panel and handles interactions.
 class _AdminPanelState extends State<AdminPanel> {
+  /// Whether the admin panel is currently open or not.
   bool _isExpanded = false;
 
+  /// A list of widgets used to construct the admin panel.
+  /// These will be positioned vertically in a column.
   List<Widget> items = [
-    EndpointCallButton(
+    AdminButton(
       title: 'Load Local Config',
-      endpointCallback: (context) {
+      onPressed: (context) {
         BlocProvider.of<GameCubit>(context).loadLocalConfig();
       },
     ),
@@ -67,26 +72,33 @@ class _AdminPanelState extends State<AdminPanel> {
   }
 }
 
-/// Signature for endpoint callbacks used to create [EndpointCallButton]s.
-typedef EndpointCallback = void Function(BuildContext context);
+/// Signature for callbacks used to create [AdminButtons]s. Callbacks which are
+/// assigned through this callback will be called with a [BuildContext] object
+/// and can thus access any inherited Bloc/Cubit objects, as well as anything
+/// else normally accessed through a `.of(context)` call.
+typedef ContextualCallback = void Function(BuildContext context);
 
-/// A button which can make calls to the endpoint.
-class EndpointCallButton extends StatelessWidget {
-  const EndpointCallButton({
+/// A button used in the [AdminPanel] widget.
+///
+/// This is one of a number of possible tools which can be included in the list
+/// of tools provided by the [AdminPanel]. This button takes a
+/// [ContextualCallback] and constructs a button wired to it.
+class AdminButton extends StatelessWidget {
+  const AdminButton({
     super.key,
     required this.title,
-    required this.endpointCallback,
+    required this.onPressed,
   });
 
   final String title;
-  final EndpointCallback endpointCallback;
+  final ContextualCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(title),
-      // Passes `context` into given callback, allowing it to find the cubit
-      onTap: () => endpointCallback(context),
+      // Passes `context` into given callback, allowing it to find the GameCubit.
+      onTap: () => onPressed(context),
     );
   }
 }
