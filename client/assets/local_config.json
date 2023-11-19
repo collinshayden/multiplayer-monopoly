@@ -13,86 +13,97 @@
   },
   "tiles": [
     {
-      "id": 0,
       "type": "go",
+      "id": 0,
+      "isCorner": true,
       "quarterTurns": 0,
       "upperText": "COLLECT\nSALARY\nAS YOU PASS",
       "goImage": "go_text.png",
       "arrowImage": "go_arrow.png"
     },
     {
-      "id": 1,
       "type": "improvable",
-      "tier": 0,
+      "id": 1,
+      "isCorner": false,
       "quarterTurns": 1,
+      "tier": 0,
       "price": 60,
       "title": "MEDITER-\nRANEAN\nAVENUE"
     },
     {
-      "id": 2,
       "type": "communityChest",
+      "id": 2,
+      "isCorner": false,
       "quarterTurns": 1,
       "title": "COMMUNITY\nCHEST",
       "image": "community_chest.png"
     },
     {
-      "id": 3,
       "type": "improvable",
-      "tier": 0,
+      "id": 3,
+      "isCorner": false,
       "quarterTurns": 1,
+      "tier": 0,
       "price": 60,
       "title": "BALTIC\nAVENUE"
     },
     {
-      "id": 4,
       "type": "tax",
+      "id": 4,
+      "isCorner": false,
       "quarterTurns": 1,
       "title": "INCOME\nTAX",
       "image": "income_tax.png",
       "payCommandText": "PAY"
     },
     {
-      "id": 5,
       "type": "railroad",
+      "id": 5,
+      "isCorner": false,
       "quarterTurns": 1,
       "price": 200,
       "title": "READING\nRAILROAD",
       "image": "railroad.png"
     },
     {
-      "id": 6,
       "type": "improvable",
-      "tier": 1,
+      "id": 6,
+      "isCorner": false,
       "quarterTurns": 1,
+      "tier": 1,
       "price": 100,
       "title": "ORIENTAL\nAVENUE"
     },
     {
-      "id": 7,
       "type": "chance",
+      "id": 7,
+      "isCorner": false,
       "quarterTurns": 1,
       "title": "CHANCE",
       "image": "chance-1.png"
     },
     {
-      "id": 8,
       "type": "improvable",
-      "tier": 1,
+      "id": 8,
+      "isCorner": false,
       "quarterTurns": 1,
+      "tier": 1,
       "price": 100,
       "title": "VERMONT\nAVENUE"
     },
     {
-      "id": 9,
       "type": "improvable",
-      "tier": 1,
+      "id": 9,
+      "isCorner": false,
       "quarterTurns": 1,
+      "tier": 1,
       "price": 120,
       "title": "CONNECTICUT\nAVENUE"
     },
     {
-      "id": 10,
       "type": "jail",
+      "id": 10,
+      "isCorner": true,
       "quarterTurns": 0,
       "upperText": "IN",
       "image": "jail.png",
@@ -100,230 +111,259 @@
       "visitingText": "JUST\nVISITING"
     },
     {
-      "id": 11,
       "type": "improvable",
-      "tier": 2,
+      "id": 11,
+      "isCorner": false,
       "quarterTurns": 2,
+      "tier": 2,
       "price": 140,
       "title": "ST. CHARLES\nPLACE"
     },
     {
-      "id": 12,
       "type": "utility",
+      "id": 12,
+      "isCorner": false,
       "quarterTurns": 2,
       "price": 150,
       "title": "ELECTRIC\nCOMPANY",
       "image": "electric_company.png"
     },
     {
-      "id": 13,
       "type": "improvable",
-      "tier": 2,
+      "id": 13,
+      "isCorner": false,
       "quarterTurns": 2,
+      "tier": 2,
       "price": 140,
       "title": "STATES\nAVENUE"
     },
     {
-      "id": 14,
       "type": "improvable",
-      "tier": 2,
+      "id": 14,
+      "isCorner": false,
       "quarterTurns": 2,
+      "tier": 2,
       "price": 160,
       "title": "VIRGINIA\nAVENUE"
     },
     {
-      "id": 15,
       "type": "railroad",
+      "id": 15,
+      "isCorner": false,
       "quarterTurns": 2,
       "price": 200,
       "title": "PENNSYLVANIA\nRAILROAD",
       "image": "railroad.png"
     },
     {
-      "id": 16,
       "type": "improvable",
-      "tier": 3,
+      "id": 16,
+      "isCorner": false,
       "quarterTurns": 2,
+      "tier": 3,
       "price": 180,
       "title": "ST. JAMES\nPLACE"
     },
     {
-      "id": 17,
       "type": "communityChest",
+      "id": 17,
+      "isCorner": false,
       "quarterTurns": 2,
       "title": "COMMUNITY\nCHEST",
       "image": "community_chest.png"
     },
     {
-      "id": 18,
       "type": "improvable",
-      "tier": 3,
+      "id": 18,
+      "isCorner": false,
       "quarterTurns": 2,
+      "tier": 3,
       "price": 180,
       "title": "TENNESSEE\nAVENUE"
     },
     {
-      "id": 19,
       "type": "improvable",
-      "tier": 3,
+      "id": 19,
+      "isCorner": false,
       "quarterTurns": 2,
+      "tier": 3,
       "price": 200,
       "title": "NEW YORK\nAVENUE"
     },
     {
-      "id": 20,
       "type": "freeParking",
+      "id": 20,
+      "isCorner": true,
       "quarterTurns": 0,
       "upperText": "FREE",
       "image": "free_parking.png",
       "lowerText": "PARKING"
     },
     {
-      "id": 21,
       "type": "improvable",
-      "tier": 4,
+      "id": 21,
+      "isCorner": false,
       "quarterTurns": 3,
+      "tier": 4,
       "price": 220,
       "title": "KENTUCKY\nAVENUE"
     },
     {
-      "id": 22,
       "type": "chance",
+      "id": 22,
+      "isCorner": false,
       "quarterTurns": 3,
       "title": "CHANCE",
       "image": "chance-2.png"
     },
     {
-      "id": 23,
       "type": "improvable",
-      "tier": 4,
+      "id": 23,
+      "isCorner": false,
       "quarterTurns": 3,
+      "tier": 4,
       "price": 220,
       "title": "INDIANA\nAVENUE"
     },
     {
-      "id": 24,
       "type": "improvable",
-      "tier": 4,
+      "id": 24,
+      "isCorner": false,
       "quarterTurns": 3,
+      "tier": 4,
       "price": 240,
       "title": "ILLINOIS\nAVENUE"
     },
     {
-      "id": 25,
       "type": "railroad",
+      "id": 25,
+      "isCorner": false,
       "quarterTurns": 3,
       "price": 200,
       "title": "B. & O.\nRAILROAD",
       "image": "railroad.png"
     },
     {
-      "id": 26,
       "type": "improvable",
-      "tier": 5,
+      "id": 26,
+      "isCorner": false,
       "quarterTurns": 3,
+      "tier": 5,
       "price": 260,
       "title": "ATLANTIC\nAVENUE"
     },
     {
-      "id": 27,
       "type": "improvable",
-      "tier": 5,
+      "id": 27,
+      "isCorner": false,
       "quarterTurns": 3,
+      "tier": 5,
       "price": 260,
       "title": "VENTNOR\nAVENUE"
     },
     {
-      "id": 28,
       "type": "utility",
+      "id": 28,
+      "isCorner": false,
       "quarterTurns": 3,
       "price": 150,
       "title": "WATER\nWORKS",
       "image" : "water_works.png"
     },
     {
-      "id": 29,
       "type": "improvable",
-      "tier": 5,
+      "id": 29,
+      "isCorner": false,
       "quarterTurns": 3,
+      "tier": 5,
       "price": 280,
       "title": "MARVIN\nGARDENS"
     },
     {
-      "id": 30,
       "type": "goToJail",
+      "id": 30,
+      "isCorner": true,
       "quarterTurns": 0,
       "upperText": "GO TO",
       "image": "go_to_jail.png",
       "lowerText": "JAIL"
     },
     {
-      "id": 31,
       "type": "improvable",
-      "tier": 6,
+      "id": 31,
+      "isCorner": false,
       "quarterTurns": 0,
+      "tier": 6,
       "price": 300,
       "title": "PACIFIC\nAVENUE"
     },
     {
-      "id": 32,
       "type": "improvable",
-      "tier": 6,
+      "id": 32,
+      "isCorner": false,
       "quarterTurns": 0,
+      "tier": 6,
       "price": 300,
       "title": "NORTH\nCAROLINA\nAVENUE"
     },
     {
-      "id": 33,
       "type": "communityChest",
+      "id": 33,
+      "isCorner": false,
       "quarterTurns": 0,
       "title": "COMMUNITY\nCHEST",
       "image": "community_chest.png"
     },
     {
-      "id": 34,
       "type": "improvable",
-      "tier": 6,
+      "id": 34,
+      "isCorner": false,
       "quarterTurns": 0,
+      "tier": 6,
       "price": 320,
       "title": "PENNSYLVANIA\nAVENUE"
     },
     {
-      "id": 35,
       "type": "railroad",
+      "id": 35,
+      "isCorner": false,
       "quarterTurns": 0,
       "price": 200,
       "title": "SHORT\nLINE",
       "image": "railroad.png"
     },
     {
-      "id": 36,
       "type": "chance",
+      "id": 36,
+      "isCorner": false,
       "quarterTurns": 0,
       "title": "CHANCE",
       "image": "chance-3.png"
     },
     {
-      "id": 37,
       "type": "improvable",
-      "tier": 7,
+      "id": 37,
+      "isCorner": false,
       "quarterTurns": 0,
+      "tier": 7,
       "price": 350,
       "title": "PARK\nPLACE"
     },
     {
-      "id": 38,
       "type": "tax",
+      "id": 38,
+      "isCorner": false,
       "quarterTurns": 0,
       "title": "LUXURY\nTAX",
       "image": "luxury_tax.png",
       "payCommandText": "PAY"
     },
     {
-      "id": 39,
       "type": "improvable",
-      "tier": 7,
+      "id": 39,
+      "isCorner": false,
       "quarterTurns": 0,
+      "tier": 7,
       "price": 400,
       "title": "BOARDWALK"
     }
