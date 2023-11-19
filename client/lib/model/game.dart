@@ -22,8 +22,14 @@ class Game {
   Map<PlayerId, Player> players;
   Map<int, Tile> tiles;
 
+  /// Method used to retrieve a player's location if they are a valid player.
+  int? getPlayerLocation(PlayerId playerId) {
+    return players[playerId]?.location;
+  }
+
   /// Update game data to match provided JSON values.
   void applyJson(Json? json) {
+    print("Applying JSON: \n${json}");
     if (json == null) return;
     monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
     monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;
@@ -37,16 +43,22 @@ class Game {
       tierColors[6] = Color(int.parse(json['tierColors']['7'], radix: 16));
       tierColors[7] = Color(int.parse(json['tierColors']['8'], radix: 16));
     }
+
     if (json['activePlayerId'] != null) {
       if (json['activePlayerId'] != '') {
         // TODO: Remove on server-side
         activePlayerId = PlayerId(json['activePlayerId'] as String);
       }
     }
-    lastRoll = lastRoll..applyJson(json['lastRoll']);
 
-    // Load and update players
+    // TODO: This is obsolete. Remove?
+    // lastRoll = lastRoll..applyJson(json['lastRoll']);
+
+    // Load and update players to make client/server agree.
     if (json['players'] != null) {
+      // TODO: Find a more optimized way to do this
+      // Clear out player information each time it is loaded.
+      players.clear();
       for (Json player in json['players']) {
         final id = PlayerId(player['id']);
         if (players[id] != null) {

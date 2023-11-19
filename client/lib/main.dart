@@ -20,10 +20,15 @@ class MonopolyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: Color(int.parse('FF11202D', radix: 16)),
         body: BlocProvider(
           create: (context) => GameCubit(),
-          child: GameScreen(),
+          child: const Stack(
+            children: [
+              //const CubitTest(),
+              GameScreen(),
+            ],
+          ),
         ),
       ),
     );
@@ -40,20 +45,131 @@ class StartScreen extends StatelessWidget {
 }
 
 /// This widget contains the screen on which the game is played.
-class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+class GameScreen extends StatefulWidget {
+  const GameScreen({Key? key}) : super(key: key);
+
+  @override
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  bool isPlayerDisplayExpanded = true;
+  bool areAdminButtonsExpanded = true;
 
   @override
   Widget build(BuildContext context) {
     // Load or reload local configuration whenever the game screen is rebuilt.
     BlocProvider.of<GameCubit>(context).loadLocalConfig();
 
-    return const Stack(
-      children: [
-        Board(),
-        AdminPanel(),
-        DisplayDice(),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Monopoly'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.blue,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  Text(
+                    'Back',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  SizedBox(width: 48.0), // Adjust the width as needed
+                ],
+              ),
+            ),
+            SizedBox(height: 16.0), // Add spacing between header and switches
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Player Display',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      Switch(
+                        value: isPlayerDisplayExpanded,
+                        onChanged: (value) {
+                          setState(() {
+                            isPlayerDisplayExpanded = value;
+                          });
+                        },
+                        activeColor: Colors.black,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.0), // Add spacing between switches
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Admin Buttons',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      Switch(
+                        value: areAdminButtonsExpanded,
+                        onChanged: (value) {
+                          setState(() {
+                            areAdminButtonsExpanded = value;
+                          });
+                        },
+                        activeColor: Colors.black,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Add more items as needed
+          ],
+        ),
+      ),
+      body: Row(
+        children: [
+          Visibility(
+            visible: isPlayerDisplayExpanded,
+            child: Expanded(
+              flex: 1,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: PlayerDisplay(),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: isPlayerDisplayExpanded ? 2 : 3,
+            child: const Board(),
+          ),
+          Visibility(
+            visible: areAdminButtonsExpanded,
+            child: Expanded(
+              flex: 1,
+              child: AdminPanel(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

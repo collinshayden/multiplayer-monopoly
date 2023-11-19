@@ -66,7 +66,7 @@ class TileLayout extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           case LocalConfigFailure():
             return const Placeholder(
-              child: Text('Failed to load local configuration!'),
+              child: Text('Failed to load configuration!'),
             );
           case LocalConfigSuccess():
             return _buildBoard(context, state);

@@ -11,44 +11,70 @@ sealed class GameState {}
 /// Empty initial state.
 class GameInitial extends GameState {}
 
-/// Loading in configuration from local files.
-class LocalConfigLoading extends GameState {}
-
-class LocalConfigSuccess extends GameState {
-  LocalConfigSuccess({required this.game});
-
+class SuccessState extends GameState {
+  SuccessState({required this.game});
   final Game game;
 }
 
-class LocalConfigFailure extends GameState {
-  LocalConfigFailure([this.object]);
+class LoadingState extends GameState {}
 
+class FailureState extends GameState {
+  FailureState({required this.object});
   final dynamic object;
 }
 
+/// Loading in configuration from local files.
+class LocalConfigLoading extends LoadingState {}
+
+class LocalConfigSuccess extends SuccessState {
+  LocalConfigSuccess({required super.game});
+}
+
+class LocalConfigFailure extends FailureState {
+  LocalConfigFailure({required super.object});
+}
+
 /// Game state update emits
-class GameStateUpdateSuccess extends GameState {}
+class GameStateUpdateLoading extends LoadingState {}
 
-class GameStateUpdateFailure extends GameState {}
+class GameStateUpdateSuccess extends SuccessState {
+  GameStateUpdateSuccess({required super.game});
+}
 
-class GameActionLoading extends GameState {}
+class GameStateUpdateFailure extends FailureState {
+  GameStateUpdateFailure({required super.object});
+}
 
-class GameActionSuccess extends GameState {}
+class GameActionLoading extends LoadingState {}
 
-class GameActionFailure extends GameState {}
+class GameActionSuccess extends SuccessState {
+  GameActionSuccess({required super.game});
+}
+
+class GameActionFailure extends FailureState {
+  GameActionFailure({required super.object});
+}
 
 /// Establish a connection with the server.
-class RemoteConfigLoading extends GameState {}
+class RemoteConfigLoading extends LoadingState {}
 
-class RemoteConfigSuccess extends GameState {}
+class RemoteConfigSuccess extends SuccessState {
+  RemoteConfigSuccess({required super.game});
+}
 
-class RemoteConfigFailure extends GameState {}
+class RemoteConfigFailure extends FailureState {
+  RemoteConfigFailure({required super.object});
+}
 
-class JoinGameLoading extends GameState {}
+class JoinGameLoading extends LoadingState {}
 
-class JoinGameSuccess extends GameState {}
+class JoinGameSuccess extends SuccessState {
+  JoinGameSuccess({required super.game});
+}
 
-class JoinGameFailure extends GameState {}
+class JoinGameFailure extends FailureState {
+  JoinGameFailure({required super.object});
+}
 
 class ActiveGame extends GameState {}
 

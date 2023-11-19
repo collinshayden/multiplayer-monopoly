@@ -9,9 +9,14 @@ import 'package:flutter/material.dart';
 ///
 /// [children] are the list of widgets which are contained in the tooltray.
 class ExpandableTooltray extends StatefulWidget {
+  final CrossAxisAlignment crossAlignment;
+  final MainAxisAlignment mainAlignment;
   final List<Widget> children;
 
-  ExpandableTooltray({required this.children});
+  ExpandableTooltray(
+      {required this.children,
+      this.crossAlignment = CrossAxisAlignment.end,
+      this.mainAlignment = MainAxisAlignment.end});
 
   @override
   _ExpandableTooltrayState createState() => _ExpandableTooltrayState();
@@ -62,6 +67,58 @@ class _ExpandableTooltrayState extends State<ExpandableTooltray> {
           },
         ),
       ],
+    );
+  }
+}
+
+/// Widget for getting text value inputs.
+///
+/// Given [buttonText] and [onPressed] the widget will display the submit
+/// button text and execute some closure when pressed.
+class TextInputWidget extends StatefulWidget {
+  final double width;
+  final String labelText;
+  final String buttonText;
+  final Function(String) onPressed;
+
+  TextInputWidget(
+      {required this.width,
+      required this.labelText,
+      required this.buttonText,
+      required this.onPressed});
+
+  @override
+  _TextInputWidgetState createState() => _TextInputWidgetState();
+}
+
+class _TextInputWidgetState extends State<TextInputWidget> {
+  TextEditingController _textController = TextEditingController();
+
+  void _onPressed() {
+    // Call the provided onPressed closure with the current text value
+    widget.onPressed(_textController.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: widget.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          TextField(
+            controller: _textController,
+            decoration: InputDecoration(
+              labelText: widget.labelText,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _onPressed,
+            child: Text(widget.buttonText),
+          ),
+        ],
+      ),
     );
   }
 }
