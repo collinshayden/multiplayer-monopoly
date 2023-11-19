@@ -8,7 +8,6 @@ import 'roll.dart';
 import 'package:client/json_utils.dart';
 
 class Game {
-  /// Constructs an empty GameData object.
   Game()
       : tierColors = {},
         lastRoll = Roll(),
