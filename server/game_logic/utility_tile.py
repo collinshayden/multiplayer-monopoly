@@ -47,5 +47,6 @@ class UtilityTile(AssetTile):
         """
         client_bindings: dict = super().to_dict()
         client_bindings.pop("rent")
+        client_bindings["type"] = "utility"
         client_bindings["rentMultiplier"] = self.rent
         return client_bindings

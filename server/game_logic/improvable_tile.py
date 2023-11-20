@@ -6,7 +6,7 @@ Author:         Jordan Bourdeau, Hayden Collins
 
 from typing import Any
 from .asset_tile import AssetTile
-from .constants import IMPROVEMENT_MAP
+from .constants import IMPROVEMENT_MAP, RENTS
 from .types import AssetGroups, PropertyStatus
 
 
@@ -48,16 +48,15 @@ class ImprovableTile(AssetTile):
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        client_bindings = {
-            "id": self.id,
-            "type": "improvable",
-            "owner": self.owner,
-            "price": self.price,
-            "isMortgaged": self.is_mortgaged,
-            "mortgagePrice": self.mortage_price,
-            "group": str(self.group),
-            "status": str(self.status.name),
-            "rent": self.rent,
-            "improvementCost": self.improvement_cost
-        }
+        client_bindings: dict = super().to_dict()
+        client_bindings["type"] = "improvable"
+        client_bindings["improvementCost"] = self.improvement_cost
+        client_bindings["baseRent"] = RENTS[self.id][PropertyStatus.NO_MONOPOLY]
+        client_bindings["oneImprovement"] = RENTS[self.id][PropertyStatus.ONE_IMPROVEMENT]
+        client_bindings["twoImprovements"] = RENTS[self.id][PropertyStatus.TWO_IMPROVEMENTS]
+        client_bindings["threeImprovements"] = RENTS[self.id][PropertyStatus.THREE_IMPROVEMENTS]
+        client_bindings["fourImprovements"] = RENTS[self.id][PropertyStatus.FOUR_IMPROVEMENTS]
+        client_bindings["fiveImprovements"] = RENTS[self.id][PropertyStatus.FIVE_IMPROVEMENTS]
+
+
         return client_bindings

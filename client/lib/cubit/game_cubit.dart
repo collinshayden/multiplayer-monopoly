@@ -168,10 +168,12 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void buyProperty(int tileId) async {
+  void buyProperty() async {
     emit(GameActionLoading());
+    final player = game.players[clientPlayerId];
     try {
-      final result = await endpointService.buyProperty(clientPlayerId!, tileId);
+      final result = await endpointService.buyProperty(
+          clientPlayerId!, player?.location ?? 0);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {
@@ -218,6 +220,6 @@ class GameCubit extends Cubit<GameState> {
   /// Method used in the admin buttons to change the clientPlayerId to the
   /// Game object's active player ID. Allows you to simulate multiple users.
   void switchToActivePlayerId() {
-    clientPlayerId = game.activePlayerId;
+    clientPlayerId = game.activePlayerId!;
   }
 }

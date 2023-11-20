@@ -679,7 +679,6 @@ class Game:
             game_dict["activePlayerId"] = self.active_player_id
         game_dict["players"] = [self.players[id].to_dict() for id in self.turn_order]
         game_dict["tiles"] = [tile.to_dict() for tile in self.tiles]
-        game_dict["rents"] = RENTS
         return game_dict
         
         """

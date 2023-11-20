@@ -99,5 +99,8 @@ class Player:
             "doublesStreak": self.doubles_streak,
             "getOutOfJailFreeCards": self.jail_cards,
             "turnsInJail": self.turns_in_jail,
-            "active": self.active}
+            "active": self.active,
+            # Include a list of the IDs for the assets they own
+            "assets": [asset.to_dict() for asset in self.assets]
+        }
         return client_bindings
