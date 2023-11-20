@@ -1,4 +1,5 @@
 import 'package:client/cubit/endpoint_service.dart';
+import 'package:client/cubit/event_cubit.dart';
 import 'package:client/cubit/file_service.dart';
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/game.dart';
@@ -10,6 +11,8 @@ class MockGame extends Mock implements Game {}
 class MockFileService extends Mock implements FileService {}
 
 class MockEndpointService extends Mock implements EndpointService {}
+
+class MockEventCubit extends Mock implements EventCubit {}
 
 void main() {
   late GameCubit sut; // "System under test"
@@ -25,14 +28,15 @@ void main() {
     mockFileService = MockFileService();
     mockEndpointService = MockEndpointService();
     sut = GameCubit(
-      game: mockGame,
-      fileService: mockFileService,
-      endpointService: mockEndpointService,
-    );
+        game: mockGame,
+        fileService: mockFileService,
+        endpointService: mockEndpointService);
   });
 
-  test("Initial values are correct", () {
+  test('Initial values are correct', () {
     expect(sut.state.runtimeType, GameInitial);
     expect(sut.clientPlayerId, null);
   });
+
+  test('Events are properly enqueued', () {});
 }
