@@ -51,10 +51,14 @@ class _AdminPanelState extends State<AdminPanel> {
         gameCubit.rollDice();
       },
     ),
-    AdminTileButton(
+    AdminButton(
       title: 'Buy Property',
-      onPressed: (gameCubit, tileId) {
-        gameCubit.buyProperty(tileId);
+      onPressed: (gameCubit) {
+        final tileId =
+            gameCubit.game.players[gameCubit.clientPlayerId]?.location;
+        if (tileId != null) {
+          gameCubit.buyProperty(tileId);
+        }
       },
     ),
     AdminJailButton(
