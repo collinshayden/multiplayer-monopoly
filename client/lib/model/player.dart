@@ -1,4 +1,5 @@
 import 'package:client/json_utils.dart';
+import 'package:client/model/asset.dart';
 
 /// Thin wrapper class used to specify a player-unique identifier.
 class PlayerId {
@@ -25,12 +26,12 @@ class PlayerId {
 /// Data class for players constructed from JSON.
 class Player {
   Player({required this.id});
-
   PlayerId id;
   String? displayName;
   int? money;
   int? location;
   int? getOutOfJailFreeCards;
+  List<Map<String, dynamic>> assets = [];
 
   /// Apply JSON to this object.
   ///
@@ -44,5 +45,11 @@ class Player {
     location = json["location"] ?? location;
     getOutOfJailFreeCards =
         json["getOutOfJailFreeCards"] ?? getOutOfJailFreeCards;
+    // Clear out existing assets
+    // assets.clear();
+    // // Add updated assets into the list of player assets
+    for (Map<String, dynamic> assetJson in json["assets"]) {
+      assets.add(assetJson);
+    }
   }
 }

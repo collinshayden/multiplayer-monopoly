@@ -1,7 +1,13 @@
 import 'package:client/cubit/game_cubit.dart';
+import 'package:client/view/properties_display.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:client/cubit/game_cubit.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client/model/player.dart';
 
 class PlayerDisplay extends StatelessWidget {
   @override
@@ -9,11 +15,9 @@ class PlayerDisplay extends StatelessWidget {
     return BlocBuilder<GameCubit, GameState>(
       builder: (context, state) {
         return PlayerInfoScreens(
-            players: BlocProvider.of<GameCubit>(context)
-                .game
-                .players
-                .values
-                .toList());
+          players:
+              BlocProvider.of<GameCubit>(context).game.players.values.toList(),
+        );
       },
     );
   }
@@ -23,7 +27,10 @@ class PlayerInfoScreens extends StatelessWidget {
   final List<Player> players;
   final Key? key;
 
-  PlayerInfoScreens({required this.players, this.key}) : super(key: key);
+  PlayerInfoScreens({
+    required this.players,
+    this.key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,36 +41,56 @@ class PlayerInfoScreens extends StatelessWidget {
       body: ListView.builder(
         itemCount: players.length,
         itemBuilder: (context, index) {
-          return PlayerInfoExpansionTile(players[index], context);
+          return PlayerInfoExpansionTile(
+            player: players[index],
+          );
         },
       ),
     );
   }
 }
 
-class PlayerInfoExpansionTile extends StatelessWidget {
+class PlayerInfoExpansionTile extends StatefulWidget {
   final Player player;
-  final BuildContext context;
 
-  PlayerInfoExpansionTile(this.player, this.context);
+  PlayerInfoExpansionTile({
+    required this.player,
+  });
+
+  @override
+  _PlayerInfoExpansionTileState createState() =>
+      _PlayerInfoExpansionTileState();
+}
+
+class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
+  bool isPropertiesExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     final isClientPlayer =
-        player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
-    final isActivePlayer =
-        player.id == BlocProvider.of<GameCubit>(context).game.activePlayerId;
+        widget.player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
+    final isActivePlayer = widget.player.id ==
+        BlocProvider.of<GameCubit>(context).game.activePlayerId;
 
-    return ExpansionTile(
-      title: _buildTitle(
-          isClientPlayer, isActivePlayer, player.displayName ?? 'N/A'),
+    return Column(
       children: [
-        _buildText('Money: ${player.money ?? 0}'),
-        // TODO: Make clickable widget which shows all their properties
-        _buildText('Properties: None'),
-        _buildText(
-            'Get Out Of Jail Free Cards: ${player.getOutOfJailFreeCards ?? 0}'),
-        _buildText('Active: ${isActivePlayer ? 'Yes' : 'No'}'),
+        ExpansionTile(
+          title: _buildTitle(
+            isClientPlayer,
+            isActivePlayer,
+            widget.player.displayName ?? 'N/A',
+          ),
+          children: [
+            _buildText('Location ID: ${widget.player.location ?? 0}'),
+            _buildText('Money: ${widget.player.money ?? 0}'),
+            _buildText(
+                'Get Out Of Jail Free Cards: ${widget.player.getOutOfJailFreeCards ?? 0}'),
+            _buildText('Active: ${isActivePlayer ? 'Yes' : 'No'}'),
+            PropertyList(
+              assets: widget.player.assets,
+            )
+          ],
+        ),
       ],
     );
   }

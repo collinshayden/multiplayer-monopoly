@@ -161,10 +161,12 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void buyProperty(int tileId) async {
+  void buyProperty() async {
     emit(GameActionLoading());
+    final player = game.players[clientPlayerId];
     try {
-      final result = await endpointService.buyProperty(clientPlayerId, tileId);
+      final result = await endpointService.buyProperty(
+          clientPlayerId, player?.location ?? 0);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {

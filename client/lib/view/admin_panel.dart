@@ -64,10 +64,10 @@ class _AdminPanelState extends State<AdminPanel> {
                     BlocProvider.of<GameCubit>(context).switchActivePlayerId();
                   },
                   child: const Text('Change to Active Player')),
-              // Hardcoded as 0 for now. How can I get the tile ID the current player is on?
+              // Hardcoded as the client player's active tile.
               ElevatedButton(
                   onPressed: () {
-                    BlocProvider.of<GameCubit>(context).buyProperty(0);
+                    BlocProvider.of<GameCubit>(context).buyProperty();
                   },
                   child: const Text('Buy Property')),
               MultiOptionWidget(

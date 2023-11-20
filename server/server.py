@@ -155,12 +155,14 @@ def buy_property():
         tile_id: int = int(request.args.get("tile_id"))
     # No query parameters passed in
     except (AttributeError, TypeError, ValueError) as e:
+        print(e)
         player_id: str = ""
         tile_id: int = -1
     if player_id is None or tile_id is None:
+        print("Parameter is none")
         player_id: str = ""
         tile_id: int = -1
-
+    print(player_id, tile_id)
     """
     Checks the following:
         1) Does the player ID correspond to a valid, active player?

@@ -48,16 +48,8 @@ class ImprovableTile(AssetTile):
                         Used for creating JSON representation of the game state.
         :return:        Dictionary of class attributes.
         """
-        client_bindings = {
-            "id": self.id,
-            "type": "improvable",
-            "owner": self.owner,
-            "price": self.price,
-            "isMortgaged": self.is_mortgaged,
-            "mortgagePrice": self.mortage_price,
-            "group": str(self.group),
-            "status": str(self.status.name),
-            "rent": self.rent,
-            "improvementCost": self.improvement_cost
-        }
+        client_bindings: dict = super().to_dict()
+        client_bindings["type"] = "improvable"
+        client_bindings["improvementCost"] = self.improvement_cost
+
         return client_bindings
