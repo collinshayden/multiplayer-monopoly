@@ -1,8 +1,8 @@
-import 'package:client/constants.dart';
-import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:client/constants.dart';
 import 'package:client/model/game.dart';
+import 'package:client/model/player.dart';
 import 'package:client/cubit/file_service.dart';
 import 'package:client/cubit/endpoint_service.dart';
 import 'package:client/json_utils.dart';
@@ -35,7 +35,7 @@ class GameCubit extends Cubit<GameState> {
   /// deserialised into a [Game] object.
   void loadLocalConfig() async {
     emit(LocalConfigLoading());
-    // await Future.delayed(const Duration(seconds: 1)); // TODO: Remove
+    await Future.delayed(const Duration(milliseconds: 250)); // TODO: Remove
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
@@ -152,11 +152,13 @@ class GameCubit extends Cubit<GameState> {
 
   // Hardcoded to use admin ID for now
   void resetGame({bool useAdmin = false}) async {
-    var playerId = clientPlayerId!;
-    emit(GameActionLoading());
+    PlayerId playerId;
     if (useAdmin) {
       playerId = PlayerId('admin');
+    } else {
+      playerId = clientPlayerId!;
     }
+    emit(GameActionLoading());
     try {
       final result = await endpointService.reset(playerId: playerId);
       updateGameData(useAdmin: true);
@@ -215,15 +217,7 @@ class GameCubit extends Cubit<GameState> {
 
   /// Method used in the admin buttons to change the clientPlayerId to the
   /// Game object's active player ID. Allows you to simulate multiple users.
-  void switchActivePlayerId() {
-    print('Switching active player!');
-    print(clientPlayerId!.value);
-    print(game.activePlayerId!);
-    try {
-      final originalId = clientPlayerId!.value;
-      clientPlayerId = game.activePlayerId!;
-      print('ID was ${originalId} and is now ${clientPlayerId!.value}');
-      updateGameData();
-    } catch (e) {}
+  void switchActivePlayerId(PlayerId id) {
+    clientPlayerId = id;
   }
 }
