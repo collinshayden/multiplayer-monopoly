@@ -65,7 +65,7 @@ class EndpointService {
   Future<bool> drawCard(PlayerId playerId, String cardType) async {
     assert(cardType == 'chance' || cardType == 'community_chest');
     final response = await http.get(
-      Uri.parse('$API_URL/draw_card?player_id=$playerId?card_type=$cardType'),
+      Uri.parse('$API_URL/draw_card?player_id=$playerId&card_type=$cardType'),
     );
     final Json body = jsonDecode(response.body);
     assert(body['event'] == 'drawCard');
@@ -75,7 +75,7 @@ class EndpointService {
   Future<bool> buyProperty(PlayerId playerId, int tileId) async {
     assert(0 <= tileId && tileId <= 39);
     final response = await http.get(
-      Uri.parse('$API_URL/buy_property?player_id=$playerId?tile_id=$tileId'),
+      Uri.parse('$API_URL/buy_property?player_id=$playerId&tile_id=$tileId'),
     );
     final Json body = jsonDecode(response.body);
     assert(body['event'] == 'buyProperty');
@@ -87,7 +87,7 @@ class EndpointService {
     assert(0 <= tileId && tileId <= 39);
     final response = await http.get(
       Uri.parse(
-          '$API_URL/set_improvements?player_id=${playerId.value}?tile_id=$tileId?quantity=$quantity'),
+          '$API_URL/set_improvements?player_id=${playerId.value}&tile_id=$tileId&quantity=$quantity'),
     );
     final Json body = jsonDecode(response.body);
     assert(body['event'] == 'setImprovement');
@@ -97,7 +97,7 @@ class EndpointService {
   Future<bool> setMortgage(PlayerId playerId, int tileId, bool mortgage) async {
     final response = await http.get(
       Uri.parse(
-          '$API_URL/set_mortgage?player_id=${playerId.value}?tile_id=$tileId?mortgage=$mortgage'),
+          '$API_URL/set_mortgage?player_id=${playerId.value}&tile_id=$tileId&mortgage=$mortgage'),
     );
     final Json body = jsonDecode(response.body);
     assert(body['event'] == 'setMortgage');
@@ -108,11 +108,11 @@ class EndpointService {
     String call = '$API_URL/get_out_of_jail?player_id=$playerId';
     switch (jailMethod) {
       case JailMethod.doubles:
-        call += '?method=doubles';
+        call += '&method=doubles';
       case JailMethod.money:
-        call += '?method=money';
+        call += '&method=money';
       case JailMethod.card:
-        call += '?method=card';
+        call += '&method=card';
     }
     final response = await http.get(
       Uri.parse(call),
