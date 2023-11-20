@@ -8,8 +8,63 @@ import 'package:flutter/material.dart';
 import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+class PaddedText extends StatelessWidget {
+  final String text;
+  final bool bold;
+
+  PaddedText({required this.text, this.bold = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Text(
+        text,
+        style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal),
+      ),
+    );
+  }
+}
+
+/// Widget for common pattern of <Text> <Dollar amount>
+class TextAmountWidget extends StatelessWidget {
+  final String text;
+  final int amount;
+
+  TextAmountWidget({required this.text, required this.amount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(text, textAlign: TextAlign.left),
+          Text('\$$amount', textAlign: TextAlign.right),
+        ],
+      ),
+    );
+  }
+}
+
+class SpacerLine extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      color: Colors.black, // You can customize the color as needed
+      margin:
+          EdgeInsets.symmetric(vertical: 8), // Adjust vertical margin as needed
+    );
+  }
+}
+
 class PropertyInfo extends StatelessWidget {
   final Map<String, dynamic> property;
+  var titleDeed;
 
   PropertyInfo({
     required this.property,
@@ -17,74 +72,215 @@ class PropertyInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = getPropertyGroupColor(property);
+    List<Widget> children = [];
+
+    switch (property['type']) {
+      case ('improvable'):
+        children.addAll([
+          Container(
+            alignment: Alignment.center,
+            color: backgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  PaddedText(text: 'Title Deed'),
+                  PaddedText(
+                      text: property['name'] ?? 'Unknown Property', bold: true)
+                ],
+              ),
+            ),
+          ),
+          TextAmountWidget(text: 'Rent', amount: property['baseRent']),
+          TextAmountWidget(
+              text: 'With 1 House', amount: property['oneImprovement']),
+          TextAmountWidget(
+              text: 'With 2 House', amount: property['twoImprovements']),
+          TextAmountWidget(
+              text: 'With 3 House', amount: property['threeImprovements']),
+          TextAmountWidget(
+              text: 'With 4 House', amount: property['fourImprovements']),
+          TextAmountWidget(
+              text: 'With Hotel', amount: property['fiveImprovements']),
+          TextAmountWidget(
+              text: 'Mortgage Value', amount: property['mortgagePrice']),
+          TextAmountWidget(
+              text: 'Houses Cost', amount: property['improvementCost']),
+          TextAmountWidget(
+              text: 'Hotels Cost', amount: property['improvementCost']),
+          PaddedText(
+            text:
+                'If a player owns ALL the Lots of any Color-Group, the rent is Doubled on Unimproved Lots in that group.',
+          ),
+        ]);
+        break;
+      case ('utility'):
+        final imageLocation = property['name'] == 'Electric Company'
+            ? 'assets/images/electric_company.png'
+            : 'assets/images/water_works.png';
+        children.addAll(
+          [
+            Container(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Image.asset(imageLocation, height: 80, width: 80),
+                    SpacerLine(),
+                    PaddedText(
+                        text: property['name'] ?? 'Unknown Property',
+                        bold: true),
+                    SpacerLine(),
+                  ],
+                ),
+              ),
+            ),
+            PaddedText(
+              text:
+                  'If one "Utility" is owned rent is 4 times amount shown on dice',
+            ),
+            PaddedText(
+              text:
+                  'If both "Utilities" are owned rent is 10 times amount shown on dice',
+            ),
+            TextAmountWidget(
+              text: 'Mortgage Value',
+              amount: property['mortgagePrice'],
+            ),
+          ],
+        );
+        break;
+      case ('railroad'):
+        children.addAll(
+          [
+            Container(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Image.asset('assets/images/railroad.png',
+                        height: 80, width: 80),
+                    SpacerLine(),
+                    PaddedText(
+                        text: property['name'] ?? 'Unknown Property',
+                        bold: true),
+                    SpacerLine(),
+                  ],
+                ),
+              ),
+            ),
+            TextAmountWidget(text: 'Rent', amount: property['oneOwned']),
+            TextAmountWidget(
+              text: 'If 2 R.R.\'s are owned',
+              amount: property['twoOwned'],
+            ),
+            TextAmountWidget(
+              text: 'If 3       "   "     "',
+              amount: property['threeOwned'],
+            ),
+            TextAmountWidget(
+              text: 'If 4       "   "     "',
+              amount: property['fourOwned'],
+            ),
+            TextAmountWidget(
+                text: 'Mortgage Value', amount: property['mortgagePrice'])
+          ],
+        );
+        break;
+      case _:
+    }
+    final titalDeed = Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    );
+
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              property['name'] ?? 'Unknown Property',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Price: \$${property['price'] ?? 0}',
-              style: TextStyle(fontSize: 16),
-            ),
-            if (property.containsKey('rent')) ...[
-              SizedBox(height: 8),
-              Text(
-                'Rent: \$${property['rent'] ?? 0}',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-            if (property.containsKey('improvementCost')) ...[
-              SizedBox(height: 8),
-              Text(
-                'Improvement Cost: \$${property['improvementCost'] ?? 0}',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-            SizedBox(height: 8),
-            // Not relevant
-            // Text(
-            //   'Owner: ${property['owner'] ?? 'Unowned'}',
-            //   style: TextStyle(fontSize: 16),
-            // ),
-            // SizedBox(height: 8),
-            Text(
-              'Status: ${property['status'] ?? 'Unknown'}',
-              style: TextStyle(fontSize: 16),
-            ),
-            if (property.containsKey('isMortgaged')) ...[
-              SizedBox(height: 8),
-              Text(
-                'Mortgaged: ${property['isMortgaged'] ?? false}',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-            if (property.containsKey('mortgagePrice')) ...[
-              SizedBox(height: 8),
-              Text(
-                'Mortgage Price: \$${property['mortgagePrice'] ?? 0}',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ],
-        ),
-      ),
+      child: Padding(padding: EdgeInsets.all(16), child: titalDeed),
     );
+  }
+
+  Color getPropertyGroupColor(Map<String, dynamic> property) {
+    // Define colors for different property groups
+    Map<String, Color> groupColors = {
+      'BROWN': Colors.brown,
+      'LIGHT_BLUE': Colors.lightBlue,
+      'PINK': Colors.pink,
+      'ORANGE': Colors.orange,
+      'RED': Colors.red,
+      'YELLOW': Colors.yellow,
+      'GREEN': Colors.green,
+      'DARK_BLUE': Colors.blue,
+      // Add more colors as needed
+    };
+
+    // Get property group from the property map
+    String? propertyGroup = property['group'];
+
+    // Return the corresponding color or a default color
+    return groupColors[propertyGroup] ?? Colors.grey;
+  }
+
+  String getStatusText(Map<String, dynamic> property) {
+    String statusText = 'Unknown';
+    if (property.containsKey('status')) {
+      switch (property['status']) {
+        case 'NO_MONOPOLY':
+          statusText = 'No Monopoly';
+          break;
+        case 'MONOPOLY':
+          statusText = 'Monopoly';
+          break;
+        case 'ONE_IMPROVEMENT':
+          statusText = 'One Improvement';
+          break;
+        case 'TWO_IMPROVEMENTS':
+          statusText = 'Two Improvements';
+          break;
+        case 'THREE_IMPROVEMENTS':
+          statusText = 'Three Improvements';
+          break;
+        case 'FOUR_IMPROVEMENTS':
+          statusText = 'Four Improvements';
+          break;
+        case 'FIVE_IMPROVEMENTS':
+          statusText = 'Five Improvements';
+          break;
+        case 'UNOWNED':
+          statusText = 'Unowned';
+          break;
+        case 'ONE_OWNED':
+          statusText = 'One Owned';
+          break;
+        case 'TWO_OWNED':
+          statusText = 'Two Owned';
+          break;
+        case 'THREE_OWNED':
+          statusText = 'Three Owned';
+          break;
+        case 'FOUR_OWNED':
+          statusText = 'Four Owned';
+          break;
+      }
+    }
+    return statusText;
   }
 }
 
 class PropertyList extends StatelessWidget {
   final List<Map<String, dynamic>> assets;
+  bool isExpanded = false;
 
   PropertyList({
     required this.assets,
@@ -115,16 +311,17 @@ class PropertyList extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  'Group: $group',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              // Don't need to explicitly display the group
+              // Padding(
+              //   padding: EdgeInsets.all(16),
+              //   child: Text(
+              //     'Group: $group',
+              //     style: TextStyle(
+              //       fontSize: 20,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              // ),
               Column(
                 children: properties
                     .map((property) => PropertyInfo(property: property))

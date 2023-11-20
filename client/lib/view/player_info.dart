@@ -71,6 +71,7 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
         widget.player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
     final isActivePlayer = widget.player.id ==
         BlocProvider.of<GameCubit>(context).game.activePlayerId;
+    final propertyList = PropertyList(assets: widget.player.assets);
 
     return Row(
       children: [
@@ -109,23 +110,24 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
                       onPressed: null,
                     ),
                   ),
+                  propertyList
                 ],
               ),
             ],
           ),
         ),
         // Property Information Column
-        if (isPropertiesExpanded)
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PropertyList(
-                  assets: widget.player.assets,
-                ),
-              ],
-            ),
-          ),
+        // if (isPropertiesExpanded)
+        //   Expanded(
+        //     child: Column(
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: [
+        //         PropertyList(
+        //           assets: widget.player.assets,
+        //         ),
+        //       ],
+        //     ),
+        //   ),
       ],
     );
   }
