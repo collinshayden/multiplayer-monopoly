@@ -100,6 +100,7 @@ class ImprovableTile extends Tile {
   int? tier;
   int? price;
   Color? tierColor;
+  bool? isMortgaged = false;
 
   @override
   void applyJson(Json json) {
@@ -107,6 +108,7 @@ class ImprovableTile extends Tile {
     title = json['title'] ?? title;
     tier = json['tier'] ?? tier;
     price = json['price'] ?? price;
+    isMortgaged = json['isMortgaged'] ?? isMortgaged;
   }
 
   @override
@@ -115,7 +117,8 @@ class ImprovableTile extends Tile {
         title != null &&
         title!.isNotEmpty &&
         tierColor != null &&
-        price != null;
+        price != null &&
+        isMortgaged != null;
   }
 
   @override
