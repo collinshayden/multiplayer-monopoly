@@ -72,25 +72,60 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
     final isActivePlayer = widget.player.id ==
         BlocProvider.of<GameCubit>(context).game.activePlayerId;
 
-    return Column(
+    return Row(
       children: [
-        ExpansionTile(
-          title: _buildTitle(
-            isClientPlayer,
-            isActivePlayer,
-            widget.player.displayName ?? 'N/A',
+        // Player Information Column
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ExpansionTile(
+                title: _buildTitle(
+                  isClientPlayer,
+                  isActivePlayer,
+                  widget.player.displayName ?? 'N/A',
+                ),
+                children: [
+                  _buildText('Location ID: ${widget.player.location ?? 0}'),
+                  _buildText('Money: ${widget.player.money ?? 0}'),
+                  _buildText(
+                      'Get Out Of Jail Free Cards: ${widget.player.getOutOfJailFreeCards ?? 0}'),
+                  _buildText('Active: ${isActivePlayer ? 'Yes' : 'No'}'),
+                  HoverButton(
+                    onTap: () {
+                      setState(() {
+                        isPropertiesExpanded = !isPropertiesExpanded;
+                      });
+                    },
+                    label: isPropertiesExpanded
+                        ? 'Hide Properties'
+                        : "Show Properties",
+                    child: IconButton(
+                      icon: Icon(
+                        isPropertiesExpanded
+                            ? Icons.arrow_back
+                            : Icons.arrow_forward,
+                      ),
+                      onPressed: null,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          children: [
-            _buildText('Location ID: ${widget.player.location ?? 0}'),
-            _buildText('Money: ${widget.player.money ?? 0}'),
-            _buildText(
-                'Get Out Of Jail Free Cards: ${widget.player.getOutOfJailFreeCards ?? 0}'),
-            _buildText('Active: ${isActivePlayer ? 'Yes' : 'No'}'),
-            PropertyList(
-              assets: widget.player.assets,
-            )
-          ],
         ),
+        // Property Information Column
+        if (isPropertiesExpanded)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PropertyList(
+                  assets: widget.player.assets,
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -117,5 +152,56 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Text(text),
     );
+  }
+}
+
+class HoverButton extends StatefulWidget {
+  final VoidCallback onTap;
+  final Widget child;
+  final String label;
+
+  HoverButton({
+    required this.onTap,
+    required this.child,
+    required this.label,
+  });
+
+  @override
+  _HoverButtonState createState() => _HoverButtonState();
+}
+
+class _HoverButtonState extends State<HoverButton> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => _handleHover(true),
+      onExit: (_) => _handleHover(false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Container(
+          padding: EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            color: isHovered ? Colors.blue.withOpacity(0.2) : null,
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.child,
+              SizedBox(width: 8.0),
+              Text(widget.label),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleHover(bool hover) {
+    setState(() {
+      isHovered = hover;
+    });
   }
 }
