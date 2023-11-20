@@ -7,7 +7,7 @@ Date:           10/24/23
 from enum import Enum, IntEnum
 
 
-class EventType(Enum):
+class EventType(IntEnum):
     """
     Description:    Enumeration for the types of possible events. Will send certain events to all
                     player queues (ex. INFORMATION) and others to only select players (ex. PROMPT).
@@ -20,7 +20,7 @@ class EventType(Enum):
     UPDATE = 2
 
 
-class CardType(Enum):
+class CardType(IntEnum):
     """
     Description:     Enumeration for potential card types.
     CHANCE:          Chance card.
@@ -32,7 +32,7 @@ class CardType(Enum):
     INVALID = 2
 
 
-class JailMethod(Enum):
+class JailMethod(IntEnum):
     """
     Description:    Enumeration for potential methods to get out of jail
     DOUBLES:        Player rolled doubles
@@ -46,7 +46,7 @@ class JailMethod(Enum):
     INVALID = 3
 
 
-class PlayerStatus(Enum):
+class PlayerStatus(IntEnum):
     """
     Description:    Enumeration of potential player statuses.
     GOOD:           Player status is normal
@@ -88,7 +88,7 @@ class RailroadStatus(IntEnum):
     FOUR_OWNED = 4
 
 
-class UtilityStatus(Enum):
+class UtilityStatus(IntEnum):
     """
     Description:    Enumeration for the number of owned utilities.
     #_OWNED:        Corresponds to the number of utility tiles owned
@@ -97,7 +97,7 @@ class UtilityStatus(Enum):
     MONOPOLY = 1
 
 
-class AssetGroups(Enum):
+class AssetGroups(IntEnum):
     """
     Description:    Enumeration of groups AssetTile objects can be part of.
     """
