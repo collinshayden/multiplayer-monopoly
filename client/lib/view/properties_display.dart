@@ -17,12 +17,11 @@ class PaddedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.all(6.0),
       child: Text(
         text,
-        style: TextStyle(
-            fontSize: 14.0,
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal),
+        style:
+            TextStyle(fontWeight: bold ? FontWeight.bold : FontWeight.normal),
       ),
     );
   }
@@ -38,7 +37,7 @@ class TextAmountWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -103,16 +102,20 @@ class PropertyInfo extends StatelessWidget {
               text: 'With 4 House', amount: property['fourImprovements']),
           TextAmountWidget(
               text: 'With Hotel', amount: property['fiveImprovements']),
+          SpacerLine(),
           TextAmountWidget(
               text: 'Mortgage Value', amount: property['mortgagePrice']),
           TextAmountWidget(
               text: 'Houses Cost', amount: property['improvementCost']),
           TextAmountWidget(
               text: 'Hotels Cost', amount: property['improvementCost']),
-          PaddedText(
-            text:
+          Padding(
+              padding: EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
+              child: Text(
                 'If a player owns ALL the Lots of any Color-Group, the rent is Doubled on Unimproved Lots in that group.',
-          ),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12.0),
+              )),
         ]);
         break;
       case ('utility'):
@@ -163,11 +166,9 @@ class PropertyInfo extends StatelessWidget {
                   children: [
                     Image.asset('assets/images/railroad.png',
                         height: 80, width: 80),
-                    SpacerLine(),
                     PaddedText(
                         text: property['name'] ?? 'Unknown Property',
                         bold: true),
-                    SpacerLine(),
                   ],
                 ),
               ),
@@ -194,13 +195,17 @@ class PropertyInfo extends StatelessWidget {
     }
     final titalDeed = Container(
       padding: EdgeInsets.all(16),
+      width: 275,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
+      child: AspectRatio(
+        aspectRatio: 16 / 25,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
       ),
     );
 
