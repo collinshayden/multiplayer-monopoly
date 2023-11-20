@@ -1,23 +1,25 @@
 import 'package:client/json_utils.dart';
 
 enum EventType {
-  startSession,
-  enterQueue,
-  updateQueue,
-  toggleReadyPrompt,
-  startGame,
-  startTurn,
+  showPlayerJoin,
+  promptStartGame,
+  showStartGame,
+  showStartTurn,
   showRoll,
-  movePlayer,
+  showPassGo,
+  showRent,
+  showTax,
+  showMovePlayer,
   promptPurchase,
   showPurchase,
-  showCardDraw,
-  showImprovements,
+  showImprovement,
   showMortgage,
   promptEndTurn,
+  showEndTurn,
+  promptLiquidate,
   showLoser,
-  showWinner,
-  endGame,
+  showEndGame,
+  showBankruptcy,
 }
 
 /// Lightweight wrapper class for events passed between the server and client.
@@ -26,8 +28,14 @@ enum EventType {
 /// event, and parameters specifying what the event is are stored as a [Json]
 /// object `Map<String, dynamic>`.
 class Event {
-  Event({required this.type, required this.parameters});
+  Event.fromJson(Json json) {
+    for (var e in EventType.values) {
+      if (e.name == json['type']) {
+        type = e;
+      }
+    }
+  }
 
-  EventType type;
-  Json parameters;
+  EventType? type;
+  late Json parameters;
 }

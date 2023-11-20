@@ -61,7 +61,9 @@ class _AdminPanelState extends State<AdminPanel> {
                   child: const Text('Update State')),
               ElevatedButton(
                   onPressed: () {
-                    BlocProvider.of<GameCubit>(context).switchActivePlayerId();
+                    BlocProvider.of<GameCubit>(context)
+                        .switchToActivePlayerId();
+                    BlocProvider.of<GameCubit>(context).updateGameData();
                   },
                   child: const Text('Change to Active Player')),
               // Hardcoded as the client player's active tile.
@@ -71,15 +73,6 @@ class _AdminPanelState extends State<AdminPanel> {
                   },
                   child: const Text('Buy Property')),
               MultiOptionWidget(
-                  defaultText: "Select Mortgage",
-                  options: const [
-                    {'text': 'Mortgage', 'value': true},
-                    {'text': 'Unmortgage', 'value': false},
-                  ],
-                  onPressed: (value) {
-                    BlocProvider.of<GameCubit>(context).setMortgage(0, value);
-                  }),
-              MultiOptionWidget(
                   defaultText: "Select Jail method",
                   options: const [
                     {'text': 'Card', 'value': JailMethod.card},
@@ -88,12 +81,6 @@ class _AdminPanelState extends State<AdminPanel> {
                   ],
                   onPressed: (value) {
                     BlocProvider.of<GameCubit>(context).getOutOfJail(value);
-                  }),
-              NumberInputWidget(
-                  buttonText: "Improvements",
-                  onPressed: (value) {
-                    BlocProvider.of<GameCubit>(context)
-                        .setImprovements(0, value);
                   }),
             ],
           ),

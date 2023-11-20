@@ -1,4 +1,7 @@
+import 'package:client/cubit/endpoint_service.dart';
+import 'package:client/cubit/file_service.dart';
 import 'package:client/cubit/game_cubit.dart';
+import 'package:client/model/game.dart';
 import 'package:client/view/admin_panel.dart';
 import 'package:client/view/game_screen/board.dart';
 import 'package:client/view/player_info.dart';
@@ -21,7 +24,10 @@ class MonopolyApp extends StatelessWidget {
       home: Scaffold(
         backgroundColor: Color(int.parse('FF11202D', radix: 16)),
         body: BlocProvider(
-          create: (context) => GameCubit(),
+          create: (context) => GameCubit(
+              game: Game(),
+              fileService: FileService(),
+              endpointService: EndpointService()),
           child: const Stack(
             children: [
               //const CubitTest(),

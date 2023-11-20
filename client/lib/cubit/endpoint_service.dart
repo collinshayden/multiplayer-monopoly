@@ -108,11 +108,11 @@ class EndpointService {
     String call = '$API_URL/get_out_of_jail?player_id=$playerId';
     switch (jailMethod) {
       case JailMethod.doubles:
-        call += '?method=doubles';
+        call += '&method=doubles';
       case JailMethod.money:
-        call += '?method=money';
+        call += '&method=money';
       case JailMethod.card:
-        call += '?method=card';
+        call += '&method=card';
     }
     final response = await http.get(
       Uri.parse(call),

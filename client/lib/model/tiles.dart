@@ -100,6 +100,7 @@ class ImprovableTile extends Tile {
   int? tier;
   int? price;
   Color? tierColor;
+  bool? isMortgaged = false;
 
   @override
   void applyJson(Json json) {
@@ -107,6 +108,7 @@ class ImprovableTile extends Tile {
     title = json['title'] ?? title;
     tier = json['tier'] ?? tier;
     price = json['price'] ?? price;
+    isMortgaged = json['isMortgaged'] ?? isMortgaged;
   }
 
   @override
@@ -115,7 +117,8 @@ class ImprovableTile extends Tile {
         title != null &&
         title!.isNotEmpty &&
         tierColor != null &&
-        price != null;
+        price != null &&
+        isMortgaged != null;
   }
 
   @override
@@ -138,7 +141,7 @@ class ImprovableTile extends Tile {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                  title ?? "Placeholder title",
+                  title ?? 'Placeholder title',
                   textAlign: TextAlign.center,
                   style: Tile.boardTextStyle,
                 ),
@@ -196,7 +199,7 @@ class RailroadTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            title ?? "Placeholder title",
+            title ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
@@ -252,7 +255,7 @@ class UtilityTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            title ?? "Placeholder title",
+            title ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
@@ -301,7 +304,7 @@ class ChanceTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            title ?? "Placeholder title",
+            title ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
@@ -346,7 +349,7 @@ class CommunityChestTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            title ?? "Placeholder title",
+            title ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
@@ -397,13 +400,13 @@ class TaxTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            title ?? "Placeholder title",
+            title ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
           Image.asset('assets/images/$image'),
           Text(
-            payCommandText ?? "Placeholder price",
+            payCommandText ?? 'Placeholder price',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           )
@@ -451,7 +454,7 @@ class GoTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            upperText ?? "Placeholder title",
+            upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
@@ -511,17 +514,17 @@ class JailTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            upperText ?? "Placeholder title",
+            upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
           Text(
-            lowerText ?? "Placeholder lower text",
+            lowerText ?? 'Placeholder lower text',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
           Text(
-            visitingText ?? "Placeholder visiting text",
+            visitingText ?? 'Placeholder visiting text',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
@@ -568,12 +571,12 @@ class FreeParkingTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            upperText ?? "Placeholder title",
+            upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
           Text(
-            lowerText ?? "Placeholder lower text",
+            lowerText ?? 'Placeholder lower text',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
@@ -625,12 +628,12 @@ class GoToJailTile extends Tile {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            upperText ?? "Placeholder title",
+            upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
           Text(
-            lowerText ?? "Placeholder lower text",
+            lowerText ?? 'Placeholder lower text',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           ),
