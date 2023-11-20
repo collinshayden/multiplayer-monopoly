@@ -84,3 +84,9 @@ class ActiveGame extends GameState {}
 class ActiveTurnRollPhase extends GameState {}
 
 class ActiveTurnUpkeepPhase extends GameState {}
+
+class EventEnqueuement extends GameState {
+  EventEnqueuement({required this.events});
+
+  final Queue<Event> events;
+}
