@@ -1,3 +1,4 @@
+import 'package:client/model/events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:client/constants.dart';
@@ -54,7 +55,6 @@ class GameCubit extends Cubit<GameState> {
     if (useAdmin) {
       playerId = PlayerId('admin');
     }
-    late Json? localConfig;
     try {
       gameData = await endpointService.fetchData(playerId: playerId!);
       game.applyJson(gameData);
