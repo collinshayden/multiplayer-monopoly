@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:client/model/event.dart';
+import 'package:client/model/events.dart';
 
 void main() {
   late Event sut; // "System under test"

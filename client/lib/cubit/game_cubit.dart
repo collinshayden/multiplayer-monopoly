@@ -217,7 +217,7 @@ class GameCubit extends Cubit<GameState> {
 
   /// Method used in the admin buttons to change the clientPlayerId to the
   /// Game object's active player ID. Allows you to simulate multiple users.
-  void switchActivePlayerId(PlayerId id) {
-    clientPlayerId = id;
+  void switchToActivePlayerId() {
+    clientPlayerId = game.activePlayerId;
   }
 }
