@@ -72,7 +72,7 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
         widget.player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
     final isActivePlayer = widget.player.id ==
         BlocProvider.of<GameCubit>(context).game.activePlayerId;
-    final propertyList = PropertyList(assets: widget.player.assets);
+    final propertyList = PropertyList(player: widget.player);
 
     return Row(
       children: [

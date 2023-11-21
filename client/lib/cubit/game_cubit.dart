@@ -38,7 +38,7 @@ class GameCubit extends Cubit<GameState> {
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
-        print('updated state');
+        // print('updated state');
         if (clientPlayerId != null) {
           updateGameData();
         } else {

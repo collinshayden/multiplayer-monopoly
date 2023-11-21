@@ -11,10 +11,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PropertyInfo extends StatelessWidget {
   final Map<String, dynamic> property;
+  bool showButtons;
   var titleDeed;
 
   PropertyInfo({
     required this.property,
+    required this.showButtons,
   });
 
   @override
@@ -143,6 +145,11 @@ class PropertyInfo extends StatelessWidget {
         break;
       case _:
     }
+    // Only show the buttons to edit a property (mortgage/improve/degrade)
+    // if showButtons flag is set to true
+    if (showButtons) {
+      children.add(Text("Test for enabled edits"));
+    }
     final titalDeed = Container(
       padding: EdgeInsets.all(16),
       width: 275,
@@ -234,15 +241,16 @@ class PropertyInfo extends StatelessWidget {
 }
 
 class PropertyList extends StatelessWidget {
-  final List<Map<String, dynamic>> assets;
+  final Player player;
   bool isExpanded = false;
 
   PropertyList({
-    required this.assets,
+    required this.player,
   });
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> assets = player.assets;
     // Group properties by their 'group' property
     Map<String, List<Map<String, dynamic>>> groupedProperties = {};
 
@@ -260,10 +268,21 @@ class PropertyList extends StatelessWidget {
         itemBuilder: (context, index) {
           String group = groupedProperties.keys.elementAt(index);
           List<Map<String, dynamic>> properties = groupedProperties[group]!;
+          print(player.id);
+          print(BlocProvider.of<GameCubit>(context).clientPlayerId);
+          print(BlocProvider.of<GameCubit>(context).game.activePlayerId);
 
           // Create a unique ScrollController for each row
+          var showPropertyButtons =
+              player.id == BlocProvider.of<GameCubit>(context).clientPlayerId &&
+                  player.id ==
+                      BlocProvider.of<GameCubit>(context).game.activePlayerId;
           ScrollController scrollController = ScrollController();
-
+          var groupProperties = properties
+              .map((property) => PropertyInfo(
+                  property: property, showButtons: showPropertyButtons))
+              .toList();
+          // If the active player is also the client, add the
           return Scrollbar(
             controller: scrollController,
             trackVisibility: true,
@@ -271,9 +290,7 @@ class PropertyList extends StatelessWidget {
               controller: scrollController,
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: properties
-                    .map((property) => PropertyInfo(property: property))
-                    .toList(),
+                children: groupProperties,
               ),
             ),
           );
