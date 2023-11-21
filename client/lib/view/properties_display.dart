@@ -166,9 +166,11 @@ class PropertyInfo extends StatelessWidget {
                   children: [
                     Image.asset('assets/images/railroad.png',
                         height: 80, width: 80),
+                    SpacerLine(),
                     PaddedText(
                         text: property['name'] ?? 'Unknown Property',
                         bold: true),
+                    SpacerLine(),
                   ],
                 ),
               ),
@@ -302,37 +304,30 @@ class PropertyList extends StatelessWidget {
       groupedProperties[group]!.add(property);
     }
 
+    // Need a Container to limit height
     return Container(
-      // Wrap with a Container
-      height: MediaQuery.of(context)
-          .size
-          .height, // Set a fixed height or adjust as needed
+      height: MediaQuery.of(context).size.height,
       child: ListView.builder(
         itemCount: groupedProperties.length,
         itemBuilder: (context, index) {
           String group = groupedProperties.keys.elementAt(index);
           List<Map<String, dynamic>> properties = groupedProperties[group]!;
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Don't need to explicitly display the group
-              // Padding(
-              //   padding: EdgeInsets.all(16),
-              //   child: Text(
-              //     'Group: $group',
-              //     style: TextStyle(
-              //       fontSize: 20,
-              //       fontWeight: FontWeight.bold,
-              //     ),
-              //   ),
-              // ),
-              Column(
+          // Create a unique ScrollController for each row
+          ScrollController scrollController = ScrollController();
+
+          return Scrollbar(
+            controller: scrollController,
+            trackVisibility: true,
+            child: SingleChildScrollView(
+              controller: scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Row(
                 children: properties
                     .map((property) => PropertyInfo(property: property))
                     .toList(),
               ),
-            ],
+            ),
           );
         },
       ),

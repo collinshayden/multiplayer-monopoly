@@ -156,7 +156,7 @@ class _GameScreenState extends State<GameScreen> {
           Visibility(
             visible: isPlayerDisplayExpanded,
             child: Expanded(
-              flex: 1,
+              flex: 2,
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: PlayerDisplay(),
