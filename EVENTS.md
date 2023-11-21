@@ -147,7 +147,7 @@ Note: Want not a need
 	"winnerName": String
 }
 ```
-19.  `showBankruptcy`: Informational event to be broadcast
+19.  `showBankruptcy`: Informational event to be broadcast.
 ```
 {
 	"type": "endGame",
