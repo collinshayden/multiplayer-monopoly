@@ -33,7 +33,7 @@ class Game {
     if (json == null) return;
     monetaryUnitName = json['monetaryUnitName'] ?? monetaryUnitName;
     monetaryUnitSymbol = json['monetaryUnitSymbol'] ?? monetaryUnitSymbol;
-    if (json['tierColors'] != null) {
+    if (json.containsKey('tierColors')) {
       tierColors[0] = Color(int.parse(json['tierColors']['1'], radix: 16));
       tierColors[1] = Color(int.parse(json['tierColors']['2'], radix: 16));
       tierColors[2] = Color(int.parse(json['tierColors']['3'], radix: 16));
@@ -44,18 +44,15 @@ class Game {
       tierColors[7] = Color(int.parse(json['tierColors']['8'], radix: 16));
     }
 
-    if (json['activePlayerId'] != null) {
+    if (json.containsKey('activePlayerId')) {
       if (json['activePlayerId'] != '') {
         // TODO: Remove on server-side
         activePlayerId = PlayerId(json['activePlayerId'] as String);
       }
     }
 
-    // TODO: This is obsolete. Remove?
-    // lastRoll = lastRoll..applyJson(json['lastRoll']);
-
     // Load and update players to make client/server agree.
-    if (json['players'] != null) {
+    if (json.containsKey('players')) {
       // TODO: Find a more optimized way to do this
       // Clear out player information each time it is loaded.
       players.clear();
@@ -70,7 +67,7 @@ class Game {
     }
 
     // Load and update tiles
-    if (json['tiles'] != null) {
+    if (json.containsKey('tiles')) {
       for (Json tile in json['tiles']) {
         final id = tile['id'];
         // Updates if the tile already exists.
