@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:client/model/events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -115,7 +117,7 @@ class GameCubit extends Cubit<GameState> {
   void rollDice() async {
     emit(GameActionLoading());
     try {
-      final result = await endpointService.rollDice(clientPlayerId!);
+      await endpointService.rollDice(clientPlayerId!);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {
@@ -129,7 +131,7 @@ class GameCubit extends Cubit<GameState> {
   void endTurn() async {
     emit(GameActionLoading());
     try {
-      final result = await endpointService.endTurn(clientPlayerId!);
+      await endpointService.endTurn(clientPlayerId!);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {
@@ -141,7 +143,7 @@ class GameCubit extends Cubit<GameState> {
   void startGame() async {
     emit(GameActionLoading());
     try {
-      final result = await endpointService.startGame(playerId: clientPlayerId!);
+      await endpointService.startGame(playerId: clientPlayerId!);
       updateGameData();
       emit(GameActionSuccess(game: game));
       updateGameData();
@@ -160,7 +162,7 @@ class GameCubit extends Cubit<GameState> {
     }
     emit(GameActionLoading());
     try {
-      final result = await endpointService.reset(playerId: playerId);
+      await endpointService.reset(playerId: playerId);
       updateGameData(useAdmin: true);
       emit(GameActionSuccess(game: game));
     } catch (e) {
@@ -170,10 +172,9 @@ class GameCubit extends Cubit<GameState> {
 
   void buyProperty() async {
     emit(GameActionLoading());
-    final player = game.players[clientPlayerId];
+    final int tileId = game.players[clientPlayerId]!.location!;
     try {
-      final result = await endpointService.buyProperty(
-          clientPlayerId!, player?.location ?? 0);
+      await endpointService.buyProperty(clientPlayerId!, tileId);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {
@@ -184,8 +185,7 @@ class GameCubit extends Cubit<GameState> {
   void setImprovements(int tileId, int quantity) async {
     emit(GameActionLoading());
     try {
-      final result = await endpointService.setImprovements(
-          clientPlayerId!, tileId, quantity);
+      await endpointService.setImprovements(clientPlayerId!, tileId, quantity);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {
@@ -196,8 +196,7 @@ class GameCubit extends Cubit<GameState> {
   void setMortgage(int tileId, bool mortgage) async {
     emit(GameActionLoading());
     try {
-      final result =
-          await endpointService.setMortgage(clientPlayerId!, tileId, mortgage);
+      await endpointService.setMortgage(clientPlayerId!, tileId, mortgage);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {
@@ -208,8 +207,7 @@ class GameCubit extends Cubit<GameState> {
   void getOutOfJail(JailMethod jailMethod) async {
     emit(GameActionLoading());
     try {
-      final result =
-          await endpointService.getOutOfJail(clientPlayerId!, jailMethod);
+      await endpointService.getOutOfJail(clientPlayerId!, jailMethod);
       updateGameData();
       emit(GameActionSuccess(game: game));
     } catch (e) {
