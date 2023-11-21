@@ -12,6 +12,8 @@ sealed class EventState {}
 
 class _NullEvent extends EventState {}
 
+class InvalidEvent extends EventState {}
+
 class ShowEvent extends EventState {
   ShowEvent({required this.event});
 
