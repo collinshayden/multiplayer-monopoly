@@ -5,6 +5,72 @@
 
 import 'package:flutter/material.dart';
 
+class PaddedText extends StatelessWidget {
+  final String text;
+  final bool bold;
+
+  PaddedText({required this.text, this.bold = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Text(
+        text,
+        style:
+            TextStyle(fontWeight: bold ? FontWeight.bold : FontWeight.normal),
+      ),
+    );
+  }
+}
+
+/// Widget for common pattern of <Text> <Dollar amount>
+class LeftRightJustifyTextWidget extends StatelessWidget {
+  final String left;
+  final String right;
+
+  LeftRightJustifyTextWidget({required this.left, required this.right});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(left, textAlign: TextAlign.left),
+          Text(right, textAlign: TextAlign.right),
+        ],
+      ),
+    );
+  }
+}
+
+/// Widget for common pattern of <Left justified text> <Right justified text>
+class TextAmountWidget extends StatelessWidget {
+  final String text;
+  final int amount;
+
+  TextAmountWidget({required this.text, required this.amount});
+
+  @override
+  Widget build(BuildContext context) {
+    return LeftRightJustifyTextWidget(left: text, right: '\$$amount');
+  }
+}
+
+class SpacerLine extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      color: Colors.black, // You can customize the color as needed
+      margin:
+          EdgeInsets.symmetric(vertical: 8), // Adjust vertical margin as needed
+    );
+  }
+}
+
 /// Widget which provides a "tooltray" to house many other widgets/buttons.
 ///
 /// [children] are the list of widgets which are contained in the tooltray.

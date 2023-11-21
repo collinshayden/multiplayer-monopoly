@@ -39,7 +39,11 @@ class GameCubit extends Cubit<GameState> {
       const Duration(seconds: 1),
       (timer) async {
         print('updated state');
-        updateGameData();
+        if (clientPlayerId != null) {
+          updateGameData();
+        } else {
+          updateGameData(useAdmin: true);
+        }
       },
     );
   }

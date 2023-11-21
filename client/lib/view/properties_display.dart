@@ -4,62 +4,10 @@
 
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/asset_enums.dart';
+import 'package:client/view/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-class PaddedText extends StatelessWidget {
-  final String text;
-  final bool bold;
-
-  PaddedText({required this.text, this.bold = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(6.0),
-      child: Text(
-        text,
-        style:
-            TextStyle(fontWeight: bold ? FontWeight.bold : FontWeight.normal),
-      ),
-    );
-  }
-}
-
-/// Widget for common pattern of <Text> <Dollar amount>
-class TextAmountWidget extends StatelessWidget {
-  final String text;
-  final int amount;
-
-  TextAmountWidget({required this.text, required this.amount});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(text, textAlign: TextAlign.left),
-          Text('\$$amount', textAlign: TextAlign.right),
-        ],
-      ),
-    );
-  }
-}
-
-class SpacerLine extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 1,
-      color: Colors.black, // You can customize the color as needed
-      margin:
-          EdgeInsets.symmetric(vertical: 8), // Adjust vertical margin as needed
-    );
-  }
-}
 
 class PropertyInfo extends StatelessWidget {
   final Map<String, dynamic> property;
