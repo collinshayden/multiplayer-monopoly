@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:collection';
-
-import 'package:client/model/events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:client/constants.dart';
+import 'package:client/constants.dart'; // TODO: as Constants? (stackoverflow.com/questions/54069239)
+import 'package:client/model/events.dart';
 import 'package:client/model/game.dart';
 import 'package:client/model/player.dart';
-import 'package:client/cubit/file_service.dart';
-import 'package:client/cubit/endpoint_service.dart';
 import 'package:client/json_utils.dart';
+import 'endpoint_service.dart';
+import 'file_service.dart';
+import 'event_cubit.dart';
 
 part 'game_state.dart';
 
@@ -32,11 +32,19 @@ class GameCubit extends Cubit<GameState> {
   final FileService fileService;
   final EndpointService endpointService;
 
+  // A timer used to perform polling asynchronously.
   late Timer _timer;
 
+  /// A setup function used to configure and start polling.
+  ///
+  /// This function uses the [POLL_PERIOD] application constant to decide how
+  /// often to call [updateGameData], and will pass in `useAdmin: true` whenever
+  /// [clientPlayerId] is not set.
+  ///
+  /// TODO: Fix useAdmin parameter.
   void _startTimer() {
     _timer = Timer.periodic(
-      const Duration(seconds: 1),
+      POLL_PERIOD,
       (timer) async {
         // print('updated state');
         if (clientPlayerId != null) {
@@ -48,8 +56,14 @@ class GameCubit extends Cubit<GameState> {
     );
   }
 
-  void _stopTimer() {
+  /// Dispose of this Cubit's resources.
+  ///
+  /// This function simply cancels the polling [Timer] object and makes a call
+  /// to [BlocBase.close].
+  @override
+  Future<void> close() async {
     _timer.cancel();
+    await super.close();
   }
 
   /// Load local configuration files and emit the result.
@@ -59,9 +73,12 @@ class GameCubit extends Cubit<GameState> {
   /// [LocalConfigFailure] or [LocalConfigSuccess] will emitted dependent on
   /// whether the config was able to be loaded by the file service and
   /// deserialised into a [Game] object.
+  ///
+  /// This method only needs to be called once at the beginning of the game.
   void loadLocalConfig() async {
-    emit(LocalConfigLoading());
     await Future.delayed(const Duration(milliseconds: 250)); // TODO: Remove
+    emit(LocalConfigLoading());
+
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
@@ -73,16 +90,36 @@ class GameCubit extends Cubit<GameState> {
     emit(LocalConfigSuccess(game: game));
   }
 
+  /// Retrieve game data from the server.
+  ///
+  /// This method serves as an entry point for all data from the server. Beyond
+  /// a simple success status [bool], all other methods call endpoints return no
+  /// information about the current game's state.
+  ///
+  /// This method dispatches the list (queue) of incoming events to the
+  /// [EventCubit] through the [EventEnqueuement] state. The incoming JSON, if
+  /// it contains an `events` key, is translated into a Queue to be passed to
+  /// the [EventCubit]. The sole consumer of this state is the [EventCubit], and
+  /// thus all inter-Cubit communication about new events should go through this
+  /// state emission.
   void updateGameData({useAdmin = false}) async {
     emit(GameStateUpdateLoading());
-    late Json? gameData;
-    var playerId = clientPlayerId;
-    if (useAdmin) {
-      playerId = PlayerId('admin');
-    }
+
+    var playerId = useAdmin ? PlayerId('admin') : clientPlayerId;
+    Json? gameData;
     try {
       gameData = await endpointService.fetchData(playerId: playerId!);
       game.applyJson(gameData);
+      // Check whether any new events have arrived.
+      if (gameData.containsKey('events') &&
+          (gameData['events'] is List) &&
+          (gameData['events'] as List).isNotEmpty) {
+        // JSON translation into a Queue object
+        final Queue<Event> events = (gameData['events'] as List)
+            .map((e) => Event.fromJson(e))
+            .toList() as Queue<Event>;
+        emit(EventEnqueuement(events: events));
+      }
       emit(GameStateUpdateSuccess(game: game));
     } catch (e) {
       emit(GameStateUpdateFailure(object: e));
