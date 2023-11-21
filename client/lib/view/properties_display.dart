@@ -147,9 +147,70 @@ class PropertyInfo extends StatelessWidget {
     }
     // Only show the buttons to edit a property (mortgage/improve/degrade)
     // if showButtons flag is set to true
+    // Inside the showButtons block
+    List<Widget> propertyButtons = [];
     if (showButtons) {
-      children.add(Text("Test for enabled edits"));
+      if (property['isMortgaged']) {
+        // Mortgage Button
+        propertyButtons.add(
+          ElevatedButton(
+            onPressed: () {
+              BlocProvider.of<GameCubit>(context)
+                  .setMortgage(property['id'], false);
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red, // Adjust color accordingly
+              textStyle: TextStyle(color: Colors.white),
+            ),
+            child: Text('Unmortgage'),
+          ),
+        );
+      } else {
+        // Unmortgage Button
+        propertyButtons.add(
+          ElevatedButton(
+            onPressed: () {
+              BlocProvider.of<GameCubit>(context)
+                  .setMortgage(property['id'], true);
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green, // Adjust color accordingly
+              textStyle: TextStyle(color: Colors.white),
+            ),
+            child: Text('Mortgage'),
+          ),
+        );
+      }
+
+      // Improve Button (Placeholder)
+      propertyButtons.add(
+        ElevatedButton(
+          onPressed: () {
+            // Call BlocProvider.of<GameCubit>(context).improveProperty(property['id']);
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.blue, // Adjust color accordingly
+            textStyle: TextStyle(color: Colors.white),
+          ),
+          child: Text('Improve'),
+        ),
+      );
+
+      // Degrade Button (Placeholder)
+      propertyButtons.add(
+        ElevatedButton(
+          onPressed: () {
+            // Call BlocProvider.of<GameCubit>(context).degradeProperty(property['id']);
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.orange, // Adjust color accordingly
+            textStyle: TextStyle(color: Colors.white),
+          ),
+          child: Text('Degrade'),
+        ),
+      );
     }
+
     final titalDeed = Container(
       padding: EdgeInsets.all(16),
       width: 275,
@@ -157,19 +218,43 @@ class PropertyInfo extends StatelessWidget {
         border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: AspectRatio(
-        aspectRatio: 16 / 25,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: children,
-        ),
+      child: Stack(
+        children: [
+          AspectRatio(
+            aspectRatio: 16 / 25,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children,
+            ),
+          ),
+          if (property['isMortgaged'])
+            Positioned.fill(
+              child: Transform.rotate(
+                angle: -45 * 3.1415927 / 180,
+                child: Container(
+                  child: Center(
+                    child: Text(
+                      'Mortgaged',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
 
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(padding: EdgeInsets.all(16), child: titalDeed),
+      child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(children: [titalDeed, ...propertyButtons])),
     );
   }
 
