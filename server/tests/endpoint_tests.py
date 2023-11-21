@@ -30,7 +30,7 @@ class EndpointTests(TestCase):
 
     def setUp(self) -> None:
         """
-        Description:    Method used to clear game state between tests.
+        Description:    Method used to clear game data between tests.
         :return:        None.
         """
         game.__init__()
@@ -110,8 +110,8 @@ class EndpointTests(TestCase):
             self.assert200(response)
             self.assertEqual(expected, json.loads(response.data))
 
-    def test_state(self):
-        endpoint: str = "/game/state"
+    def test_data(self):
+        endpoint: str = "/game/data"
         self.fill_players(2)
         id1, id2 = game.players.keys()
         args: dict = {
@@ -120,7 +120,7 @@ class EndpointTests(TestCase):
         expected: dict = {
             "success": False
         }
-        # Verify game state can't be retrieved without a valid player ID
+        # Verify game data can't be retrieved without a valid player ID
         response = self.client.get(endpoint, query_string=args)
         self.assert200(response)
         self.assertEqual(expected, json.loads(response.data))
@@ -128,13 +128,13 @@ class EndpointTests(TestCase):
         game.start_game(id2)
         id1, id2 = game.turn_order
 
-        # Verify game state can't be retrieved without a valid player ID
+        # Verify game data can't be retrieved without a valid player ID
         response = self.client.get(endpoint, query_string={"player_id": "Bogus"})
         self.assert200(response)
         expected: dict = {"success": False}
 
         args = {"player_id": id1}
-        # Verify state is received with a valid player ID, and each player gets their expected event queue.
+        # Verify data is received with a valid player ID, and each player gets their expected event queue.
         player1_queue: list[dict] = [event.serialize() for event in game.event_queue[id1]]
         player2_queue: list[dict] = [event.serialize() for event in game.event_queue[id2]]
         response = self.client.get(endpoint, query_string={"player_id": id1})
@@ -476,7 +476,7 @@ class EndpointTests(TestCase):
         self.assertEqual(money, player.money)
         self.assertFalse(asset.is_mortgaged)
 
-        # Mortgage the property and verify state updates
+        # Mortgage the property and verify data updates
         query_string["mortgage"] = True
         expected["success"] = True
         response = self.client.get(endpoint, query_string=query_string)
@@ -495,7 +495,7 @@ class EndpointTests(TestCase):
         self.assertEqual(money, player.money)
         self.assertTrue(asset.is_mortgaged)
 
-        # Unmortgage the property and verify state updates
+        # Unmortgage the property and verify data updates
         query_string["mortgage"] = False
         expected["success"] = True
         response = self.client.get(endpoint, query_string=query_string)
@@ -584,7 +584,7 @@ class EndpointTests(TestCase):
         event: str = "endTurn"
         self.authenticate(endpoint, event)
 
-        # Verify game state updated accordingly after valid request
+        # Verify game data updated accordingly after valid request
         player_ids: list[str] = game.turn_order
         self.assertEqual(game.active_player_id, player_ids[1])
 

@@ -20,7 +20,7 @@ app.secret_key = SECRET_KEY
 game: Game = Game()
 
 
-@app.route("/game/state", methods=["GET"])
+@app.route("/game/data", methods=["GET"])
 def state():
     """
     Description:    Base endpoint which returns JSON formatted with the game state.
