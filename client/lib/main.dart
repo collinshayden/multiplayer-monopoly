@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:window_size/window_size.dart';
 
 import 'package:client/cubit/endpoint_service.dart';
 import 'package:client/cubit/event_cubit.dart';
@@ -6,9 +9,6 @@ import 'package:client/cubit/file_service.dart';
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/game.dart';
 import 'package:client/view/game_screen/game_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:window_size/window_size.dart';
 
 void main() {
   // Limit the window resizing (from stackoverflow.com/questions/69755091)
