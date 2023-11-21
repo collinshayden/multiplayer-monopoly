@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:client/model/events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
