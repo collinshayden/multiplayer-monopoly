@@ -1,16 +1,23 @@
+import 'dart:io';
+
 import 'package:client/cubit/endpoint_service.dart';
 import 'package:client/cubit/event_cubit.dart';
 import 'package:client/cubit/file_service.dart';
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/game.dart';
-import 'package:client/view/admin_panel.dart';
-import 'package:client/view/game_screen/board.dart';
 import 'package:client/view/game_screen/game_screen.dart';
-import 'package:client/view/player_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:window_size/window_size.dart';
 
 void main() {
+  // Limit the window resizing (from stackoverflow.com/questions/69755091)
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowTitle('Monopoly');
+    setWindowMinSize(const Size(1280, 720));
+  }
+
   runApp(MonopolyApp());
 }
 
