@@ -163,6 +163,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
   void _onPressed() {
     // Call the provided onPressed closure with the current text value
     widget.onPressed(_textController.text);
+    _textController.clear();
   }
 
   @override
