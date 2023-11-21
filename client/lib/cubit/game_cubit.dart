@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:client/model/events.dart';
@@ -17,7 +18,9 @@ class GameCubit extends Cubit<GameState> {
     required this.game,
     required this.fileService,
     required this.endpointService,
-  }) : super(GameInitial());
+  }) : super(GameInitial()) {
+    _startTimer();
+  }
 
   // Initialise game
   final Game game;
@@ -28,6 +31,22 @@ class GameCubit extends Cubit<GameState> {
   // Initialise services
   final FileService fileService;
   final EndpointService endpointService;
+
+  late Timer _timer;
+
+  void _startTimer() {
+    _timer = Timer.periodic(
+      const Duration(milliseconds: 500),
+      (timer) {
+        print('updated state');
+        updateGameData();
+      },
+    );
+  }
+
+  void _stopTimer() {
+    _timer.cancel();
+  }
 
   /// Load local configuration files and emit the result.
   ///
@@ -65,25 +84,6 @@ class GameCubit extends Cubit<GameState> {
       emit(GameStateUpdateFailure(object: e));
     }
   }
-
-  /// Load remote config from the server and emit the result.
-  ///
-  /// This function is currently set up to fetch the entire game object from the
-  /// server as JSON which is parsed into the client-side [Game] counterpart
-  /// object.
-  // void loadRemoteConfig() async {
-  //   // emit(RemoteConfigLoading());
-
-  //   late Json? remoteConfig;
-  //   try {
-  //     remoteConfig = await endpointService.getGameData();
-  //     game.applyJson(remoteConfig);
-  //   } catch (e) {
-  //     emit(RemoteConfigFailure());
-  //   }
-
-  // emit(RemoteConfigSuccess());
-  // }
 
   /// Method to get the location of the active player.
   int? getActivePlayerLocation() {
