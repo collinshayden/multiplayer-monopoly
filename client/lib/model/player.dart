@@ -30,6 +30,7 @@ class Player {
   String? displayName;
   int? money;
   int? location;
+  int? doublesStreak;
   int? turnsInJail;
   int? getOutOfJailFreeCards;
   List<Map<String, dynamic>> assets = [];
@@ -44,6 +45,7 @@ class Player {
     displayName = json['displayName'] ?? displayName;
     money = json['money'] ?? money;
     location = json['location'] ?? location;
+    doublesStreak = json['doublesStreak'] ?? doublesStreak;
     turnsInJail = json['turnsInJail'] ?? turnsInJail;
     getOutOfJailFreeCards =
         json['getOutOfJailFreeCards'] ?? getOutOfJailFreeCards;

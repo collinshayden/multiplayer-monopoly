@@ -412,8 +412,8 @@ class UpdateTests(unittest.TestCase):
         def verify_in_jail(player: Player):
             # Helper method to make perform checks that a player was freed from ail
             self.assertEqual(JAIL_LOCATION, player.location)
-            self.assertTrue(player.in_jail)
             self.assertEqual(3, player.turns_in_jail)
+            self.assertTrue(player.in_jail)
 
         player: Player = self.make_player()
         verify_free(player, START_LOCATION)
@@ -447,7 +447,10 @@ class UpdateTests(unittest.TestCase):
 
         # Send them to jail. Free them with an invalid method and with other parameter types.
         send_to_jail(player)
-        for method in [JailMethod.INVALID, 0, "foo", 3.5, []]:
+        verify_in_jail(player)
+        # Can't be an integer corresponding to one of the JailMethod indices
+        for method in [JailMethod.INVALID, -1, "foo", 3.5, []]:
+            print(method)
             player.update(LeaveJailUpdate(method))
             verify_in_jail(player)
 

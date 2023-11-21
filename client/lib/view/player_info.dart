@@ -96,6 +96,9 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
                     TextAmountWidget(
                         text: 'Money:', amount: widget.player.money ?? 0),
                     LeftRightJustifyTextWidget(
+                        left: 'Doubles Streak',
+                        right: '${widget.player.doublesStreak ?? 0}'),
+                    LeftRightJustifyTextWidget(
                         left: 'Turns in Jail',
                         right: '${widget.player.turnsInJail ?? 0}'),
                     LeftRightJustifyTextWidget(

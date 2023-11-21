@@ -2,6 +2,7 @@
 /// Author: Jordan Bourdeau
 /// Date: 11/20/2023
 
+import 'package:client/constants.dart';
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/model/asset_enums.dart';
 import 'package:client/view/widgets.dart';
@@ -9,10 +10,119 @@ import 'package:flutter/material.dart';
 import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PropertyInfo extends StatelessWidget {
+class UnmortgageButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  UnmortgageButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.red,
+        textStyle: TextStyle(color: Colors.white),
+        padding: EdgeInsets.symmetric(horizontal: 20),
+      ),
+      child: Text('Unmortgage'),
+    );
+  }
+}
+
+class MortgageButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  MortgageButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.green,
+        textStyle: TextStyle(color: Colors.white),
+        padding: EdgeInsets.symmetric(horizontal: 20),
+      ),
+      child: Text('Mortgage'),
+    );
+  }
+}
+
+// Widget used to build/degrade the number of improvements on a property
+class ImprovementsButton extends StatefulWidget {
+  final int currentImprovements;
+  final ValueChanged<int> onChanged;
+
+  ImprovementsButton({
+    required this.currentImprovements,
+    required this.onChanged,
+  });
+
+  @override
+  _ImprovementsButtonState createState() => _ImprovementsButtonState();
+}
+
+class _ImprovementsButtonState extends State<ImprovementsButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (widget.currentImprovements > 0)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                widget.onChanged(-1);
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red,
+                textStyle: TextStyle(color: Colors.white),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              child: Text('Degrade'),
+            ),
+          ),
+        SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            widget.currentImprovements.toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
+        if (widget.currentImprovements < MAX_NUM_IMPROVEMENTS)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                widget.onChanged(1);
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.green,
+                textStyle: TextStyle(color: Colors.white),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              child: Text('Improve'),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class PropertyInfo extends StatefulWidget {
   final Map<String, dynamic> property;
   bool showButtons;
-  var titleDeed;
 
   PropertyInfo({
     required this.property,
@@ -20,9 +130,17 @@ class PropertyInfo extends StatelessWidget {
   });
 
   @override
+  _PropertyInfoState createState() => _PropertyInfoState();
+}
+
+class _PropertyInfoState extends State<PropertyInfo> {
+  bool isMouseOver = false;
+
+  @override
   Widget build(BuildContext context) {
-    Color backgroundColor = getPropertyGroupColor(property);
+    Color backgroundColor = getPropertyGroupColor(widget.property);
     List<Widget> children = [];
+    Map<String, dynamic> property = widget.property;
 
     switch (property['type']) {
       case ('improvable'):
@@ -145,116 +263,108 @@ class PropertyInfo extends StatelessWidget {
         break;
       case _:
     }
-    // Only show the buttons to edit a property (mortgage/improve/degrade)
-    // if showButtons flag is set to true
-    // Inside the showButtons block
+
     List<Widget> propertyButtons = [];
-    if (showButtons) {
-      if (property['isMortgaged']) {
-        // Mortgage Button
-        propertyButtons.add(
-          ElevatedButton(
-            onPressed: () {
-              BlocProvider.of<GameCubit>(context)
-                  .setMortgage(property['id'], false);
-            },
-            style: ElevatedButton.styleFrom(
-              primary: Colors.red, // Adjust color accordingly
-              textStyle: TextStyle(color: Colors.white),
-            ),
-            child: Text('Unmortgage'),
-          ),
-        );
+    if (widget.showButtons) {
+      if (widget.property['isMortgaged']) {
+        propertyButtons.add(UnmortgageButton(onPressed: () {
+          BlocProvider.of<GameCubit>(context)
+              .setMortgage(property['id'], false);
+        }));
       } else {
-        // Unmortgage Button
-        propertyButtons.add(
-          ElevatedButton(
-            onPressed: () {
-              BlocProvider.of<GameCubit>(context)
-                  .setMortgage(property['id'], true);
-            },
-            style: ElevatedButton.styleFrom(
-              primary: Colors.green, // Adjust color accordingly
-              textStyle: TextStyle(color: Colors.white),
-            ),
-            child: Text('Mortgage'),
-          ),
-        );
+        propertyButtons.add(MortgageButton(onPressed: () {
+          BlocProvider.of<GameCubit>(context).setMortgage(property['id'], true);
+        }));
       }
-
-      // Improve Button (Placeholder)
-      propertyButtons.add(
-        ElevatedButton(
-          onPressed: () {
-            // Call BlocProvider.of<GameCubit>(context).improveProperty(property['id']);
-          },
-          style: ElevatedButton.styleFrom(
-            primary: Colors.blue, // Adjust color accordingly
-            textStyle: TextStyle(color: Colors.white),
-          ),
-          child: Text('Improve'),
-        ),
-      );
-
-      // Degrade Button (Placeholder)
-      propertyButtons.add(
-        ElevatedButton(
-          onPressed: () {
-            // Call BlocProvider.of<GameCubit>(context).degradeProperty(property['id']);
-          },
-          style: ElevatedButton.styleFrom(
-            primary: Colors.orange, // Adjust color accordingly
-            textStyle: TextStyle(color: Colors.white),
-          ),
-          child: Text('Degrade'),
-        ),
-      );
+      // Being able to upgrade a property only applies with a property that can
+      // be upgraded where all others of a color are owned.
+      if (widget.property['type'] == 'improvable' &&
+          widget.property['status'] != 'NO_MONOPOLY' &&
+          !widget.property['isMortgaged']) {
+        propertyButtons.add(ImprovementsButton(
+            currentImprovements: getNumImprovements(property['status']),
+            onChanged: (quantity) {
+              print("Changing improvements by $quantity improvements.");
+              BlocProvider.of<GameCubit>(context)
+                  .setImprovements(property['id'], quantity);
+            }));
+      }
     }
-
-    final titalDeed = Container(
-      padding: EdgeInsets.all(16),
-      width: 275,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Stack(
-        children: [
-          AspectRatio(
-            aspectRatio: 16 / 25,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
-            ),
-          ),
-          if (property['isMortgaged'])
-            Positioned.fill(
-              child: Transform.rotate(
-                angle: -45 * 3.1415927 / 180,
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      'Mortgaged',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
 
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(children: [titalDeed, ...propertyButtons])),
+        padding: EdgeInsets.all(16),
+        child: MouseRegion(
+          onEnter: (_) {
+            setState(() {
+              isMouseOver = true;
+            });
+          },
+          onExit: (_) {
+            setState(() {
+              isMouseOver = false;
+            });
+          },
+          child: Container(
+            padding: EdgeInsets.all(16),
+            width: 275,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Stack(
+              children: [
+                AspectRatio(
+                  aspectRatio: 16 / 25,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: children,
+                  ),
+                ),
+                if (widget.property['isMortgaged'])
+                  Positioned.fill(
+                    child: Transform.rotate(
+                      angle: -45 * 3.1415927 / 180,
+                      child: Container(
+                        child: Center(
+                          child: Text(
+                            'Mortgaged',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                if (isMouseOver && widget.showButtons)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.grey.withOpacity(0.45),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ...propertyButtons.map(
+                            (button) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: button,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -277,6 +387,28 @@ class PropertyInfo extends StatelessWidget {
 
     // Return the corresponding color or a default color
     return groupColors[propertyGroup] ?? Colors.grey;
+  }
+
+  int getNumImprovements(String status) {
+    switch (status) {
+      case 'NO_MONOPOLY':
+        return 0;
+      case 'MONOPOLY':
+        return 0;
+      case 'ONE_IMPROVEMENT':
+        return 1;
+      case 'TWO_IMPROVEMENTS':
+        return 2;
+      case 'THREE_IMPROVEMENTS':
+        return 3;
+      case 'FOUR_IMPROVEMENTS':
+        return 4;
+      case 'FIVE_IMPROVEMENTS':
+        return 5;
+      // Shouldn't get here, but just in case
+      case _:
+        return -1;
+    }
   }
 
   String getStatusText(Map<String, dynamic> property) {
