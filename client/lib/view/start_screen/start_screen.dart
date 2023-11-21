@@ -28,7 +28,7 @@ class StartScreen extends StatelessWidget {
 
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => GameScreen()),
+                  MaterialPageRoute(builder: (context) => WaitScreen()),
                 );
               },
             ),
