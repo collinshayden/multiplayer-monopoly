@@ -33,7 +33,6 @@ class Board extends StatelessWidget {
                 // TODO: Dice here
                 DisplayDice(),
                 // TODO: Activity feed here
-                const Tokens()
               ],
             ),
           ),
