@@ -66,15 +66,18 @@ class EndpointTests(TestCase):
 
         # Verify endpoint does nothing when there are players, but the game hasn't started
         player_ids: list[str] = self.fill_players(MIN_NUM_PLAYERS)
+
         # No player ID
         response = self.client.get(endpoint)
         self.assert200(response)
         self.assertEqual(expected, json.loads(response.data))
+
         # Invalid player ID
         query_string: dict = {"player_id": "invalid"}
         response = self.client.get(endpoint, query_string=query_string)
         self.assert200(response)
         self.assertEqual(expected, json.loads(response.data))
+
         # Valid player ID
         query_string["player_id"] = player_ids[0]
         response = self.client.get(endpoint, query_string=query_string)
@@ -104,6 +107,16 @@ class EndpointTests(TestCase):
                 self.assertEqual(expected, json.loads(response.data))
 
             # Verify endpoint updates active player when passed the active player ID
+            # End turn requires a last roll
+            player: Player = game.players[player_ids[0]]
+            if endpoint == "/game/end_turn":
+                game.event_history.append(Event({
+                    "type": "showRoll",
+                    "displayName": player.display_name,
+                    "playerId": player.id,
+                    "first": 1,
+                    "second": 2
+                }))
             expected["success"] = True
             query_string["player_id"] = game.active_player_id
             response = self.client.get(endpoint, query_string=query_string)
@@ -590,6 +603,14 @@ class EndpointTests(TestCase):
 
         query_string: dict = {"player_id": player_ids[1]}
         expected: dict = {"event": event, "success": True}
+        player: Player = game.players[player_ids[1]]
+        game.event_history.append(Event({
+            "type": "showRoll",
+            "displayName": player.display_name,
+            "playerId": player.id,
+            "first": 1,
+            "second": 2
+        }))
         response = self.client.get(endpoint, query_string=query_string)
         self.assert200(response)
         self.assertEqual(expected, json.loads(response.data))
