@@ -32,6 +32,15 @@ class StartScreen extends StatelessWidget {
                 );
               },
             ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<GameCubit>(context)
+                            .resetGame(useAdmin: true);
+                      },
+                      child: const Text('Reset')),
+            ),
           ],
         ),
       ),

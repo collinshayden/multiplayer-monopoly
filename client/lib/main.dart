@@ -41,7 +41,7 @@ class MonopolyApp extends StatelessWidget {
         theme: ThemeData(
           scaffoldBackgroundColor: backgroundColor,
         ),
-        home: StartScreen(),
+        home: GameScreen(),
       ),
     );
   }

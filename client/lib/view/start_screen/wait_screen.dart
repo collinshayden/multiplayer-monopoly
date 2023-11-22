@@ -17,7 +17,44 @@ class WaitScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(BlocProvider.of<GameCubit>(context).game.players.length.toString())
+            BlocBuilder<GameCubit, GameState>(
+              buildWhen: (previous, current) {
+                return current is GameStateUpdateSuccess;
+              },
+              builder: (context, state) {
+                if (state is GameStateUpdateSuccess) {
+                  // return Text(BlocProvider.of<GameCubit>(context).game.players.length.toString());
+                  List<Player> players = BlocProvider.of<GameCubit>(context)
+                      .game
+                      .players
+                      .values
+                      .toList();
+                  // final isClientPlayer = widget.player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
+                  if (players.length >= 2) {
+                    return Column(
+                      children: [
+                        PlayerDisplay(players: players),
+                        ElevatedButton(
+                            onPressed: () {
+                              BlocProvider.of<GameCubit>(context).startGame();
+                              BlocProvider.of<GameCubit>(context)
+                                  .updateGameData(useAdmin: true);
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GameScreen()));
+                            },
+                            child: Text("Start Game"))
+                      ],
+                    );
+                  } else {
+                    return PlayerDisplay(players: players);
+                  }
+                } else {
+                  return Text("");
+                }
+              },
+            ),
           ],
         ),
       ),
@@ -25,107 +62,31 @@ class WaitScreen extends StatelessWidget {
   }
 }
 
-// class PlayerDisplay extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<GameCubit, GameState>(
-//       builder: (context, state) {
-//         return PlayerInfoScreens(
-//           players:
-//               BlocProvider.of<GameCubit>(context).game.players.values.toList(),
-//         );
-//       },
-//     );
-//   }
-// }
+class PlayerDisplay extends StatelessWidget {
+  final List<Player> players;
 
-// class PlayerInfoScreens extends StatelessWidget {
-//   final List<Player> players;
-//   final Key? key;
+  PlayerDisplay({required this.players});
 
-//   PlayerInfoScreens({
-//     required this.players,
-//     this.key,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Players'),
-//       ),
-//       body: ListView.builder(
-//         itemCount: players.length,
-//         itemBuilder: (context, index) {
-//           return PlayerInfoExpansionTile(
-//             player: players[index],
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
-// class PlayerInfoExpansionTile extends StatefulWidget {
-//   final Player player;
-
-//   PlayerInfoExpansionTile({
-//     required this.player,
-//   });
-
-//   @override
-//   _PlayerInfoExpansionTileState createState() =>
-//       _PlayerInfoExpansionTileState();
-// }
-
-// class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
-//   bool isPropertiesExpanded = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final isClientPlayer =
-//         widget.player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
-//     final isActivePlayer = widget.player.id ==
-//         BlocProvider.of<GameCubit>(context).game.activePlayerId;
-
-//     return Row(
-//       children: [
-//         // Player Information Column
-//         Expanded(
-//           child: Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 ExpansionTile(
-//                   title: _buildTitle(
-//                     isClientPlayer,
-//                     isActivePlayer,
-//                     widget.player.displayName ?? 'N/A',
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-
-//   Widget _buildTitle(
-//       bool isClientPlayer, bool isActivePlayer, String displayName) {
-//     return Row(
-//       children: [
-//         if (isActivePlayer) ...[
-//           const Icon(Icons.arrow_forward, color: Colors.black),
-//           SizedBox(width: 4),
-//         ],
-//         if (isClientPlayer) ...[
-//           const Icon(Icons.star, color: Colors.amber),
-//           SizedBox(width: 4),
-//         ],
-//         Text(displayName),
-//       ],
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(
+        players.length,
+        (index) => Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            players[index].displayName ?? "N/A",
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.none
+                // You can add more styles here as per your design
+                ),
+          ),
+        ),
+      ),
+    );
+  }
+}
