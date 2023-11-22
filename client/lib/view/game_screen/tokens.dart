@@ -1,3 +1,4 @@
+import 'package:client/cubit/event_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:client/model/player.dart';
@@ -65,15 +66,14 @@ class Tokens extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO(aidan): This should be a stack containing [TokenManager]s.
     // TODO(aidan): Have token managers created for each player in the game (accessed through `BlocProvider.of...`)
-    final tokenManagers = <TokenManager>[];
-    for (int i = 0;
-        i < BlocProvider.of<GameCubit>(context).game.players.length;
-        i++) {
-      tokenManagers.add(TokenManager(
-          playerId: BlocProvider.of<GameCubit>(context).game.players[i]!.id,
-          tileId:
-              BlocProvider.of<GameCubit>(context).game.players[i]!.location!));
-    }
+
+    final players = BlocProvider.of<GameCubit>(context).game.players;
+    final List<Widget> tokenManagers = players.values
+        .map((v) => TokenManager(
+              playerId: v.id,
+              tileId: v.location ?? 0,
+            ))
+        .toList();
     return Stack(children: tokenManagers);
   }
 }
@@ -99,7 +99,6 @@ class TokenManager extends StatelessWidget {
   /// This function is called from within the build method when building either
   /// an [Align] widget.
   Alignment computeTokenAlignment({
-    required PlayerId playerId,
     required int tileId,
     inJail = false,
   }) {
@@ -145,10 +144,20 @@ class TokenManager extends StatelessWidget {
     // TODO(aidan): Place an Align in the root of this subtree (where the Placeholder currently is).
     // TODO(aidan): Tell the Align how to align its children using the `alignment` parameter.
     // TODO(aidan): Tell it what to use as a child (i.e., the Token widget).
-    return Align(
-      alignment: computeTokenAlignment(playerId: playerId, tileId: tileId),
-      child: Token(),
-    );
+    return BlocBuilder<EventCubit, EventState>(
+        buildWhen: (previous, current) {
+          return current is ShowMovePlayer;
+        },
+        builder: (context, state) => Align(
+              alignment: computeTokenAlignment(
+                tileId: BlocProvider.of<GameCubit>(context)
+                        .game
+                        .players[playerId]
+                        ?.location ??
+                    0,
+              ),
+              child: const Token(),
+            ));
   }
 }
 

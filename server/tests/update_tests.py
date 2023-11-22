@@ -450,7 +450,6 @@ class UpdateTests(unittest.TestCase):
         verify_in_jail(player)
         # Can't be an integer corresponding to one of the JailMethod indices
         for method in [JailMethod.INVALID, -1, "foo", 3.5, []]:
-            print(method)
             player.update(LeaveJailUpdate(method))
             verify_in_jail(player)
 

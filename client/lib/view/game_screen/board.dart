@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../cubit/game_cubit.dart';
+import 'tokens.dart';
 
 /// Provides a background and container for the board.
 class Board extends StatelessWidget {
@@ -29,6 +30,7 @@ class Board extends StatelessWidget {
                   ),
                 ),
                 // TODO: Tokens here
+                const Tokens(),
                 DisplayDice(),
                 // TODO: Activity feed here
                 ActivityFeed()
@@ -157,7 +159,7 @@ class TileOutlinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Compute dimensions and sizes
-    const lineWidth = 3.0;
+    final lineWidth = (1.4 / 502) * size.width;
     const lineColor = Colors.black;
     final innerSquareOffset = Offset(0.138 * size.width, 0.138 * size.height);
     final innerSquareSideLength = (1 - 2 * 0.138) * size.width;
