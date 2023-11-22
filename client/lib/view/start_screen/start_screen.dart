@@ -8,8 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class StartScreen extends StatelessWidget {
   const StartScreen({Key? key});
 
-    @override
+  @override
   Widget build(BuildContext context) {
+    // Load this here so it is already loaded when a player registers.
+    BlocProvider.of<GameCubit>(context).loadLocalConfig();
+
     return Scaffold(
       backgroundColor: Colors.grey,
       body: Column(
@@ -59,7 +62,8 @@ class StartScreen extends StatelessWidget {
                     child: const Text('Reset'),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15), // Adjust padding as needed
+                          horizontal: 30,
+                          vertical: 15), // Adjust padding as needed
                     ),
                   ),
                 ],

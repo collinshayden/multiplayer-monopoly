@@ -19,7 +19,6 @@ class GameCubit extends Cubit<GameState> {
     required this.fileService,
     required this.endpointService,
   }) : super(GameInitial()) {
-    loadLocalConfig();
     _startTimer();
   }
 
