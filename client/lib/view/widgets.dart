@@ -145,13 +145,15 @@ class TextInputWidget extends StatefulWidget {
   final double width;
   final String labelText;
   final String buttonText;
+  final bool center;
   final Function(String) onPressed;
 
   TextInputWidget(
       {required this.width,
       required this.labelText,
       required this.buttonText,
-      required this.onPressed});
+      required this.onPressed,
+      this.center = true});
 
   @override
   _TextInputWidgetState createState() => _TextInputWidgetState();
@@ -163,6 +165,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
   void _onPressed() {
     // Call the provided onPressed closure with the current text value
     widget.onPressed(_textController.text);
+    _textController.clear();
   }
 
   @override
@@ -179,10 +182,17 @@ class _TextInputWidgetState extends State<TextInputWidget> {
             ),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _onPressed,
-            child: Text(widget.buttonText),
-          ),
+          widget.center
+              ? Center(
+                  child: ElevatedButton(
+                    onPressed: _onPressed,
+                    child: Text(widget.buttonText),
+                  ),
+                )
+              : ElevatedButton(
+                  onPressed: _onPressed,
+                  child: Text(widget.buttonText),
+                )
         ],
       ),
     );

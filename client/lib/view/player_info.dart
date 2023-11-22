@@ -36,8 +36,10 @@ class PlayerInfoScreens extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Players'),
+        automaticallyImplyLeading: false,
       ),
       body: ListView.builder(
         itemCount: players.length,
@@ -106,24 +108,25 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
                         right: '${widget.player.getOutOfJailFreeCards ?? 0}'),
                     LeftRightJustifyTextWidget(
                         left: 'Active:', right: isActivePlayer ? 'Yes' : 'No'),
-                    HoverButton(
-                      onTap: () {
-                        setState(() {
-                          isPropertiesExpanded = !isPropertiesExpanded;
-                        });
-                      },
-                      label: isPropertiesExpanded
-                          ? 'Hide Properties'
-                          : "Show Properties",
-                      child: IconButton(
-                        icon: Icon(
-                          isPropertiesExpanded
-                              ? Icons.arrow_back
-                              : Icons.arrow_forward,
-                        ),
-                        onPressed: null,
-                      ),
-                    ),
+                    // Commented out since properties aren't expanding to the side.
+                    // HoverButton(
+                    //   onTap: () {
+                    //     setState(() {
+                    //       isPropertiesExpanded = !isPropertiesExpanded;
+                    //     });
+                    //   },
+                    //   label: isPropertiesExpanded
+                    //       ? 'Hide Properties'
+                    //       : "Show Properties",
+                    //   child: IconButton(
+                    //     icon: Icon(
+                    //       isPropertiesExpanded
+                    //           ? Icons.arrow_back
+                    //           : Icons.arrow_forward,
+                    //     ),
+                    //     onPressed: null,
+                    //   ),
+                    // ),
                     propertyList
                   ],
                 ),

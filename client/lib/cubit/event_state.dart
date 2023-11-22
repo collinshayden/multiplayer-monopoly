@@ -10,7 +10,8 @@ sealed class EventState {}
 
 // BASE EVENT STATES
 
-class _NullEvent extends EventState {}
+/// Empty initial event.
+class InitialEvent extends EventState {}
 
 class InvalidEvent extends EventState {}
 

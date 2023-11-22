@@ -1,6 +1,7 @@
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/view/admin_panel.dart';
 import 'package:client/view/game_screen/board.dart';
+import 'package:client/view/player_controls.dart';
 import 'package:client/view/player_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +16,8 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   bool isPlayerDisplayExpanded = true;
-  bool areAdminButtonsExpanded = true;
+  bool arePlayerControlsExpanded = true;
+  bool areAdminButtonsExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +85,28 @@ class _GameScreenState extends State<GameScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Admin Buttons',
+                        'Player Controls',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      Switch(
+                        value: arePlayerControlsExpanded,
+                        onChanged: (value) {
+                          setState(() {
+                            arePlayerControlsExpanded = value;
+                          });
+                        },
+                        activeColor: Colors.black,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Admin Controls',
                         style: TextStyle(
                           color: Colors.black,
                         ),
@@ -127,6 +150,13 @@ class _GameScreenState extends State<GameScreen> {
             child: Expanded(
               flex: 1,
               child: AdminPanel(),
+            ),
+          ),
+          Visibility(
+            visible: arePlayerControlsExpanded,
+            child: Expanded(
+              flex: 1,
+              child: PlayerControls(),
             ),
           ),
         ],

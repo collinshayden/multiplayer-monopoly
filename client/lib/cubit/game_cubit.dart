@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:collection';
-
-import 'package:client/model/events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:client/constants.dart';
+import 'package:client/constants.dart'; // TODO: as Constants? (stackoverflow.com/questions/54069239)
+import 'package:client/model/events.dart';
 import 'package:client/model/game.dart';
 import 'package:client/model/player.dart';
-import 'package:client/cubit/file_service.dart';
-import 'package:client/cubit/endpoint_service.dart';
 import 'package:client/json_utils.dart';
+import 'endpoint_service.dart';
+import 'file_service.dart';
+import 'event_cubit.dart';
 
 part 'game_state.dart';
 
@@ -32,11 +32,21 @@ class GameCubit extends Cubit<GameState> {
   final FileService fileService;
   final EndpointService endpointService;
 
+  bool _hasLoadedLocalConfig = false;
+
+  // A timer used to perform polling asynchronously.
   late Timer _timer;
 
+  /// A setup function used to configure and start polling.
+  ///
+  /// This function uses the [POLL_PERIOD] application constant to decide how
+  /// often to call [updateGameData], and will pass in `useAdmin: true` whenever
+  /// [clientPlayerId] is not set.
+  ///
+  /// TODO: Fix useAdmin parameter.
   void _startTimer() {
     _timer = Timer.periodic(
-      const Duration(seconds: 1),
+      POLL_PERIOD,
       (timer) async {
         // print('updated state');
         if (clientPlayerId != null) {
@@ -48,8 +58,14 @@ class GameCubit extends Cubit<GameState> {
     );
   }
 
-  void _stopTimer() {
+  /// Dispose of this Cubit's resources.
+  ///
+  /// This function simply cancels the polling [Timer] object and makes a call
+  /// to [BlocBase.close].
+  @override
+  Future<void> close() async {
     _timer.cancel();
+    await super.close();
   }
 
   /// Load local configuration files and emit the result.
@@ -59,9 +75,13 @@ class GameCubit extends Cubit<GameState> {
   /// [LocalConfigFailure] or [LocalConfigSuccess] will emitted dependent on
   /// whether the config was able to be loaded by the file service and
   /// deserialised into a [Game] object.
-  void loadLocalConfig() async {
+  ///
+  /// This method only needs to be called once at the beginning of the game.
+  Future<void> loadLocalConfig() async {
     emit(LocalConfigLoading());
     await Future.delayed(const Duration(milliseconds: 250)); // TODO: Remove
+    emit(LocalConfigLoading());
+
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
@@ -70,20 +90,40 @@ class GameCubit extends Cubit<GameState> {
       emit(LocalConfigFailure(object: e));
     }
 
+    _hasLoadedLocalConfig = true;
     emit(LocalConfigSuccess(game: game));
   }
 
-  void updateGameData({useAdmin = false}) async {
-    emit(GameStateUpdateLoading());
-    late Json? gameData;
-    var playerId = clientPlayerId;
-    if (useAdmin) {
-      playerId = PlayerId('admin');
-    }
+  /// Retrieve game data from the server.
+  ///
+  /// This method serves as an entry point for all data from the server. Beyond
+  /// a simple success status [bool], all other methods call endpoints return no
+  /// information about the current game's state.
+  ///
+  /// This method dispatches the list (queue) of incoming events to the
+  /// [EventCubit] through the [EventEnqueuement] state. The incoming JSON, if
+  /// it contains an `events` key, is translated into a Queue to be passed to
+  /// the [EventCubit]. The sole consumer of this state is the [EventCubit], and
+  /// thus all inter-Cubit communication about new events should go through this
+  /// state emission.
+  Future<void> updateGameData({useAdmin = false}) async {
+    assert(_hasLoadedLocalConfig);
+
+    var playerId = useAdmin ? PlayerId('admin') : clientPlayerId;
+    Json? gameData;
     try {
       gameData = await endpointService.fetchData(playerId: playerId!);
       game.applyJson(gameData);
-      emit(GameStateUpdateSuccess(game: game));
+      // Check whether any new events have arrived.
+      if (gameData.containsKey('events') &&
+          (gameData['events'] is List) &&
+          (gameData['events'] as List).isNotEmpty) {
+        // JSON translation into a Queue object
+        final List<Event> events =
+            (gameData['events'] as List).map((e) => Event.fromJson(e)).toList();
+        emit(EventEnqueuement(events: events));
+        emit(GameStateUpdateSuccess(game: game));
+      }
     } catch (e) {
       emit(GameStateUpdateFailure(object: e));
     }
@@ -101,7 +141,7 @@ class GameCubit extends Cubit<GameState> {
   /// game has not yet started. Because there is currently only one instance of
   /// the game running at a time, it is necessary to call [reset] to be able to
   /// join a game.
-  void registerPlayer({required String displayName}) async {
+  Future<void> registerPlayer({required String displayName}) async {
     emit(JoinGameLoading());
     try {
       final playerId =
@@ -117,7 +157,7 @@ class GameCubit extends Cubit<GameState> {
   /// Roll dice during a player's active turn.
   ///
   /// The client should only be able to call this
-  void rollDice() async {
+  Future<void> rollDice() async {
     emit(GameActionLoading());
     try {
       await endpointService.rollDice(clientPlayerId!);
@@ -130,7 +170,7 @@ class GameCubit extends Cubit<GameState> {
   /// End a player's turn.
   ///
   /// The client should only be able to call this
-  void endTurn() async {
+  Future<void> endTurn() async {
     emit(GameActionLoading());
     try {
       await endpointService.endTurn(clientPlayerId!);
@@ -141,7 +181,7 @@ class GameCubit extends Cubit<GameState> {
     // emit(ActiveTurnRollPhase());
   }
 
-  void startGame() async {
+  Future<void> startGame() async {
     emit(GameActionLoading());
     try {
       await endpointService.startGame(playerId: clientPlayerId!);
@@ -152,7 +192,7 @@ class GameCubit extends Cubit<GameState> {
   }
 
   // Hardcoded to use admin ID for now
-  void resetGame({bool useAdmin = false}) async {
+  Future<void> resetGame({bool useAdmin = false}) async {
     PlayerId playerId;
     if (useAdmin) {
       playerId = PlayerId('admin');
@@ -168,7 +208,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void buyProperty() async {
+  Future<void> buyProperty() async {
     emit(GameActionLoading());
     final int tileId = game.players[clientPlayerId]!.location!;
     try {
@@ -179,7 +219,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void setImprovements(int tileId, int quantity) async {
+  Future<void> setImprovements(int tileId, int quantity) async {
     emit(GameActionLoading());
     try {
       await endpointService.setImprovements(clientPlayerId!, tileId, quantity);
@@ -189,7 +229,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void setMortgage(int tileId, bool mortgage) async {
+  Future<void> setMortgage(int tileId, bool mortgage) async {
     emit(GameActionLoading());
     try {
       await endpointService.setMortgage(clientPlayerId!, tileId, mortgage);
@@ -199,7 +239,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void getOutOfJail(JailMethod jailMethod) async {
+  Future<void> getOutOfJail(JailMethod jailMethod) async {
     emit(GameActionLoading());
     try {
       await endpointService.getOutOfJail(clientPlayerId!, jailMethod);

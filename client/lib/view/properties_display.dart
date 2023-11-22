@@ -284,7 +284,7 @@ class _PropertyInfoState extends State<PropertyInfo> {
         propertyButtons.add(ImprovementsButton(
             currentImprovements: getNumImprovements(property['status']),
             onChanged: (quantity) {
-              print("Changing improvements by $quantity improvements.");
+              // print("Changing improvements by $quantity improvements.");
               BlocProvider.of<GameCubit>(context)
                   .setImprovements(property['id'], quantity);
             }));
@@ -485,9 +485,6 @@ class PropertyList extends StatelessWidget {
         itemBuilder: (context, index) {
           String group = groupedProperties.keys.elementAt(index);
           List<Map<String, dynamic>> properties = groupedProperties[group]!;
-          print(player.id);
-          print(BlocProvider.of<GameCubit>(context).clientPlayerId);
-          print(BlocProvider.of<GameCubit>(context).game.activePlayerId);
 
           // Create a unique ScrollController for each row
           var showPropertyButtons =
