@@ -1,8 +1,10 @@
 import 'package:client/model/tiles.dart';
+import 'package:client/view/game_screen/dice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../cubit/game_cubit.dart';
+import 'tokens.dart';
 
 /// Provides a background and container for the board.
 class Board extends StatelessWidget {
@@ -27,7 +29,9 @@ class Board extends StatelessWidget {
                   ),
                 ),
                 // TODO: Tokens here
+                const Tokens(),
                 // TODO: Dice here
+                DisplayDice(),
                 // TODO: Activity feed here
               ],
             ),

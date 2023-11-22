@@ -1,3 +1,4 @@
+import 'package:client/cubit/event_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client/cubit/game_cubit.dart';
@@ -142,29 +143,59 @@ void main() {
 class DisplayDice extends StatelessWidget {
   const DisplayDice({super.key});
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return BlocBuilder<GameCubit, GameState>(builder: (context, state) {
+  //     return LayoutBuilder(
+  //         builder: (BuildContext context, BoxConstraints constraints) {
+  //       return Align(
+  //         alignment: Alignment.center,
+  //         child: SizedBox(
+  //           width: constraints.maxWidth / 3,
+  //           child: Dice(
+  //               first: BlocProvider.of<GameCubit>(context)
+  //                       .game
+  //                       .lastRoll
+  //                       .first ??
+  //                   1,
+  //               second: BlocProvider.of<GameCubit>(context)
+  //                       .game
+  //                       .lastRoll
+  //                       .second ??
+  //                   1),
+  //         ),
+  //       );
+  //     });
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(builder: (context, state) {
-      return LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-        return Align(
-          alignment: Alignment.center,
-          child: SizedBox(
-            width: constraints.maxWidth / 7,
-            child: Dice(
-                first: BlocProvider.of<GameCubit>(context)
-                        .game
-                        .lastRoll
-                        .first ??
-                    1,
-                second: BlocProvider.of<GameCubit>(context)
-                        .game
-                        .lastRoll
-                        .second ??
-                    1),
-          ),
-        );
-      });
-    });
+    return BlocBuilder<EventCubit, EventState>(
+      buildWhen: (previous, current) {
+        return current is ShowRoll;
+      },
+      builder: (context, state) {
+        if (state is ShowRoll) {
+          return LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 250),
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: constraints.maxWidth / 3,
+                  child: Dice(
+                    first: state.event.parameters['first'],
+                    second: state.event.parameters['second'],
+                  ),
+                ),
+              ),
+            );
+          });
+        } // Added missing closing brace for 'if' block
+        return Container(); // Placeholder return if 'state' is not ShowRoll
+      },
+    );
   }
 }
