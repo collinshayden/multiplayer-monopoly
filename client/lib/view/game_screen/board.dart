@@ -1,4 +1,5 @@
 import 'package:client/model/tiles.dart';
+import 'package:client/view/game_screen/dice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +28,11 @@ class Board extends StatelessWidget {
                     foregroundPainter: TileOutlinePainter(),
                   ),
                 ),
+                // TODO: Tokens here
+                const Tokens(),
+                // TODO: Dice here
+                DisplayDice(),
+                // TODO: Activity feed here
                 const Tokens()
               ],
             ),

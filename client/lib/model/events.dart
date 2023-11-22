@@ -29,13 +29,18 @@ enum EventType {
 /// object `Map<String, dynamic>`.
 class Event {
   Event.fromJson(Json json) {
+    // Looks at the enum and decides what type to take on.
     for (var e in EventType.values) {
       if (e.name == json['type']) {
         type = e;
       }
     }
+    json.remove('type');
+    parameters = json;
   }
 
   EventType? type;
+
+  ///
   late Json parameters;
 }
