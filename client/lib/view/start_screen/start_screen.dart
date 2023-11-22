@@ -10,6 +10,9 @@ class StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Load this here so it is already loaded when a player registers.
+    BlocProvider.of<GameCubit>(context).loadLocalConfig();
+
     return Scaffold(
       backgroundColor: Colors.grey,
       body: Column(
