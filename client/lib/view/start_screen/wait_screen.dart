@@ -11,48 +11,72 @@ class WaitScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BlocBuilder<GameCubit, GameState>(
-              buildWhen: (previous, current) {
-                return current is GameStateUpdateSuccess;
-              },
-              builder: (context, state) {
-                if (state is GameStateUpdateSuccess) {
-                  // return Text(BlocProvider.of<GameCubit>(context).game.players.length.toString());
-                  List<Player> players = BlocProvider.of<GameCubit>(context)
-                      .game
-                      .players
-                      .values
-                      .toList();
-                  // final isClientPlayer = widget.player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
-                  if (players.length >= 2) {
-                    return Column(
-                      children: [
-                        PlayerDisplay(players: players),
-                        ElevatedButton(
-                            onPressed: () {
-                              BlocProvider.of<GameCubit>(context).startGame();
-
-                              Navigator.pushNamed(context, '/game');
-                            },
-                            child: Text("Start Game"))
-                      ],
-                    );
-                  } else {
-                    return PlayerDisplay(players: players);
-                  }
-                } else {
-                  return Text("");
-                }
-              },
+    return Scaffold(
+      backgroundColor: Colors.grey,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 100, bottom: 20),
+            child: Text(
+              'Welcome to Monopoly',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ],
-        ),
+          ),
+          const Text(
+            'Created by Aidan Bonner, Jordan Bourdeau, Hayden Collins, and Alex Hall',
+            style: TextStyle(
+              fontSize: 16,
+              fontStyle: FontStyle.normal,
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  BlocBuilder<GameCubit, GameState>(
+                    buildWhen: (previous, current) {
+                      return current is GameStateUpdateSuccess;
+                    },
+                    builder: (context, state) {
+                      if (state is GameStateUpdateSuccess) {
+                        List<Player> players =
+                            BlocProvider.of<GameCubit>(context)
+                                .game
+                                .players
+                                .values
+                                .toList();
+                        if (players.length >= 2) {
+                          return Column(
+                            children: [
+                              PlayerDisplay(players: players),
+                              ElevatedButton(
+                                onPressed: () {
+                                  BlocProvider.of<GameCubit>(context)
+                                      .startGame();
+                                  Navigator.pushNamed(context, '/game');
+                                },
+                                child: Text("Start Game"),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return PlayerDisplay(players: players);
+                        }
+                      } else {
+                        return Text("");
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -67,22 +91,39 @@ class PlayerDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(
-        players.length,
-        (index) => Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            players[index].displayName ?? "N/A",
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.black87,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Center(
+            child: Text(
+              'Connected Players',
+              style: TextStyle(
+                fontSize: 24, // Larger font size for the title
                 fontWeight: FontWeight.bold,
-                decoration: TextDecoration.none
-                // You can add more styles here as per your design
-                ),
+              ),
+            ),
           ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Center(
+            child: Column(
+              children: players.map((player) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      player.displayName ?? "N/A",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.normal,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  )).toList(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
