@@ -1,15 +1,14 @@
 # Event Handling
 
 The following events are expected to be received by the client with each being a self-contained JSON object with known fields:
-1. `showPlayerJoin`: A targeted event which indicates if display name input was successful and the player has joined the game. This event causes the client's screen to switch to a list of currently registered players. This event is the first event to be enqueued server-side into the Game object to confirm that they have successfully joined the queue.
+1. `showPlayerJoin`: A broadcast event which indicates that a player has joined the game. This event is the first event to be enqueued server-side into the Game object to confirm that they have successfully joined the queue.
 ```
 {
 	"type": "showPlayerJoin",
 	"displayName": String
 }
 ```
-
-2. `promptStartGame`: A prompt event once a player has joined asking them if they would like to start the game.
+1. `promptStartGame`: A prompt event once a player has joined asking them if they would like to start the game.
 ```
 {
 	"type": "promptStartGame"
