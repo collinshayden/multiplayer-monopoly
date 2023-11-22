@@ -20,6 +20,7 @@ class _AdminPanelState extends State<AdminPanel> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             title: const Text('Admin Buttons'),
+            automaticallyImplyLeading: false,
           ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
