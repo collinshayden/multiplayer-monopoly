@@ -59,6 +59,8 @@ class WaitScreen extends StatelessWidget {
                                   BlocProvider.of<GameCubit>(context)
                                       .startGame();
                                   Navigator.pushNamed(context, '/game');
+                                  BlocProvider.of<GameCubit>(context)
+                                      .updateGameData();
                                 },
                                 child: Text("Start Game"),
                               ),
@@ -108,18 +110,20 @@ class PlayerDisplay extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Center(
             child: Column(
-              children: players.map((player) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      player.displayName ?? "N/A",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.normal,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  )).toList(),
+              children: players
+                  .map((player) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          player.displayName ?? "N/A",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.normal,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
         ),

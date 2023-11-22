@@ -47,9 +47,6 @@ class StartScreen extends StatelessWidget {
                     onPressed: (value) {
                       BlocProvider.of<GameCubit>(context)
                           .registerPlayer(displayName: value);
-                      BlocProvider.of<GameCubit>(context)
-                          .updateGameData(useAdmin: true);
-
                       Navigator.pushNamed(context, '/wait');
                     },
                   ),
