@@ -51,9 +51,6 @@ class Game {
       }
     }
 
-    // TODO: This is obsolete. Remove?
-    // lastRoll = lastRoll..applyJson(json['lastRoll']);
-
     // Load and update players to make client/server agree.
     if (json['players'] != null) {
       // TODO: Find a more optimized way to do this

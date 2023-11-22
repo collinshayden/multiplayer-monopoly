@@ -121,6 +121,10 @@ class ImprovableTile extends Tile {
         isMortgaged != null;
   }
 
+  void setTierColor(Map<int, Color> colorMap) {
+    tierColor = colorMap[tier];
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(
@@ -156,10 +160,6 @@ class ImprovableTile extends Tile {
         ],
       ),
     );
-  }
-
-  void setTierColor(Map<int, Color> colorMap) {
-    tierColor = colorMap[tier];
   }
 }
 
