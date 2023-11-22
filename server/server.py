@@ -13,9 +13,10 @@ from flask import Flask, jsonify, request
 from random import randint
 from typing import Any
 
+DEBUG: bool = False
+
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
-
 game: Game = Game()
 
 
@@ -26,7 +27,8 @@ def state():
                     No authentication required to receive the game state.
     :return:        Returns json-formatted data with the game state.
     """
-    print(f"Client Request: \n{request.args}")
+    if DEBUG:
+        print(f"Client Request: \n{request.args}")
     global game
     try:
         player_id: str = request.args.get("player_id").lower()
@@ -42,9 +44,10 @@ def state():
         "events": game.flush_events(player_id)
     }
     client_bindings.update(game.to_dict())
-    print(f"Server Response:")
-    pprint(client_bindings["events"])
-    pprint(client_bindings["players"])
+    if DEBUG:
+        print(f"Server Response:")
+        pprint(client_bindings["events"])
+        pprint(client_bindings["players"])
     return jsonify(client_bindings)
 
 

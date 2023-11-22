@@ -105,7 +105,7 @@ class EndpointTests(TestCase):
 
             # Verify endpoint updates active player when passed the active player ID
             expected["success"] = True
-            query_string["player_id"] = player_ids[0]
+            query_string["player_id"] = game.active_player_id
             response = self.client.get(endpoint, query_string=query_string)
             self.assert200(response)
             self.assertEqual(expected, json.loads(response.data))

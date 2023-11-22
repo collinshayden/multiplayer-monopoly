@@ -38,8 +38,8 @@ class GameTests(unittest.TestCase):
         self.assertEqual([], game.event_queue[id1])  # Player1's queue should be empty
 
         # Test case: Non-empty event queue for a single player
-        event1: Event = Event({"name": "event1"})
-        event2: Event = Event({"name": "event2"})
+        event1: Event = Event({"type": "event1"})
+        event2: Event = Event({"type": "event2"})
         game._enqueue_event(event1, EventType.UPDATE, target=id1)
         game._enqueue_event(event2, EventType.PROMPT, target=id1)
 
@@ -49,8 +49,8 @@ class GameTests(unittest.TestCase):
         self.assertEqual([], game.event_queue[id1])  # Player1's queue should be cleared
 
         # Test case: Non-empty event queue for multiple players
-        event3 = Event({"name": "event3"})
-        event4 = Event({"name": "event4"})
+        event3 = Event({"type": "event3"})
+        event4 = Event({"type": "event4"})
         game._enqueue_event(event3, EventType.UPDATE, target=id1)
         game._enqueue_event(event4, EventType.PROMPT, target=id2)
 
@@ -82,13 +82,13 @@ class GameTests(unittest.TestCase):
         # Verify events are enqueued as expected
         # 2 from the UPDATE events when each player joined and then 2 from startGame + startTurn
         self.assertEqual(4, len(game.event_history))
-        event_names: list[str] = ["playerJoin", "playerJoin", "startGame", "startTurn"]
+        event_names: list[str] = ["showPlayerJoin", "showPlayerJoin", "showStartGame", "showStartTurn"]
         for event, name in zip(game.event_history, event_names):
-            self.assertEqual(event.parameters["name"], name)
+            self.assertEqual(event.parameters["type"], name)
         id1, id2 = game.turn_order
         # Verify the active player's last two events are startTurn and promptRoll
         last_2: list[Event] = game.event_queue[id1][-2:]
-        self.assertEqual(["startTurn", "promptRoll"], [event.parameters["name"] for event in last_2])
+        self.assertEqual(["showStartTurn", "promptRoll"], [event.parameters["type"] for event in last_2])
 
         # Verify it creates a turn order with the 2 ids and sets active player id and idx
         self.assertEqual(2, len(game.turn_order))
@@ -111,10 +111,10 @@ class GameTests(unittest.TestCase):
             self.assertEqual(display_name, game.players[id].display_name)
             self.assertEqual(id, game.players[id].id)
             self.assertEqual(i, len(game._players))
-            # Verify new player got a "startGamePrompt" event
+            # Verify new player got a "promptStartGame" event
             self.assertEqual(2, len(game.event_queue[id]))
-            self.assertEqual("playerJoin", game.event_queue[id][0].parameters["name"])
-            self.assertEqual("startGamePrompt", game.event_queue[id][1].parameters["name"])
+            self.assertEqual("showPlayerJoin", game.event_queue[id][0].parameters["type"])
+            self.assertEqual("promptStartGame", game.event_queue[id][1].parameters["type"])
 
             # For each new player, verify the event queue was updated accordingly for existing ones
             for n in range(i):
@@ -171,24 +171,28 @@ class GameTests(unittest.TestCase):
         # Verify they got all expected events
         self.assertEqual(4, len(game.event_queue[id1]))
         expected: dict = {
-            "name": "showRoll",
+            "type": "showRoll",
+            "displayName": player.display_name,
             "playerId": id1,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "first": roll.first,
+            "second": roll.second,
         }
         self.assertEqual(expected, game.event_queue[id1][0].parameters)
         expected = {
-            "name": "movePlayer",
-            "spaces": roll.total
+            "type": "showMovePlayer",
+            "directMovement": False,
+            "displayName": player.display_name,
+            "intoJail": False,
+            "outOfJail": False
         }
         self.assertEqual(expected, game.event_queue[id1][1].parameters)
         expected = {
-            "name": "promptPurchase",
+            "type": "promptPurchase",
+            "propertyName": game.tiles[3].name,
             "tileId": player.location
         }
         self.assertEqual(expected, game.event_queue[id1][2].parameters)
-        expected = {"name": "promptEndTurn"}
+        expected = {"type": "promptEndTurn"}
         self.assertEqual(expected, game.event_queue[id1][3].parameters)
         game.end_turn(id1)
         # Clear out event queue
@@ -215,22 +219,25 @@ class GameTests(unittest.TestCase):
         self.assertTrue(player2.roll_again)
         # Verify they got all expected events
         self.assertEqual(4, len(game.event_queue[id2]))
-        expected = {
-            "name": "showRoll",
+        expected: dict = {
+            "type": "showRoll",
+            "displayName": player2.display_name,
             "playerId": id2,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "first": roll.first,
+            "second": roll.second,
         }
         self.assertEqual(expected, game.event_queue[id2][0].parameters)
         expected = {
-            "name": "movePlayer",
-            "spaces": roll.total
+            "type": "showMovePlayer",
+            "directMovement": False,
+            "displayName": player2.display_name,
+            "intoJail": False,
+            "outOfJail": False
         }
         self.assertEqual(expected, game.event_queue[id2][1].parameters)
         # Since this is randomized we don't know exactly what card will be drawn.
-        self.assertEqual("showCardDraw", game.event_queue[id2][2].parameters["name"])
-        expected = {"name": "promptRoll"}
+        self.assertEqual("showCardDraw", game.event_queue[id2][2].parameters["type"])
+        expected = {"type": "promptRoll"}
         self.assertEqual(expected, game.event_queue[id2][3].parameters)
         self.assertEqual(1, len(game.community_chest_deck.discard))
         self.assertEqual(start_length - 1, len(game.community_chest_deck.stack))
@@ -245,20 +252,23 @@ class GameTests(unittest.TestCase):
         self.assertEqual(2, len(game.event_history))
         self.assertEqual(2, len(game.event_queue[id1]))
         self.assertEqual(3, len(game.event_queue[id2]))
-        expected = {
-            "name": "showRoll",
+        expected: dict = {
+            "type": "showRoll",
+            "displayName": player2.display_name,
             "playerId": id2,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "first": roll.first,
+            "second": roll.second,
         }
         self.assertEqual(expected, game.event_queue[id2][0].parameters)
         expected = {
-            "name": "movePlayer",
-            "spaces": roll.total
+            "type": "showMovePlayer",
+            "directMovement": False,
+            "displayName": player2.display_name,
+            "intoJail": False,
+            "outOfJail": False
         }
         self.assertEqual(expected, game.event_queue[id2][1].parameters)
-        expected = {"name": "promptEndTurn"}
+        expected = {"type": "promptEndTurn"}
         self.assertEqual(expected, game.event_queue[id2][2].parameters)
         game.end_turn(id2)
         self.assertEqual(id1, game.active_player_id)
@@ -273,24 +283,28 @@ class GameTests(unittest.TestCase):
         self.assertEqual(5, player.location)
         self.assertEqual(4, len(game.event_queue[id1]))
         expected: dict = {
-            "name": "showRoll",
+            "type": "showRoll",
+            "displayName": player.display_name,
             "playerId": id1,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "first": roll.first,
+            "second": roll.second,
         }
         self.assertEqual(expected, game.event_queue[id1][0].parameters)
         expected = {
-            "name": "movePlayer",
-            "spaces": roll.total
+            "type": "showMovePlayer",
+            "directMovement": False,
+            "displayName": player.display_name,
+            "intoJail": False,
+            "outOfJail": False
         }
         self.assertEqual(expected, game.event_queue[id1][1].parameters)
         expected = {
-            "name": "promptPurchase",
+            "type": "promptPurchase",
+            "propertyName": game.tiles[player.location].name,
             "tileId": player.location
         }
         self.assertEqual(expected, game.event_queue[id1][2].parameters)
-        expected = {"name": "promptRoll"}
+        expected = {"type": "promptRoll"}
         self.assertEqual(expected, game.event_queue[id1][3].parameters)
         self.assertEqual(1, player.doubles_streak)
         self.assertTrue(player.roll_again)
@@ -306,20 +320,23 @@ class GameTests(unittest.TestCase):
         self.assertEqual(17, player.location)
         self.assertEqual(4, len(game.event_queue[id1]))
         expected: dict = {
-            "name": "showRoll",
+            "type": "showRoll",
+            "displayName": player.display_name,
             "playerId": id1,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "first": roll.first,
+            "second": roll.second,
         }
         self.assertEqual(expected, game.event_queue[id1][0].parameters)
         expected = {
-            "name": "movePlayer",
-            "spaces": roll.total
+            "type": "showMovePlayer",
+            "directMovement": False,
+            "displayName": player.display_name,
+            "intoJail": False,
+            "outOfJail": False
         }
         self.assertEqual(expected, game.event_queue[id1][1].parameters)
-        self.assertEqual("showCardDraw", game.event_queue[id1][2].parameters["name"])
-        expected = {"name": "promptRoll"}
+        self.assertEqual("showCardDraw", game.event_queue[id1][2].parameters["type"])
+        expected = {"type": "promptRoll"}
         self.assertEqual(expected, game.event_queue[id1][3].parameters)
         self.assertEqual(2, player.doubles_streak)
         self.assertTrue(player.roll_again)
@@ -335,27 +352,30 @@ class GameTests(unittest.TestCase):
         self.assertEqual(JAIL_LOCATION, player.location)
         self.assertEqual(4, len(game.event_queue[id1]))
         expected: dict = {
-            "name": "showRoll",
+            "type": "showRoll",
+            "displayName": player.display_name,
             "playerId": id1,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "first": roll.first,
+            "second": roll.second,
         }
         self.assertEqual(expected, game.event_queue[id1][0].parameters)
-        expected: dict = {
-            "name": "goToJail",
-            "player": game.players[id1].display_name
+        expected = {
+            "type": "showMovePlayer",
+            "directMovement": True,
+            "displayName": player.display_name,
+            "intoJail": True,
+            "outOfJail": False
         }
         self.assertEqual(expected, game.event_queue[id1][1].parameters)
         # Verify the endTurn and startTurn events were automatically performed
         expected: dict = {
-            "name": "endTurn",
-            "player": player.display_name
+            "type": "showEndTurn",
+            "displayName": player.display_name
         }
         self.assertEqual(expected, game.event_queue[id1][2].parameters)
         expected: dict = {
-            "name": "startTurn",
-            "player": player2.display_name
+            "type": "showStartTurn",
+            "displayName": player2.display_name
         }
         self.assertEqual(expected, game.event_queue[id1][3].parameters)
         self.assertTrue(player.in_jail)
@@ -389,26 +409,30 @@ class GameTests(unittest.TestCase):
         self.assertFalse(player2.in_jail)
         self.assertEqual(STARTING_MONEY + game.tiles[38].amount, player2.money)
         # Verify events were enqueued successfully
-        expected = {
-            "name": "showRoll",
+        expected: dict = {
+            "type": "showRoll",
+            "displayName": player2.display_name,
             "playerId": id2,
-            "die1": roll.first,
-            "die2": roll.second,
-            "doubles": roll.is_doubles
+            "first": roll.first,
+            "second": roll.second,
         }
         self.assertEqual(expected, game.event_queue[id2][0].parameters)
         expected = {
-            "name": "movePlayer",
-            "spaces": roll.total
+            "type": "showMovePlayer",
+            "directMovement": False,
+            "displayName": player2.display_name,
+            "intoJail": False,
+            "outOfJail": False
         }
         self.assertEqual(expected, game.event_queue[id2][1].parameters)
         expected = {
-            "name": "showTax",
+            "type": "showTax",
             "amount": game.tiles[38].amount,
-            "tileId": 38
+            "displayName": player2.display_name,
+            "taxType": "Luxury Tax"
         }
         self.assertEqual(expected, game.event_queue[id2][2].parameters)
-        expected = {"name": "promptEndTurn"}
+        expected = {"type": "promptEndTurn"}
         self.assertEqual(expected, game.event_queue[id2][3].parameters)
         game.end_turn(id2)
         # Clear out event queue
@@ -458,8 +482,9 @@ class GameTests(unittest.TestCase):
         # Verify a showPurchase event was created
         for id in ids:
             self.assertEqual(1, len(game.event_queue[id]))
-            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
-            self.assertEqual(3, game.event_queue[id][-1].parameters["tileId"])
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["type"])
+            self.assertEqual(player1.display_name, game.event_queue[id][-1].parameters["displayName"])
+            self.assertEqual(baltic.name, game.event_queue[id][-1].parameters["propertyName"])
         self.assertEqual(1, len(game.event_history))
 
         # Verify property cannot be bought again and that nothing changed
@@ -470,8 +495,9 @@ class GameTests(unittest.TestCase):
         # Verify nothing has changed
         for id in ids:
             self.assertEqual(1, len(game.event_queue[id]))
-            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
-            self.assertEqual(3, game.event_queue[id][-1].parameters["tileId"])
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["type"])
+            self.assertEqual(player1.display_name, game.event_queue[id][-1].parameters["displayName"])
+            self.assertEqual(baltic.name, game.event_queue[id][-1].parameters["propertyName"])
         self.assertEqual(1, len(game.event_history))
 
         # Verify buying a monopoly updates the property status
@@ -485,8 +511,9 @@ class GameTests(unittest.TestCase):
         # Verify purchase is reflected in event queue
         for id in ids:
             self.assertEqual(2, len(game.event_queue[id]))
-            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
-            self.assertEqual(1, game.event_queue[id][-1].parameters["tileId"])
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["type"])
+            self.assertEqual(player1.display_name, game.event_queue[id][-1].parameters["displayName"])
+            self.assertEqual(mediterranean.name, game.event_queue[id][-1].parameters["propertyName"])
         self.assertEqual(2, len(game.event_history))
 
         # Verify player cannot buy a property exceeding their money
@@ -506,8 +533,9 @@ class GameTests(unittest.TestCase):
         # Verify nothing changed
         for id in ids:
             self.assertEqual(2, len(game.event_queue[id]))
-            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["name"])
-            self.assertEqual(1, game.event_queue[id][-1].parameters["tileId"])
+            self.assertEqual("showPurchase", game.event_queue[id][-1].parameters["type"])
+            self.assertEqual(player1.display_name, game.event_queue[id][-1].parameters["displayName"])
+            self.assertEqual(mediterranean.name, game.event_queue[id][-1].parameters["propertyName"])
         self.assertEqual(2, len(game.event_history))
 
     def test_improvements(self):
@@ -586,8 +614,8 @@ class GameTests(unittest.TestCase):
         # Verify each improvement enqueued an event to the players and event history
         for player_id in ids:
             self.assertEqual(5 * len(improvable_ids), len(game.event_queue[player_id]))
-            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["name"])
-            self.assertEqual(1, game.event_queue[player_id][-1].parameters["number"])
+            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["type"])
+            self.assertEqual(1, game.event_queue[player_id][-1].parameters["changeInImprovements"])
         self.assertEqual(5 * len(improvable_ids), len(game.event_history))
 
         # Verify non-monopoly property cannot be improved OR degraded
@@ -608,7 +636,7 @@ class GameTests(unittest.TestCase):
         for player_id in ids:
             self.assertEqual(5 * len(improvable_ids) + 1, len(game.event_queue[player_id]))
             # Purchased Baltic avenue
-            self.assertEqual("showPurchase", game.event_queue[player_id][-1].parameters["name"])
+            self.assertEqual("showPurchase", game.event_queue[player_id][-1].parameters["type"])
         self.assertEqual(5 * len(improvable_ids) + 1, len(game.event_history))
 
         # Degrade ny_ave to MONOPOLY and verify other 2 properties were degraded to ONE_IMPROVEMENT
@@ -621,8 +649,8 @@ class GameTests(unittest.TestCase):
         # Verify there has been one additional event enqueued.
         for player_id in ids:
             self.assertEqual(5 * len(improvable_ids) + 2, len(game.event_queue[player_id]))
-            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["name"])
-            self.assertEqual(-5, game.event_queue[player_id][-1].parameters["number"])
+            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["type"])
+            self.assertEqual(-5, game.event_queue[player_id][-1].parameters["changeInImprovements"])
         self.assertEqual(5 * len(improvable_ids) + 2, len(game.event_history))
 
         # Verify other properties cannot be degraded by 2 since it would drop them below MONOPOLY
@@ -635,8 +663,8 @@ class GameTests(unittest.TestCase):
         # Verify nothing changed.
         for player_id in ids:
             self.assertEqual(5 * len(improvable_ids) + 2, len(game.event_queue[player_id]))
-            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["name"])
-            self.assertEqual(-5, game.event_queue[player_id][-1].parameters["number"])
+            self.assertEqual("showImprovements", game.event_queue[player_id][-1].parameters["type"])
+            self.assertEqual(-5, game.event_queue[player_id][-1].parameters["changeInImprovements"])
         self.assertEqual(5 * len(improvable_ids) + 2, len(game.event_history))
 
     def test_mortgage(self):
@@ -699,12 +727,12 @@ class GameTests(unittest.TestCase):
         for id in ids:
             self.assertEqual(1, len(game.event_queue[id]))
             event: Event = game.event_queue[id][-1]
-            self.assertEqual("showMortgageChange", event.parameters["name"])
-            self.assertEqual(True, event.parameters["mortgaged"])
+            self.assertEqual("showMortgage", event.parameters["type"])
+            self.assertEqual(True, event.parameters["isMortgaged"])
         self.assertEqual(1, len(game.event_history))
         event: Event = game.event_history[-1]
-        self.assertEqual("showMortgageChange", event.parameters["name"])
-        self.assertEqual(True, event.parameters["mortgaged"])
+        self.assertEqual("showMortgage", event.parameters["type"])
+        self.assertEqual(True, event.parameters["isMortgaged"])
 
         # This will unmortgage the property at 10% interest
         game.mortgage(id1, 39, False)
@@ -718,14 +746,21 @@ class GameTests(unittest.TestCase):
         for id in ids:
             self.assertEqual(2, len(game.event_queue[id]))
             event: Event = game.event_queue[id][-1]
-            self.assertEqual("showMortgageChange", event.parameters["name"])
-            self.assertEqual(False, event.parameters["mortgaged"])
+            self.assertEqual("showMortgage", event.parameters["type"])
+            self.assertEqual(False, event.parameters["isMortgaged"])
         self.assertEqual(2, len(game.event_history))
         event: Event = game.event_history[-1]
-        self.assertEqual("showMortgageChange", event.parameters["name"])
-        self.assertEqual(False, event.parameters["mortgaged"])
+        self.assertEqual("showMortgage", event.parameters["type"])
+        self.assertEqual(False, event.parameters["isMortgaged"])
 
-        # Transition to next player
+        # Transition to next player (must enqueue roll event)
+        game.event_history.append(Event({
+            "type": "showRoll",
+            "displayName": player1.display_name,
+            "playerId": player1.id,
+            "first": 1,
+            "second": 2
+        }))
         game.end_turn(id1)
         # Clear out event queue
         for id in ids:
@@ -740,6 +775,7 @@ class GameTests(unittest.TestCase):
         self.assertFalse(boardwalk.is_mortgaged)
 
         # Verify player1 can't mortgage since it is not their turn
+        self.assertEqual(game.active_player_id, id2)
         self.assertFalse(game.mortgage(id1, 39, True))
         self.assertEqual(expected_money, player1.money)
         self.assertIs(player1, boardwalk.owner)
@@ -794,7 +830,8 @@ class GameTests(unittest.TestCase):
         self.assertEqual(0, player.doubles_streak)
         for id in ids:
             self.assertEqual(1, len(game.event_queue[id]))
-            self.assertEqual("showFreeFromJail", game.event_queue[id][0].parameters["name"])
+            self.assertEqual("showMovePlayer", game.event_queue[id][0].parameters["type"])
+            self.assertTrue(game.event_queue[id][0].parameters["outOfJail"])
 
         # Send them back to jail then get them out using money
         player.update(GoToJailUpdate())
@@ -806,7 +843,9 @@ class GameTests(unittest.TestCase):
         for id in ids:
             self.assertEqual(2, len(game.event_queue[id]))
             for i in range(2):
-                self.assertEqual("showFreeFromJail", game.event_queue[id][i].parameters["name"])
+                self.assertEqual("showMovePlayer", game.event_queue[id][i].parameters["type"])
+            self.assertTrue(game.event_queue[id][0].parameters["outOfJail"])
+
 
         # Send them back to jail then get them out using 'doubles'
         # Note: roll_dice handles DOUBLES condition.
@@ -819,7 +858,9 @@ class GameTests(unittest.TestCase):
         for id in ids:
             self.assertEqual(3, len(game.event_queue[id]))
             for i in range(3):
-                self.assertEqual("showFreeFromJail", game.event_queue[id][i].parameters["name"])
+                self.assertEqual("showMovePlayer", game.event_queue[id][i].parameters["type"])
+            self.assertTrue(game.event_queue[id][0].parameters["outOfJail"])
+
 
     def test_end_turn(self):
         game: Game = Game()
@@ -837,51 +878,82 @@ class GameTests(unittest.TestCase):
             game.event_queue[id] = []
 
         # Nothing should happen since they aren't the active player
-        game.end_turn(id2)
+        self.assertFalse(game.end_turn(id2))
         self.assertEqual(game.active_player_id, id1)
         for id in ids:
             self.assertEqual(0, len(game.event_queue[id]))
         self.assertEqual(0, len(game.event_history))
 
-        # Progresses the next player
-        game.end_turn(id1)
+        # Can't end the turn since the player hasn't gone yet
+        self.assertFalse(game.end_turn(id1))
+        self.assertEqual(game.active_player_id, id1)
+
+        # Simulate a roll
+        player1: Player = game.players[id1]
+        game.event_history.append(Event({
+            "type": "showRoll",
+            "displayName": player1.display_name,
+            "playerId": player1.id,
+            "first": 1,
+            "second": 2
+        }))
+
+        self.assertTrue(game.end_turn(id1))
         self.assertEqual(game.active_player_id, id2)
 
         # Ensure the endTurn and startTurn events are correctly enqueued
         expected_end: dict = {
-            "name": "endTurn",
-            "player": game.players[id1].display_name
+            "type": "showEndTurn",
+            "displayName": game.players[id1].display_name
         }
         expected_start: dict = {
-            "name": "startTurn",
-            "player": game.players[id2].display_name
+            "type": "showStartTurn",
+            "displayName": game.players[id2].display_name
         }
-        for id in [id1, id3]:
-            self.assertEqual(2, len(game.event_queue[id]))  # Two events for the player ending the turn
-            self.assertEqual(expected_end, game.event_queue[id][0].parameters)
-            self.assertEqual(expected_start, game.event_queue[id][1].parameters)
-        self.assertEqual(2, len(game.event_history))
 
+        for id in [id1, id3]:
+            self.assertEqual(3, len(game.event_queue[id]))  # Two events for the player ending the turn
+            self.assertEqual(expected_end, game.event_queue[id][0].parameters)
+            # Skip manually enqueued event
+            self.assertEqual(expected_start, game.event_queue[id][2].parameters)
+        self.assertEqual(4, len(game.event_history))
 
         # Verify next player has 1 additional event for the promptRoll
-        self.assertEqual(3, len(game.event_queue[id2]))  # Two events for the player ending the turn
-        self.assertEqual("endTurn", game.event_queue[id2][0].parameters["name"])
-        self.assertEqual("startTurn", game.event_queue[id2][1].parameters["name"])
-        self.assertEqual("promptRoll", game.event_queue[id2][2].parameters["name"])
+        self.assertEqual(4, len(game.event_queue[id2]))  # Two events for the player ending the turn
+        self.assertEqual("showEndTurn", game.event_queue[id2][0].parameters["type"])
+        # Skip manually enqueued event
+        self.assertEqual("showStartTurn", game.event_queue[id2][2].parameters["type"])
+        self.assertEqual("promptRoll", game.event_queue[id2][3].parameters["type"])
 
         # Does nothing since they aren't the active player
         game.end_turn(id1)
         self.assertEqual(game.active_player_id, id2)
 
         # Ensure no additional events are enqueued
-        self.assertEqual(2, len(game.event_queue[id1]))
-        self.assertEqual(3, len(game.event_queue[id2]))
-        self.assertEqual(2, len(game.event_queue[id3]))
+        self.assertEqual(3, len(game.event_queue[id1]))
+        self.assertEqual(4, len(game.event_queue[id2]))
+        self.assertEqual(3, len(game.event_queue[id3]))
 
+        player2: Player = game.players[id2]
+        game.event_history.append(Event({
+            "type": "showRoll",
+            "displayName": player2.display_name,
+            "playerId": player2.id,
+            "first": 1,
+            "second": 2
+        }))
         game.end_turn(id2)
         self.assertEqual(game.active_player_id, id3)
 
         # Make sure it wraps back around properly
+        player3: Player = game.players[id3]
+        game.event_history.append(Event({
+            "type": "showRoll",
+            "displayName": player3.display_name,
+            "playerId": player3.id,
+            "first": 1,
+            "second": 2
+        }))
         game.end_turn(id3)
         self.assertEqual(game.active_player_id, id1)
 
@@ -924,12 +996,12 @@ class GameTests(unittest.TestCase):
         game.active_player_index = 0
         game.started = True
 
-        # Test enqueueing an event without a "name" field.
+        # Test enqueueing an event without a "type" field.
         event: Event = Event({})
         game._enqueue_event(event, EventType.STATUS)
         for id in game.turn_order:
             self.assertEqual(0, len(game.event_queue[id]))
-        event = Event({"name": "event"})
+        event = Event({"type": "event"})
         # Test enqueueing a valid STATUS event that players see but is not stored in game history.
         game._enqueue_event(event, EventType.STATUS)
         self.assertEqual(0, len(game.event_history))
@@ -957,8 +1029,8 @@ class GameTests(unittest.TestCase):
         game.event_queue["player1"] = []
 
         # Test adding another event and verify the order is as expected
-        event1 = Event({"name": "event1"})
-        event2 = Event({"name": "event2"})
+        event1 = Event({"type": "event1"})
+        event2 = Event({"type": "event2"})
         game._enqueue_event(event1, EventType.STATUS)
         game._enqueue_event(event2, EventType.STATUS)
 
@@ -968,7 +1040,7 @@ class GameTests(unittest.TestCase):
             game.event_queue[id] = []
 
         # Test enqueueing an event with a specific target player
-        target_event = Event({"name": "targetEvent"})
+        target_event = Event({"type": "targetEvent"})
         game._enqueue_event(target_event, EventType.STATUS, target="player2")
         self.assertEqual(1, len(game.event_queue["player2"]))
         self.assertIs(target_event, game.event_queue["player2"][0])

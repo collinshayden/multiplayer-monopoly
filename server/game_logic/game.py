@@ -154,7 +154,6 @@ class Game:
         # Reject a request if the player was the last one to roll but isn't supposed to roll again
         last_roll_event: Event = self._get_last_roll_event()
         if last_roll_event is not None:
-            print(last_roll_event.parameters)
             if last_roll_event.parameters["playerId"] == player.id and not player.roll_again:
                 return False
 
@@ -169,6 +168,7 @@ class Game:
             "first": roll.first,
             "second": roll.second,
         })
+        print(roll_event.parameters)
 
         self._enqueue_event(roll_event, EventType.UPDATE)
         # If they were either sent to jail by the roll or are in jail, don't display them moving or passing Go.
@@ -332,6 +332,12 @@ class Game:
         # Property must be a monopoly
         if tile.status < PropertyStatus.MONOPOLY:
             return False
+        # All of the other properties in the group share must be unmortgaged
+        player: Player = self.players[player_id]
+        group_share: list[ImprovableTile] = player.group_share(tile.group)
+        for asset in group_share:
+            if asset.is_mortgaged:
+                return False
         # Number of upgrades could not bring property status below MONOPOLY or above FIVE_IMPROVEMENTS
         if (tile.status + amount) > PropertyStatus.FIVE_IMPROVEMENTS or (tile.status + amount) < PropertyStatus.MONOPOLY:
             return False
@@ -421,6 +427,9 @@ class Game:
         :return:            True if the request succeeds. False otherwise.
         """
         if not self._valid_player(player_id):
+            return False
+        # Don't let them end their turn with a negative balance
+        elif self.players[player_id].status == PlayerStatus.IN_THE_HOLE:
             return False
         end_turn: Event = Event({
             "type": "showEndTurn",
@@ -637,7 +646,7 @@ class Game:
         # Checks that the player is the active player or in the list of players depending on boolean flag
         if require_active_player and self.active_player_id != player_id:
             return False
-        elif player_id not in self.players.keys():
+        elif player_id not in self.players:
             return False
         # Check if the game has started if the boolean flag is active
         if require_game_started and not self.started:

@@ -1,5 +1,6 @@
 import 'package:client/cubit/game_cubit.dart';
 import 'package:client/view/properties_display.dart';
+import 'package:client/view/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,49 +72,63 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
         widget.player.id == BlocProvider.of<GameCubit>(context).clientPlayerId;
     final isActivePlayer = widget.player.id ==
         BlocProvider.of<GameCubit>(context).game.activePlayerId;
-    final propertyList = PropertyList(assets: widget.player.assets);
+    final propertyList = PropertyList(player: widget.player);
 
     return Row(
       children: [
         // Player Information Column
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ExpansionTile(
-                title: _buildTitle(
-                  isClientPlayer,
-                  isActivePlayer,
-                  widget.player.displayName ?? 'N/A',
-                ),
-                children: [
-                  _buildText('Location ID: ${widget.player.location ?? 0}'),
-                  _buildText('Money: ${widget.player.money ?? 0}'),
-                  _buildText(
-                      'Get Out Of Jail Free Cards: ${widget.player.getOutOfJailFreeCards ?? 0}'),
-                  _buildText('Active: ${isActivePlayer ? 'Yes' : 'No'}'),
-                  HoverButton(
-                    onTap: () {
-                      setState(() {
-                        isPropertiesExpanded = !isPropertiesExpanded;
-                      });
-                    },
-                    label: isPropertiesExpanded
-                        ? 'Hide Properties'
-                        : "Show Properties",
-                    child: IconButton(
-                      icon: Icon(
-                        isPropertiesExpanded
-                            ? Icons.arrow_back
-                            : Icons.arrow_forward,
-                      ),
-                      onPressed: null,
-                    ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ExpansionTile(
+                  title: _buildTitle(
+                    isClientPlayer,
+                    isActivePlayer,
+                    widget.player.displayName ?? 'N/A',
                   ),
-                  propertyList
-                ],
-              ),
-            ],
+                  children: [
+                    LeftRightJustifyTextWidget(
+                        left: 'Location ID:',
+                        right: '${widget.player.location ?? 0}'),
+                    TextAmountWidget(
+                        text: 'Money:', amount: widget.player.money ?? 0),
+                    LeftRightJustifyTextWidget(
+                        left: 'Doubles Streak',
+                        right: '${widget.player.doublesStreak ?? 0}'),
+                    LeftRightJustifyTextWidget(
+                        left: 'Turns in Jail',
+                        right: '${widget.player.turnsInJail ?? 0}'),
+                    LeftRightJustifyTextWidget(
+                        left: 'Get Out Of Jail Free Cards:',
+                        right: '${widget.player.getOutOfJailFreeCards ?? 0}'),
+                    LeftRightJustifyTextWidget(
+                        left: 'Active:', right: isActivePlayer ? 'Yes' : 'No'),
+                    HoverButton(
+                      onTap: () {
+                        setState(() {
+                          isPropertiesExpanded = !isPropertiesExpanded;
+                        });
+                      },
+                      label: isPropertiesExpanded
+                          ? 'Hide Properties'
+                          : "Show Properties",
+                      child: IconButton(
+                        icon: Icon(
+                          isPropertiesExpanded
+                              ? Icons.arrow_back
+                              : Icons.arrow_forward,
+                        ),
+                        onPressed: null,
+                      ),
+                    ),
+                    propertyList
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         // Property Information Column
@@ -146,13 +161,6 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
         ],
         Text(displayName),
       ],
-    );
-  }
-
-  Widget _buildText(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Text(text),
     );
   }
 }
