@@ -96,34 +96,3 @@ class _AdminPanelState extends State<AdminPanel> {
         ));
   }
 }
-
-/// Signature for callbacks used to create [AdminButtons]s. Callbacks which are
-/// assigned through this callback will be called with a [BuildContext] object
-/// and can thus access any inherited Bloc/Cubit objects, as well as anything
-/// else normally accessed through a `.of(context)` call.
-typedef ContextualCallback = void Function(BuildContext context);
-
-/// A button used in the [AdminPanel] widget.
-///
-/// This is one of a number of possible tools which can be included in the list
-/// of tools provided by the [AdminPanel]. This button takes a
-/// [ContextualCallback] and constructs a button wired to it.
-class AdminButton extends StatelessWidget {
-  const AdminButton({
-    super.key,
-    required this.title,
-    required this.onPressed,
-  });
-
-  final String title;
-  final ContextualCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      // Passes `context` into given callback, allowing it to find the GameCubit.
-      onTap: () => onPressed(context),
-    );
-  }
-}
