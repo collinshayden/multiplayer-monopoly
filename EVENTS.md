@@ -1,5 +1,7 @@
 # Event Handling
 
+No change in the game data occurs without enqueueing an event (or perhaps multiple).
+
 The following events are expected to be received by the client with each being a self-contained JSON object with known fields:
 1. `showPlayerJoin`: A broadcast event which indicates that a player has joined the game. This event is the first event to be enqueued server-side into the Game object to confirm that they have successfully joined the queue.
 ```
