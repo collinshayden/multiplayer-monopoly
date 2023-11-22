@@ -19,6 +19,7 @@ class GameCubit extends Cubit<GameState> {
     required this.fileService,
     required this.endpointService,
   }) : super(GameInitial()) {
+    loadLocalConfig();
     _startTimer();
   }
 
@@ -31,6 +32,8 @@ class GameCubit extends Cubit<GameState> {
   // Initialise services
   final FileService fileService;
   final EndpointService endpointService;
+
+  bool _hasLoadedLocalConfig = false;
 
   late Timer _timer;
 
@@ -59,9 +62,8 @@ class GameCubit extends Cubit<GameState> {
   /// [LocalConfigFailure] or [LocalConfigSuccess] will emitted dependent on
   /// whether the config was able to be loaded by the file service and
   /// deserialised into a [Game] object.
-  void loadLocalConfig() async {
+  Future<void> loadLocalConfig() async {
     emit(LocalConfigLoading());
-    await Future.delayed(const Duration(milliseconds: 250)); // TODO: Remove
     late Json? localConfig;
     try {
       localConfig = await fileService.getLocalConfig();
@@ -70,10 +72,12 @@ class GameCubit extends Cubit<GameState> {
       emit(LocalConfigFailure(object: e));
     }
 
+    _hasLoadedLocalConfig = true;
     emit(LocalConfigSuccess(game: game));
   }
 
-  void updateGameData({useAdmin = false}) async {
+  Future<void> updateGameData({useAdmin = false}) async {
+    assert(_hasLoadedLocalConfig);
     emit(GameStateUpdateLoading());
     late Json? gameData;
     var playerId = clientPlayerId;
@@ -101,7 +105,7 @@ class GameCubit extends Cubit<GameState> {
   /// game has not yet started. Because there is currently only one instance of
   /// the game running at a time, it is necessary to call [reset] to be able to
   /// join a game.
-  void registerPlayer({required String displayName}) async {
+  Future<void> registerPlayer({required String displayName}) async {
     emit(JoinGameLoading());
     try {
       final playerId =
@@ -117,7 +121,7 @@ class GameCubit extends Cubit<GameState> {
   /// Roll dice during a player's active turn.
   ///
   /// The client should only be able to call this
-  void rollDice() async {
+  Future<void> rollDice() async {
     emit(GameActionLoading());
     try {
       await endpointService.rollDice(clientPlayerId!);
@@ -130,7 +134,7 @@ class GameCubit extends Cubit<GameState> {
   /// End a player's turn.
   ///
   /// The client should only be able to call this
-  void endTurn() async {
+  Future<void> endTurn() async {
     emit(GameActionLoading());
     try {
       await endpointService.endTurn(clientPlayerId!);
@@ -141,7 +145,7 @@ class GameCubit extends Cubit<GameState> {
     // emit(ActiveTurnRollPhase());
   }
 
-  void startGame() async {
+  Future<void> startGame() async {
     emit(GameActionLoading());
     try {
       await endpointService.startGame(playerId: clientPlayerId!);
@@ -152,7 +156,7 @@ class GameCubit extends Cubit<GameState> {
   }
 
   // Hardcoded to use admin ID for now
-  void resetGame({bool useAdmin = false}) async {
+  Future<void> resetGame({bool useAdmin = false}) async {
     PlayerId playerId;
     if (useAdmin) {
       playerId = PlayerId('admin');
@@ -168,7 +172,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void buyProperty() async {
+  Future<void> buyProperty() async {
     emit(GameActionLoading());
     final int tileId = game.players[clientPlayerId]!.location!;
     try {
@@ -179,7 +183,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void setImprovements(int tileId, int quantity) async {
+  Future<void> setImprovements(int tileId, int quantity) async {
     emit(GameActionLoading());
     try {
       await endpointService.setImprovements(clientPlayerId!, tileId, quantity);
@@ -189,7 +193,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void setMortgage(int tileId, bool mortgage) async {
+  Future<void> setMortgage(int tileId, bool mortgage) async {
     emit(GameActionLoading());
     try {
       await endpointService.setMortgage(clientPlayerId!, tileId, mortgage);
@@ -199,7 +203,7 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  void getOutOfJail(JailMethod jailMethod) async {
+  Future<void> getOutOfJail(JailMethod jailMethod) async {
     emit(GameActionLoading());
     try {
       await endpointService.getOutOfJail(clientPlayerId!, jailMethod);
