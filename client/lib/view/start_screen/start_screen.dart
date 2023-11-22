@@ -29,7 +29,7 @@ class StartScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.only(bottom: 50, top: 10),
               child: Text(
-                'Created by Aidan Bonner, Jordan Bourdeau, Hayden Collins, and Alex Hall!',
+                'Created by Aidan Bonner, Jordan Bourdeau, Hayden Collins, and Alex Hall',
                 style: TextStyle(
                   fontSize: 16,
                   fontStyle: FontStyle.normal,
@@ -46,10 +46,7 @@ class StartScreen extends StatelessWidget {
                 BlocProvider.of<GameCubit>(context)
                     .updateGameData(useAdmin: true);
 
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => WaitScreen()),
-                );
+                Navigator.pushNamed(context, '/wait');
               },
             ),
             SizedBox(height: 20), // Adding space between widgets

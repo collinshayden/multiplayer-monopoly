@@ -37,11 +37,8 @@ class WaitScreen extends StatelessWidget {
                         ElevatedButton(
                             onPressed: () {
                               BlocProvider.of<GameCubit>(context).startGame();
-                              
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => GameScreen()));
+
+                              Navigator.pushNamed(context, '/game');
                             },
                             child: Text("Start Game"))
                       ],

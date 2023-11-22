@@ -8,6 +8,7 @@ import 'package:client/view/game_screen/board.dart';
 import 'package:client/view/game_screen/game_screen.dart';
 import 'package:client/view/player_info.dart';
 import 'package:client/view/start_screen/start_screen.dart';
+import 'package:client/view/start_screen/wait_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,25 +24,31 @@ class MonopolyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-          providers: [
-            BlocProvider<GameCubit>(
-              create: (context) => GameCubit(
-                  game: Game(),
-                  fileService: FileService(),
-                  endpointService: EndpointService()),
-            ),
-            BlocProvider<EventCubit>(
-              create: (context) => EventCubit(
-                gameCubit: BlocProvider.of<GameCubit>(context),
-              ),
-            )
-          ],
-          child: MaterialApp(
+      providers: [
+        BlocProvider<GameCubit>(
+          create: (context) => GameCubit(
+            game: Game(),
+            fileService: FileService(),
+            endpointService: EndpointService(),
+          ),
+        ),
+        BlocProvider<EventCubit>(
+          create: (context) => EventCubit(
+            gameCubit: BlocProvider.of<GameCubit>(context),
+          ),
+        ),
+      ],
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           scaffoldBackgroundColor: backgroundColor,
         ),
-        home: StartScreen(),
+        initialRoute: '/', // Set the initial route
+        routes: {
+          '/': (context) => StartScreen(), // Define the StartScreen route
+          '/wait': (context) => WaitScreen(), // Define the WaitScreen route
+          '/game': (context) => GameScreen(), // Define the GameScreen route
+        },
       ),
     );
   }
