@@ -179,9 +179,11 @@ class _TextInputWidgetState extends State<TextInputWidget> {
             ),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _onPressed,
-            child: Text(widget.buttonText),
+          Center(
+            child: ElevatedButton(
+              onPressed: _onPressed,
+              child: Text(widget.buttonText),
+            ),
           ),
         ],
       ),
