@@ -39,6 +39,8 @@ class WaitScreen extends StatelessWidget {
                               BlocProvider.of<GameCubit>(context).startGame();
                               BlocProvider.of<GameCubit>(context)
                                   .updateGameData(useAdmin: true);
+                              BlocProvider.of<GameCubit>(context)
+                                  .loadLocalConfig();
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
