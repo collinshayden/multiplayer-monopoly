@@ -20,10 +20,11 @@ class StartScreen extends StatelessWidget {
               width: 200,
               labelText: "Enter Name",
               buttonText: "Join Game",
-              onPressed: (value) {
-                BlocProvider.of<GameCubit>(context)
+              onPressed: (value) async {
+                await BlocProvider.of<GameCubit>(context)
                     .registerPlayer(displayName: value);
-                BlocProvider.of<GameCubit>(context)
+                await BlocProvider.of<GameCubit>(context).loadLocalConfig();
+                await BlocProvider.of<GameCubit>(context)
                     .updateGameData(useAdmin: true);
 
                 Navigator.pushReplacement(
@@ -35,11 +36,11 @@ class StartScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(20),
               child: ElevatedButton(
-                      onPressed: () {
-                        BlocProvider.of<GameCubit>(context)
-                            .resetGame(useAdmin: true);
-                      },
-                      child: const Text('Reset')),
+                  onPressed: () {
+                    BlocProvider.of<GameCubit>(context)
+                        .resetGame(useAdmin: true);
+                  },
+                  child: const Text('Reset')),
             ),
           ],
         ),
