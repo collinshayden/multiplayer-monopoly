@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../cubit/game_cubit.dart';
+import 'tokens.dart';
 
 /// Provides a background and container for the board.
 class Board extends StatelessWidget {
@@ -26,6 +27,7 @@ class Board extends StatelessWidget {
                     foregroundPainter: TileOutlinePainter(),
                   ),
                 ),
+                const Tokens()
               ],
             ),
           ),
