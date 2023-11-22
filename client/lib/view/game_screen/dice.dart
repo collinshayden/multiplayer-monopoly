@@ -179,13 +179,16 @@ class DisplayDice extends StatelessWidget {
         if (state is ShowRoll) {
           return LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-            return Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: constraints.maxWidth / 3,
-                child: Dice(
-                  first: state.event.parameters['first'],
-                  second: state.event.parameters['second'],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 250),
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: constraints.maxWidth / 3,
+                  child: Dice(
+                    first: state.event.parameters['first'],
+                    second: state.event.parameters['second'],
+                  ),
                 ),
               ),
             );
