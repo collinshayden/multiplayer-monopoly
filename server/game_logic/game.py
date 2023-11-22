@@ -175,6 +175,7 @@ class Game:
         if not player.in_jail:
             move_event: Event = Event({
                 "type": "showMovePlayer",
+                "playerId": player.id,
                 "displayName": player.display_name,
                 "directMovement": False,
                 "intoJail": False,
@@ -230,6 +231,7 @@ class Game:
         if started_in_jail is False and player.in_jail:
             go_to_jail: Event = Event({
                 "type": "showMovePlayer",
+                "playerId": player.id,
                 "displayName": player.display_name,
                 "directMovement": True,
                 "intoJail": True,
@@ -411,6 +413,7 @@ class Game:
             # Create an event showing the player has left jail
             leave_jail: Event = Event({
                 "type": "showMovePlayer",
+                "playerId": player.id,
                 "displayName": player.display_name,
                 "directMovement": False,
                 "intoJail": False,
