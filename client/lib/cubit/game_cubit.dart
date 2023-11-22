@@ -119,9 +119,8 @@ class GameCubit extends Cubit<GameState> {
           (gameData['events'] is List) &&
           (gameData['events'] as List).isNotEmpty) {
         // JSON translation into a Queue object
-        final List<Event> events = (gameData['events'] as List)
-            .map((e) => Event.fromJson(e))
-            .toList() as List<Event>;
+        final List<Event> events =
+            (gameData['events'] as List).map((e) => Event.fromJson(e)).toList();
         emit(EventEnqueuement(events: events));
         emit(GameStateUpdateSuccess(game: game));
       }
