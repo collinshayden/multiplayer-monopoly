@@ -154,7 +154,7 @@ class TileOutlinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Compute dimensions and sizes
-    const lineWidth = 3.0;
+    final lineWidth = (1.4 / 502) * size.width;
     const lineColor = Colors.black;
     final innerSquareOffset = Offset(0.138 * size.width, 0.138 * size.height);
     final innerSquareSideLength = (1 - 2 * 0.138) * size.width;
