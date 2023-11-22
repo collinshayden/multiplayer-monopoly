@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class StartScreen extends StatelessWidget {
   const StartScreen({Key? key});
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey,
@@ -59,7 +59,8 @@ class StartScreen extends StatelessWidget {
                     child: const Text('Reset'),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15), // Adjust padding as needed
+                          horizontal: 30,
+                          vertical: 15), // Adjust padding as needed
                     ),
                   ),
                 ],
