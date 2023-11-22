@@ -150,7 +150,7 @@ class ImprovableTile extends Tile {
                   style: Tile.boardTextStyle,
                 ),
                 Text(
-                  'Price: \$$price',
+                  '\$$price',
                   textAlign: TextAlign.center,
                   style: Tile.boardTextStyle,
                 )
@@ -209,7 +209,7 @@ class RailroadTile extends Tile {
             child: Image.asset('assets/images/$image'),
           ),
           Text(
-            'Price: \$$price',
+            '\$$price',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           )
@@ -261,7 +261,7 @@ class UtilityTile extends Tile {
           ),
           // TODO: Add image
           Text(
-            'Price: \$$price',
+            '\$$price',
             textAlign: TextAlign.center,
             style: Tile.boardTextStyle,
           )
