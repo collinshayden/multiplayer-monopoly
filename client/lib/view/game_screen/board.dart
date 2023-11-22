@@ -26,6 +26,9 @@ class Board extends StatelessWidget {
                     foregroundPainter: TileOutlinePainter(),
                   ),
                 ),
+                // TODO: Tokens here
+                // TODO: Dice here
+                // TODO: Activity feed here
               ],
             ),
           ),
