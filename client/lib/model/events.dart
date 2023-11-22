@@ -40,5 +40,7 @@ class Event {
   }
 
   EventType? type;
+
+  ///
   late Json parameters;
 }
