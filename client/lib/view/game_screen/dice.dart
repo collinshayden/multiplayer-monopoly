@@ -1,7 +1,6 @@
 import 'package:client/cubit/event_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client/cubit/game_cubit.dart';
 
 class Dice extends StatelessWidget {
   const Dice({
@@ -143,32 +142,6 @@ void main() {
 class DisplayDice extends StatelessWidget {
   const DisplayDice({super.key});
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return BlocBuilder<GameCubit, GameState>(builder: (context, state) {
-  //     return LayoutBuilder(
-  //         builder: (BuildContext context, BoxConstraints constraints) {
-  //       return Align(
-  //         alignment: Alignment.center,
-  //         child: SizedBox(
-  //           width: constraints.maxWidth / 3,
-  //           child: Dice(
-  //               first: BlocProvider.of<GameCubit>(context)
-  //                       .game
-  //                       .lastRoll
-  //                       .first ??
-  //                   1,
-  //               second: BlocProvider.of<GameCubit>(context)
-  //                       .game
-  //                       .lastRoll
-  //                       .second ??
-  //                   1),
-  //         ),
-  //       );
-  //     });
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventCubit, EventState>(
@@ -180,11 +153,11 @@ class DisplayDice extends StatelessWidget {
           return LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 250),
+              padding: const EdgeInsets.only(bottom: 250), // placing in top center of board
               child: Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: constraints.maxWidth / 3,
+                  width: constraints.maxWidth / 3, // scaling to screen size
                   child: Dice(
                     first: state.event.parameters['first'],
                     second: state.event.parameters['second'],
@@ -193,7 +166,7 @@ class DisplayDice extends StatelessWidget {
               ),
             );
           });
-        } // Added missing closing brace for 'if' block
+        } 
         return Container(); // Placeholder return if 'state' is not ShowRoll
       },
     );
