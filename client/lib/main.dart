@@ -27,17 +27,18 @@ class MonopolyApp extends StatelessWidget {
         backgroundColor: Color(int.parse('FF11202D', radix: 16)),
         body: MultiBlocProvider(
           providers: [
+            // TODO(aidan): Here's where the Cubit comes from
             BlocProvider<GameCubit>(
               create: (context) => GameCubit(
                   game: Game(),
                   fileService: FileService(),
                   endpointService: EndpointService()),
             ),
-            BlocProvider<EventCubit>(
-              create: (context) => EventCubit(
-                gameCubit: BlocProvider.of<GameCubit>(context),
-              ),
-            )
+            // BlocProvider<EventCubit>(
+            //   create: (context) => EventCubit(
+            //     gameCubit: BlocProvider.of<GameCubit>(context),
+            //   ),
+            // )
           ],
           child: const Stack(
             children: [
