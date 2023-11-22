@@ -1,3 +1,7 @@
+/// Tile models and widget generation.
+/// Authors: Alex Hall, Aidan Bonner, and Hayden Collins
+/// Date: 11/22/2023
+
 import 'package:flutter/material.dart';
 import 'package:client/json_utils.dart';
 
