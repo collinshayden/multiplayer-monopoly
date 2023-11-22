@@ -1,3 +1,5 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:client/model/player.dart';
 import 'package:flutter/material.dart';
 import 'package:client/cubit/game_cubit.dart';
@@ -63,13 +65,26 @@ class Tokens extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO(aidan): This should be a stack containing [TokenManager]s.
     // TODO(aidan): Have token managers created for each player in the game (accessed through `BlocProvider.of...`)
-    return const Placeholder();
+    for (int i = 0;
+        i < BlocProvider.of<GameCubit>(context).game.players.length;
+        i++) {
+      TokenManager t = TokenManager(
+          playerId: BlocProvider.of<GameCubit>(context).game.players[i].id,
+          tileId: BlocProvider.of<GameCubit>(context).game.players[i].location);
+    }
+    return Stack(children: <TokenManager>[]);
   }
 }
 
 /// Position a token within the given bounds.
 class TokenManager extends StatelessWidget {
-  const TokenManager({super.key});
+  TokenManager({
+    super.key,
+    required PlayerId this.playerId,
+    required int this.tileId,
+  });
+  PlayerId playerId;
+  int tileId;
 
   /// Compute the alignment which a token should have within this widget.
   ///
@@ -93,12 +108,33 @@ class TokenManager extends StatelessWidget {
     // Notes on board geometry:
     // Every side has 11 tiles, including 9 regular side tiles and 2 corners
     // The corner side length is 0.138 of the board size.
+    // height is also 0.138
     // The side tile width (_along_ the side) is (1 - 2 * 0.138) / 9.
     // Railroad tiles fall on the dead centre of any side.
     // The Alignment's y-value for the railroad tile on the left side of the
     // board would be -((1 - 2 * 0.138) / 9) / 2), for example.
     double x = 0.00;
     double y = 0.00;
+    // left/right sides have set x-coordinates
+    // top/bottom have set y-coordinates
+    // figure out which side the tile is on, set the right fixed coordinate
+    // calculate the other coordinate for the specific tile
+    // corners don't really matter
+    // specific location of the tile on tis side
+    int sidePos = tileId % 10;
+    if (tileId < 10) {
+      x = -1 + (0.138 / 2);
+      y = -1 + ((0.138 * (sidePos - 1)) + (0.138 / 2));
+    } else if (tileId < 20) {
+      y = 1 - (0.138 / 2);
+      x = -1 + ((0.138 * (sidePos - 1)) + (0.138 / 2));
+    } else if (tileId < 30) {
+      x = 1 - (0.138 / 2);
+      y = 1 - ((0.138 * (sidePos - 1)) + (0.138 / 2));
+    } else if (tileId < 40) {
+      y = -1 + (0.138 / 2);
+      x = 1 - ((0.138 * (sidePos - 1)) + (0.138 / 2));
+    }
     return Alignment(x, y);
   }
 
