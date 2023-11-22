@@ -108,7 +108,6 @@ class GameCubit extends Cubit<GameState> {
   /// state emission.
   Future<void> updateGameData({useAdmin = false}) async {
     assert(_hasLoadedLocalConfig);
-    bool updatedEvents = false;
 
     var playerId = useAdmin ? PlayerId('admin') : clientPlayerId;
     Json? gameData;
@@ -120,13 +119,10 @@ class GameCubit extends Cubit<GameState> {
           (gameData['events'] is List) &&
           (gameData['events'] as List).isNotEmpty) {
         // JSON translation into a Queue object
-        final Queue<Event> events = (gameData['events'] as List)
+        final List<Event> events = (gameData['events'] as List)
             .map((e) => Event.fromJson(e))
-            .toList() as Queue<Event>;
+            .toList() as List<Event>;
         emit(EventEnqueuement(events: events));
-        updatedEvents = true;
-      }
-      if (updatedEvents) {
         emit(GameStateUpdateSuccess(game: game));
       }
     } catch (e) {

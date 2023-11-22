@@ -88,5 +88,5 @@ class ActiveTurnUpkeepPhase extends GameState {}
 class EventEnqueuement extends GameState {
   EventEnqueuement({required this.events});
 
-  final Queue<Event> events;
+  final List<Event> events;
 }

@@ -38,10 +38,10 @@ class EventCubit extends Cubit<EventState> {
     await super.close();
   }
 
-  Future<void> _flushEvents(Queue<Event> events) async {
+  Future<void> _flushEvents(List<Event> events) async {
     while (events.isNotEmpty) {
       // Get next event in queue
-      Event event = events.removeFirst();
+      Event event = events.removeAt(0);
       // Emit the correct event, if it is not null
       if (event.type == null) continue;
       // TODO: Insert any blocking logic needed to control event flow through emits.
