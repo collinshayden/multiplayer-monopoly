@@ -65,15 +65,14 @@ class Tokens extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO(aidan): This should be a stack containing [TokenManager]s.
     // TODO(aidan): Have token managers created for each player in the game (accessed through `BlocProvider.of...`)
-    final tokenManagers = <TokenManager>[];
-    for (int i = 0;
-        i < BlocProvider.of<GameCubit>(context).game.players.length;
-        i++) {
-      tokenManagers.add(TokenManager(
-          playerId: BlocProvider.of<GameCubit>(context).game.players[i]!.id,
-          tileId:
-              BlocProvider.of<GameCubit>(context).game.players[i]!.location!));
-    }
+
+    final players = BlocProvider.of<GameCubit>(context).game.players;
+    final List<Widget> tokenManagers = players.values
+        .map((v) => TokenManager(
+              playerId: v.id,
+              tileId: v.location ?? 0,
+            ))
+        .toList();
     return Stack(children: tokenManagers);
   }
 }
