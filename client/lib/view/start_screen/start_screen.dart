@@ -16,6 +16,26 @@ class StartScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Text(
+                'Welcome to Monopoly',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 50, top: 10),
+              child: Text(
+                'Created by Aidan Bonner, Jordan Bourdeau, Hayden Collins, and Alex Hall!',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.normal,
+                ),
+              ),
+            ),
             TextInputWidget(
               width: 200,
               labelText: "Enter Name",
@@ -35,12 +55,12 @@ class StartScreen extends StatelessWidget {
             SizedBox(height: 20), // Adding space between widgets
             ElevatedButton(
               onPressed: () {
-                BlocProvider.of<GameCubit>(context)
-                    .resetGame(useAdmin: true);
+                BlocProvider.of<GameCubit>(context).resetGame(useAdmin: true);
               },
               child: const Text('Reset'),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // Adjust padding as needed
+                padding: EdgeInsets.symmetric(
+                    horizontal: 30, vertical: 15), // Adjust padding as needed
               ),
             ),
           ],
