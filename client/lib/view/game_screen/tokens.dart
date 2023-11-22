@@ -81,7 +81,7 @@ class TokenManager extends StatelessWidget {
   ///
   /// This function is called from within the build method when building either
   /// an [Align] widget.
-  void computeTokenAlignment({
+  Alignment computeTokenAlignment({
     required PlayerId playerId,
     required int tileId,
     inJail = false,
@@ -97,6 +97,9 @@ class TokenManager extends StatelessWidget {
     // Railroad tiles fall on the dead centre of any side.
     // The Alignment's y-value for the railroad tile on the left side of the
     // board would be -((1 - 2 * 0.138) / 9) / 2), for example.
+    double x = 0.00;
+    double y = 0.00;
+    return Alignment(x, y);
   }
 
   @override
@@ -104,7 +107,10 @@ class TokenManager extends StatelessWidget {
     // TODO(aidan): Place an Align in the root of this subtree (where the Placeholder currently is).
     // TODO(aidan): Tell the Align how to align its children using the `alignment` parameter.
     // TODO(aidan): Tell it what to use as a child (i.e., the Token widget).
-    return const Placeholder();
+    return Align(
+      alignment: computeTokenAlignment(playerId: playerId, tileId: tileId),
+      child: Token(),
+    );
   }
 }
 
@@ -114,6 +120,6 @@ class Token extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO(aidan): Return an image of a token
-    return const Placeholder();
+    return const Icon(Icons.circle, color: Colors.black);
   }
 }
