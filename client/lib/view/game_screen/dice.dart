@@ -153,7 +153,7 @@ class DisplayDice extends StatelessWidget {
           return LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 250), // placing in top center of board
+              padding: EdgeInsets.only(bottom: constraints.maxHeight / 3), // placing in top center of board
               child: Align(
                 alignment: Alignment.center,
                 child: SizedBox(
