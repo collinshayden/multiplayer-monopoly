@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:client/constants.dart';
 import 'package:flutter/material.dart';
 
 import 'player.dart';
@@ -56,13 +57,16 @@ class Game {
       // TODO: Find a more optimized way to do this
       // Clear out player information each time it is loaded.
       players.clear();
+      int playerNum = 1;
       for (Json player in json['players']) {
         final id = PlayerId(player['id']);
         if (players[id] != null) {
           players[id]!.applyJson(player);
           continue;
         }
-        players[id] = Player(id: id)..applyJson(player);
+        players[id] = Player(id: id, color: COLOR_MAP[playerNum])
+          ..applyJson(player);
+        ++playerNum;
       }
     }
 

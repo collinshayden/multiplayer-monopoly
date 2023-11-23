@@ -86,11 +86,8 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ExpansionTile(
-                  title: _buildTitle(
-                    isClientPlayer,
-                    isActivePlayer,
-                    widget.player.displayName ?? 'N/A',
-                  ),
+                  title: _buildTitle(isClientPlayer, isActivePlayer,
+                      widget.player.displayName ?? 'N/A', widget.player.color!),
                   children: [
                     LeftRightJustifyTextWidget(
                         left: 'Location ID:',
@@ -150,8 +147,8 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
     );
   }
 
-  Widget _buildTitle(
-      bool isClientPlayer, bool isActivePlayer, String displayName) {
+  Widget _buildTitle(bool isClientPlayer, bool isActivePlayer,
+      String displayName, Color color) {
     return Row(
       children: [
         if (isActivePlayer) ...[
@@ -162,7 +159,9 @@ class _PlayerInfoExpansionTileState extends State<PlayerInfoExpansionTile> {
           const Icon(Icons.star, color: Colors.amber),
           SizedBox(width: 4),
         ],
-        Text(displayName),
+        Text(displayName,
+            style: TextStyle(
+                color: widget.player.color!, fontWeight: FontWeight.bold)),
       ],
     );
   }

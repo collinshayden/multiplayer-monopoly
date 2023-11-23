@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:client/model/asset_enums.dart';
+import 'package:flutter/material.dart';
 
 const String LOCAL_ASSET_DIR = 'assets'; // Should match `pubspec.yaml` entry.
 // const String API_URL = 'http://jbourde2.w3.uvm.edu/game';
@@ -16,6 +17,17 @@ enum JailMethod {
   money,
   card,
 }
+
+Map<int, Color> COLOR_MAP = {
+  1: Colors.red,
+  2: Colors.blue,
+  3: Colors.yellow,
+  4: Colors.green,
+  5: Colors.pink,
+  6: Colors.purple,
+  7: Colors.brown,
+  8: Colors.orange
+};
 
 Map<int, Map<PropertyStatus, int>> RENTS = {
   // Browns

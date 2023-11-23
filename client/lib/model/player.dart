@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:client/json_utils.dart';
 import 'package:client/model/asset.dart';
 
@@ -25,9 +27,10 @@ class PlayerId {
 
 /// Data class for players constructed from JSON.
 class Player {
-  Player({required this.id});
+  Player({required this.id, required this.color});
   PlayerId id;
   String? displayName;
+  Color? color;
   int? money;
   int? location;
   int? doublesStreak;
