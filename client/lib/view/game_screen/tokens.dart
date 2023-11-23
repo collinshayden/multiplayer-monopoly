@@ -161,6 +161,8 @@ class TokenManager extends StatelessWidget {
     // TODO(aidan): Place an Align in the root of this subtree (where the Placeholder currently is).
     // TODO(aidan): Tell the Align how to align its children using the `alignment` parameter.
     // TODO(aidan): Tell it what to use as a child (i.e., the Token widget).
+    Color color =
+        BlocProvider.of<GameCubit>(context).game.players[playerId]!.color!;
     return BlocBuilder<EventCubit, EventState>(
         buildWhen: (previous, current) {
           return current is ShowMovePlayer;
@@ -173,17 +175,18 @@ class TokenManager extends StatelessWidget {
                         ?.location ??
                     0,
               ),
-              child: const Token(),
+              child: Token(color: color),
             ));
   }
 }
 
 class Token extends StatelessWidget {
-  const Token({super.key});
+  Token({super.key, required Color this.color});
+  Color color;
 
   @override
   Widget build(BuildContext context) {
     // TODO(aidan): Return an image of a token
-    return const Icon(Icons.circle, color: Colors.blue);
+    return Icon(Icons.circle, color: color);
   }
 }
