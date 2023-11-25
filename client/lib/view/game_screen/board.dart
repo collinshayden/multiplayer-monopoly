@@ -6,39 +6,95 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubit/game_cubit.dart';
 import 'tokens.dart';
 
+/// Define the themes used to style the board.
+class BoardTheme extends ThemeExtension<BoardTheme> {
+  BoardTheme({required this.monetaryUnitSymbol, required this.tierColors});
+
+  final String? monetaryUnitSymbol;
+  final Map<int, Color>? tierColors;
+  final backgroundColor = Color(int.parse('FFD5EFEA', radix: 16));
+  final outlineColor = Colors.black;
+  final pTileOutlineWidth = 1.0 / 502.0;
+  final pTextHeight = 3.5 / 502.0;
+  final pColorBandHeight = 15.0 / 67.0;
+  final textStyle = TextStyle(
+    fontFamily: 'Montserrat',
+    fontWeight: FontWeight.w600,
+  );
+
+  @override
+  ThemeExtension<BoardTheme> copyWith({
+    String? monetaryUnitSymbol,
+    Map<int, Color>? tierColors,
+  }) =>
+      BoardTheme(
+        monetaryUnitSymbol: monetaryUnitSymbol,
+        tierColors: tierColors,
+      );
+
+  @override
+  ThemeExtension<BoardTheme> lerp(
+      covariant ThemeExtension<BoardTheme>? other, double t) {
+    final Map<int, Color>? newTierColors = (other as BoardTheme)
+        .tierColors
+        ?.map((k, v) =>
+            MapEntry<int, Color>(k, Color.lerp(v, tierColors?[k], t)!));
+    return BoardTheme(
+        monetaryUnitSymbol: other.monetaryUnitSymbol,
+        tierColors: newTierColors);
+  }
+}
+
 /// Provides a background and container for the board.
 class Board extends StatelessWidget {
   const Board({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(40.0),
-        child: AspectRatio(
-          aspectRatio: 1 / 1,
-          child: Transform.rotate(
-            angle: 0,
-            child: Stack(
-              children: [
-                Container(color: Color(int.parse('FFD5EFEA', radix: 16))),
-                const TileLayout(),
-                SizedBox.expand(
-                  child: CustomPaint(
-                    foregroundPainter: TileOutlinePainter(),
+    final gameCubit = BlocProvider.of<GameCubit>(context);
+    return Theme(
+      data: Theme.of(context).copyWith(extensions: [
+        BoardTheme(
+            monetaryUnitSymbol: gameCubit.game.monetaryUnitSymbol,
+            tierColors: gameCubit.game.tierColors)
+      ]),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: AspectRatio(
+            aspectRatio: 1 / 1,
+            child: Transform.rotate(
+              angle: 0,
+              child: Stack(
+                children: [
+                  BoardBackground(),
+                  const TileLayout(),
+                  SizedBox.expand(
+                    child: CustomPaint(
+                      foregroundPainter: TileOutlinePainter(),
+                    ),
                   ),
-                ),
-                // TODO: Tokens here
-                const Tokens(),
-                // TODO: Dice here
-                DisplayDice(),
-                // TODO: Activity feed here
-              ],
+                  const Tokens(),
+                  DisplayDice(),
+
+                  // TODO: Activity feed here
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class BoardBackground extends StatelessWidget {
+  const BoardBackground({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Theme.of(context).extension<BoardTheme>()?.backgroundColor);
   }
 }
 
