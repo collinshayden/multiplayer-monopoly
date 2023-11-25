@@ -1,4 +1,5 @@
 import 'package:client/model/tiles.dart';
+import 'package:client/view/game_screen/activity_feed.dart';
 import 'package:client/view/game_screen/dice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,8 +77,7 @@ class Board extends StatelessWidget {
                   ),
                   const Tokens(),
                   DisplayDice(),
-
-                  // TODO: Activity feed here
+                  ActivityFeed(),
                 ],
               ),
             ),

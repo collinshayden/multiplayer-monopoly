@@ -3,10 +3,11 @@
 import 'dart:ui';
 
 import 'package:client/model/asset_enums.dart';
+import 'package:flutter/material.dart';
 
 const String LOCAL_ASSET_DIR = 'assets'; // Should match `pubspec.yaml` entry.
-// const String API_URL = 'http://jbourde2.w3.uvm.edu/game';
-const String API_URL = 'http://127.0.0.1:5000/game';
+const String API_URL = 'http://jbourde2.w3.uvm.edu/game';
+// const String API_URL = 'http://127.0.0.1:5000/game';
 const Duration POLL_PERIOD = Duration(seconds: 1);
 const int MAX_NUM_IMPROVEMENTS = 5;
 const DESKTOP_MAX_SIZE = Size(1280, 720);
@@ -16,6 +17,17 @@ enum JailMethod {
   money,
   card,
 }
+
+Map<int, Color> COLOR_MAP = {
+  1: Colors.red,
+  2: Colors.blue,
+  3: Colors.yellow,
+  4: Colors.green,
+  5: Colors.pink,
+  6: Colors.purple,
+  7: Colors.brown,
+  8: Colors.orange
+};
 
 Map<int, Map<PropertyStatus, int>> RENTS = {
   // Browns

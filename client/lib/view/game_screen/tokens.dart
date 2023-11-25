@@ -1,5 +1,6 @@
 import 'package:client/cubit/event_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:math';
 
 import 'package:client/model/player.dart';
 import 'package:flutter/material.dart';
@@ -121,20 +122,36 @@ class TokenManager extends StatelessWidget {
     // figure out which side the tile is on, set the right fixed coordinate
     // calculate the other coordinate for the specific tile
     // corners don't really matter
-    // specific location of the tile on tis side
+    // specific location of the tile on its side
     int sidePos = tileId % 10;
+    // left side
     if (tileId < 10) {
-      x = -1 + (0.138 / 2);
-      y = -1 + ((0.138 * (sidePos - 1)) + (0.138 / 2));
-    } else if (tileId < 20) {
-      y = 1 - (0.138 / 2);
-      x = -1 + ((0.138 * (sidePos - 1)) + (0.138 / 2));
-    } else if (tileId < 30) {
-      x = 1 - (0.138 / 2);
-      y = 1 - ((0.138 * (sidePos - 1)) + (0.138 / 2));
-    } else if (tileId < 40) {
-      y = -1 + (0.138 / 2);
-      x = 1 - ((0.138 * (sidePos - 1)) + (0.138 / 2));
+      x = -1 + (0.138 * 0.75);
+      y = 1 - (0.138 * 0.75);
+      if (tileId != 0) {
+        y -= (1.25 * 0.138) * sidePos;
+      }
+    } // top
+    else if (tileId < 20) {
+      x = -1 + (0.138 * 0.75);
+      y = -1 + (0.138 * 0.75);
+      if (tileId != 10) {
+        x += (1.25 * 0.138) * sidePos;
+      }
+    } // right side
+    else if (tileId < 30) {
+      x = 1 - (0.138 * 0.75);
+      y = -1 + (0.138 * 0.75);
+      if (tileId != 20) {
+        y += (1.25 * 0.138) * sidePos;
+      }
+    } // bottom
+    else if (tileId < 40) {
+      x = 1 - (0.138 * 0.75);
+      y = 1 - (0.138 * 0.75);
+      if (tileId != 30) {
+        x -= (1.25 * 0.138) * sidePos;
+      }
     }
     return Alignment(x, y);
   }
@@ -144,6 +161,8 @@ class TokenManager extends StatelessWidget {
     // TODO(aidan): Place an Align in the root of this subtree (where the Placeholder currently is).
     // TODO(aidan): Tell the Align how to align its children using the `alignment` parameter.
     // TODO(aidan): Tell it what to use as a child (i.e., the Token widget).
+    Color color =
+        BlocProvider.of<GameCubit>(context).game.players[playerId]!.color!;
     return BlocBuilder<EventCubit, EventState>(
         buildWhen: (previous, current) {
           return current is ShowMovePlayer;
@@ -156,17 +175,18 @@ class TokenManager extends StatelessWidget {
                         ?.location ??
                     0,
               ),
-              child: const Token(),
+              child: Token(color: color),
             ));
   }
 }
 
 class Token extends StatelessWidget {
-  const Token({super.key});
+  Token({super.key, required Color this.color});
+  Color color;
 
   @override
   Widget build(BuildContext context) {
     // TODO(aidan): Return an image of a token
-    return const Icon(Icons.circle, color: Colors.black);
+    return Icon(Icons.circle, color: color);
   }
 }

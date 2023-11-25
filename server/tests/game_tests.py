@@ -295,7 +295,7 @@ class GameTests(unittest.TestCase):
         self.assertEqual(expected, game.event_queue[id1][0].parameters)
         expected = {
             "type": "showMovePlayer",
-            "playerId": player2.id,
+            "playerId": player.id,
             "directMovement": False,
             "displayName": player.display_name,
             "intoJail": False,
