@@ -31,7 +31,7 @@ class Board extends StatelessWidget {
                 ),
                 const Tokens(),
                 const DisplayDice(),
-                ActivityFeed()
+                const ActivityFeed()
               ],
             ),
           ),
