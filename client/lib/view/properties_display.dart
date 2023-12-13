@@ -176,7 +176,7 @@ class _PropertyInfoState extends State<PropertyInfo> {
               text: 'Houses Cost', amount: property['improvementCost']),
           TextAmountWidget(
               text: 'Hotels Cost', amount: property['improvementCost']),
-          Padding(
+          const Padding(
               padding: EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
               child: Text(
                 'If a player owns ALL the Lots of any Color-Group, the rent is Doubled on Unimproved Lots in that group.',
@@ -316,7 +316,7 @@ class _PropertyInfoState extends State<PropertyInfo> {
             child: Stack(
               children: [
                 AspectRatio(
-                  aspectRatio: 16 / 25,
+                  aspectRatio: 16 / 28,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: children,
