@@ -1,3 +1,9 @@
+/// Tile models and widget generation.
+/// Authors: Alex Hall, Aidan Bonner, and Hayden Collins
+/// Date: 11/22/2023
+
+import 'package:client/view/game_screen/board.dart';
+import 'package:client/view/game_screen/tile_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:client/json_utils.dart';
 
@@ -46,12 +52,6 @@ sealed class Tile {
   bool get _canBuild {
     return isCorner != null && quarterTurns != null;
   }
-
-  static const boardTextStyle = TextStyle(
-    fontFamily: 'Montserrat',
-    fontSize: 7,
-    fontWeight: FontWeight.w600,
-  );
 
   /// Update fields from given JSON data.
   ///
@@ -133,31 +133,10 @@ class ImprovableTile extends Tile {
     );
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
-      child: Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: Container(color: tierColor),
-          ),
-          Flexible(
-            flex: 3,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(
-                  title ?? 'Placeholder title',
-                  textAlign: TextAlign.center,
-                  style: Tile.boardTextStyle,
-                ),
-                Text(
-                  '\$$price',
-                  textAlign: TextAlign.center,
-                  style: Tile.boardTextStyle,
-                )
-              ],
-            ),
-          )
-        ],
+      child: ImprovableTileWidget(
+        tierColor: tierColor,
+        title: title,
+        price: price,
       ),
     );
   }
@@ -193,6 +172,8 @@ class RailroadTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -201,7 +182,7 @@ class RailroadTile extends Tile {
           Text(
             title ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           // TODO image
           Padding(
@@ -211,7 +192,7 @@ class RailroadTile extends Tile {
           Text(
             '\$$price',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           )
         ],
       ),
@@ -249,6 +230,8 @@ class UtilityTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -257,13 +240,13 @@ class UtilityTile extends Tile {
           Text(
             title ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           // TODO: Add image
           Text(
             '\$$price',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           )
         ],
       ),
@@ -298,6 +281,7 @@ class ChanceTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -306,7 +290,7 @@ class ChanceTile extends Tile {
           Text(
             title ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           // TODO image
           Image.asset('assets/images/$image'),
@@ -343,6 +327,7 @@ class CommunityChestTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -351,7 +336,7 @@ class CommunityChestTile extends Tile {
           Text(
             title ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           // TODO image
           Padding(
@@ -394,6 +379,7 @@ class TaxTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -402,13 +388,13 @@ class TaxTile extends Tile {
           Text(
             title ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           Image.asset('assets/images/$image'),
           Text(
             payCommandText ?? 'Placeholder price',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           )
         ],
       ),
@@ -448,6 +434,7 @@ class GoTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -456,7 +443,7 @@ class GoTile extends Tile {
           Text(
             upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           // TODO image
           Padding(
@@ -508,6 +495,7 @@ class JailTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -516,17 +504,17 @@ class JailTile extends Tile {
           Text(
             upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           Text(
             lowerText ?? 'Placeholder lower text',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           Text(
             visitingText ?? 'Placeholder visiting text',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -565,6 +553,11 @@ class FreeParkingTile extends Tile {
 
   @override
   Widget build(BuildContext context) {
+    assert(
+      _canBuild,
+      'The parameters for this tile have not been fully defined for $runtimeType',
+    );
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -573,12 +566,12 @@ class FreeParkingTile extends Tile {
           Text(
             upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           Text(
             lowerText ?? 'Placeholder lower text',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           // TODO image
           Padding(
@@ -622,6 +615,7 @@ class GoToJailTile extends Tile {
       _canBuild,
       'The parameters for this tile have not been fully defined for $runtimeType',
     );
+    final boardTheme = Theme.of(context).extension<BoardTheme>() as BoardTheme;
     return RotatedBox(
       quarterTurns: quarterTurns ?? 0,
       child: Column(
@@ -630,12 +624,12 @@ class GoToJailTile extends Tile {
           Text(
             upperText ?? 'Placeholder title',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           Text(
             lowerText ?? 'Placeholder lower text',
             textAlign: TextAlign.center,
-            style: Tile.boardTextStyle,
+            style: boardTheme.textStyle,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),

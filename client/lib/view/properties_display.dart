@@ -4,7 +4,6 @@
 
 import 'package:client/constants.dart';
 import 'package:client/cubit/game_cubit.dart';
-import 'package:client/model/asset_enums.dart';
 import 'package:client/view/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/player.dart';
@@ -86,20 +85,20 @@ class _ImprovementsButtonState extends State<ImprovementsButton> {
           ),
         SizedBox(height: 8),
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             widget.currentImprovements.toString(),
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         if (widget.currentImprovements < MAX_NUM_IMPROVEMENTS)
           Padding(
             padding: const EdgeInsets.all(8.0),
