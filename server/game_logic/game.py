@@ -115,10 +115,13 @@ class Game:
             return ""
         # Keep generating random 16-character hex strings until one is not taken
         character_set: str = string.ascii_lowercase + string.digits
-        player_id: str = "".join(secrets.choice(character_set) for _ in range(PLAYER_ID_LENGTH))
+        player_id: str = "".join(secrets.choice(character_set)
+                                 for _ in range(PLAYER_ID_LENGTH))
         while self.players.get(player_id, None) is not None:
-            player_id = "".join(secrets.choice(character_set) for _ in range(PLAYER_ID_LENGTH))
-        self.players[player_id] = Player(id=player_id, display_name=display_name)
+            player_id = "".join(secrets.choice(character_set)
+                                for _ in range(PLAYER_ID_LENGTH))
+        self.players[player_id] = Player(
+            id=player_id, display_name=display_name)
         self._players.append(self.players[player_id])
         self.turn_order.append(player_id)
 
@@ -147,7 +150,8 @@ class Game:
             return False
         player: Player = self.players[self.active_player_id]
         if roll is None:
-            roll = Roll(random.randint(MIN_DIE, MAX_DIE), random.randint(MIN_DIE, MAX_DIE))
+            roll = Roll(random.randint(MIN_DIE, MAX_DIE),
+                        random.randint(MIN_DIE, MAX_DIE))
         started_in_jail: bool = player.in_jail
         starting_location: int = player.location
 
@@ -184,7 +188,10 @@ class Game:
             self._enqueue_event(move_event, EventType.UPDATE)
             # They passed Go since their location wrapped around
             if player.location < starting_location:
-                go_event: Event = Event({"type": "showPassGo"})
+                go_event: Event = Event({
+                    "type": "showPassGo",
+                    "displayName": player.display_name
+                })
                 self._enqueue_event(go_event, EventType.UPDATE)
 
         # If the player landed on an unowned asset tile, prompt them to purchase it.
@@ -491,7 +498,8 @@ class Game:
             case EventType.PROMPT:
                 targets = [self.event_queue[self.active_player_id]]
             case EventType.UPDATE:
-                targets = list(self.event_queue.values()) + [self.event_history]
+                targets = list(self.event_queue.values()) + \
+                    [self.event_history]
             case _:
                 return
         for target in targets:
@@ -526,14 +534,16 @@ class Game:
         tiles: list[Tile] = [
             Tile(0, "Go"),
             ImprovableTile(1, "Mediterranean Avenue", 60, AssetGroups.BROWN),
-            CardTile(2, "Community Chest", self.community_chest_deck, self._players),
+            CardTile(2, "Community Chest",
+                     self.community_chest_deck, self._players),
             ImprovableTile(3, "Baltic Avenue", 60, AssetGroups.BROWN),
             TaxTile(4, "Income Tax", -200),
             RailroadTile(5, "Reading Railroad"),
             ImprovableTile(6, "Oriental Avenue", 100, AssetGroups.LIGHT_BLUE),
             CardTile(7, "Chance", self.chance_deck, self._players),
             ImprovableTile(8, "Vermont Avenue", 100, AssetGroups.LIGHT_BLUE),
-            ImprovableTile(9, "Connecticut Avenue", 120, AssetGroups.LIGHT_BLUE),
+            ImprovableTile(9, "Connecticut Avenue",
+                           120, AssetGroups.LIGHT_BLUE),
             Tile(10, "Jail"),
             ImprovableTile(11, "St. Charles Place", 140, AssetGroups.PINK),
             UtilityTile(12, "Electric Company"),
@@ -541,7 +551,8 @@ class Game:
             ImprovableTile(14, "Virginia Avenue", 160, AssetGroups.PINK),
             RailroadTile(15, "Pennsylvania Railroad"),
             ImprovableTile(16, "St. James Place", 180, AssetGroups.ORANGE),
-            CardTile(17, "Community Chest", self.community_chest_deck, self._players),
+            CardTile(17, "Community Chest",
+                     self.community_chest_deck, self._players),
             ImprovableTile(18, "Tennessee Avenue", 180, AssetGroups.ORANGE),
             ImprovableTile(19, "New York Avenue", 200, AssetGroups.ORANGE),
             Tile(20, "Free Parking"),
@@ -556,8 +567,10 @@ class Game:
             ImprovableTile(29, "Marvin Gardens", 280, AssetGroups.YELLOW),
             GoToJailTile(),
             ImprovableTile(31, "Pacific Avenue", 300, AssetGroups.GREEN),
-            ImprovableTile(32, "North Carolina Avenue", 300, AssetGroups.GREEN),
-            CardTile(33, "Community Chest", self.community_chest_deck, self._players),
+            ImprovableTile(32, "North Carolina Avenue",
+                           300, AssetGroups.GREEN),
+            CardTile(33, "Community Chest",
+                     self.community_chest_deck, self._players),
             ImprovableTile(34, "Pennsylvania Avenue", 320, AssetGroups.GREEN),
             RailroadTile(35, "Short Line Railroad"),
             CardTile(36, "Chance", self.chance_deck, self._players),
@@ -689,10 +702,11 @@ class Game:
         game_dict["started"] = self.started
         if self.active_player_id != "":
             game_dict["activePlayerId"] = self.active_player_id
-        game_dict["players"] = [self.players[id].to_dict() for id in self.turn_order]
+        game_dict["players"] = [self.players[id].to_dict()
+                                for id in self.turn_order]
         game_dict["tiles"] = [tile.to_dict() for tile in self.tiles]
         return game_dict
-        
+
         """
         return {
             "started": self.started,
