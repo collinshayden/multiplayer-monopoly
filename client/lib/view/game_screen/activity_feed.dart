@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DisplayActivityFeed extends StatelessWidget {
   final List<String> activityList;
 
-  const DisplayActivityFeed({required this.activityList});
+  const DisplayActivityFeed({Key? key, required this.activityList})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,38 +25,46 @@ class DisplayActivityFeed extends StatelessWidget {
 }
 
 class ActivityFeed extends StatefulWidget {
+  const ActivityFeed({Key? key}) : super(key: key);
+
   @override
   _ActivityFeedState createState() => _ActivityFeedState();
 }
 
 class _ActivityFeedState extends State<ActivityFeed> {
-  final Set<String> _uniqueMessages = {}; // Set to store unique event messages
   final List<String> _activityList = [];
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventCubit, EventState>(buildWhen: (previous, current) {
-      return current is ShowRoll ||
-          current is ShowPlayerJoin ||
-          current is ShowStartGame ||
-          current is ShowStartTurn ||
-          current is ShowPassGo ||
-          current is ShowRent ||
-          current is ShowPurchase ||
-          current is ShowImprovement ||
-          current is ShowEndTurn ||
-          current is ShowEndGame ||
-          current is ShowBankruptcy;
-    }, builder: (context, state) {
-      _processState(state);
-      return LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
+    return BlocBuilder<EventCubit, EventState>(
+      buildWhen: (previous, current) {
+        return current is ShowRoll ||
+            current is ShowStartTurn ||
+            current is ShowTax ||
+            current is ShowStartGame ||
+            current is ShowPassGo ||
+            current is ShowRent ||
+            current is ShowPurchase ||
+            current is ShowImprovement ||
+            current is ShowEndGame ||
+            current is ShowBankruptcy;
+      },
+      builder: (context, state) {
+        return _buildActivityFeed(context, state);
+      },
+    );
+  }
+
+  Widget _buildActivityFeed(BuildContext context, EventState state) {
+    _processState(state);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
         return Padding(
           padding: EdgeInsets.only(top: constraints.maxHeight / 2.5),
-          child: DisplayActivityFeed(activityList: _activityList),
+          child: DisplayActivityFeed(activityList: _activityList.toList()),
         );
-      });
-    });
+      },
+    );
   }
 
   void _processState(EventState state) {
@@ -64,17 +73,11 @@ class _ActivityFeedState extends State<ActivityFeed> {
       final first = state.event.parameters['first'];
       final second = state.event.parameters['second'];
       _addItem("$displayName has rolled ${first + second}!");
-    } else if (state is ShowPlayerJoin) {
-      final displayName = state.event.parameters["displayName"];
-      _addItem("$displayName has joined the game!");
     } else if (state is ShowStartGame) {
       _addItem("The game has started.");
     } else if (state is ShowStartTurn) {
       final displayName = state.event.parameters["displayName"];
-      // _addItem("$displayName's turn has started.");
-    } else if (state is ShowEndTurn) {
-      final displayName = state.event.parameters["displayName"];
-      // _addItem("$displayName's turn has ended.");
+      _addItem("$displayName's turn has started.");
     } else if (state is ShowPassGo) {
       final displayName = state.event.parameters["displayName"];
       _addItem("$displayName has passed Go.");
@@ -98,6 +101,10 @@ class _ActivityFeedState extends State<ActivityFeed> {
       } else {
         _addItem("$displayName bought an improvement on $propertyName.");
       }
+    } else if (state is ShowTax) {
+      final displayName = state.event.parameters["displayName"];
+      final amount = state.event.parameters["amount"];
+      _addItem("$displayName pays $amount in taxes.");
     } else if (state is ShowBankruptcy) {
       final displayName = state.event.parameters["displayName"];
       _addItem("$displayName has gone bankrupt.");
@@ -109,16 +116,11 @@ class _ActivityFeedState extends State<ActivityFeed> {
   }
 
   void _addItem(String content) {
-    if (!_uniqueMessages.contains(content)) {
-      _uniqueMessages.add(content);
-      Future.microtask(() {
-        setState(() {
-          _activityList.insert(0, content);
-          if (_activityList.length > 5) {
-            _activityList.removeLast();
-          }
-        });
-      });
+    // if (_uniqueMessages.add(content)) {
+    _activityList.insert(0, content);
+    if (_activityList.length > 5) {
+      _activityList.removeLast();
     }
+    // }
   }
 }
