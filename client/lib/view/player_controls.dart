@@ -39,7 +39,7 @@ class _PlayerControlsState extends State<PlayerControls> {
                         {'text': 'Money', 'value': JailMethod.money},
                       ],
                       onPressed: (value) {
-                        BlocProvider.of<GameCubit>(context).getOutOfJail(value);
+                        BlocProvider.of<GameCubit>(context).getOutOfJail(value) ?? "Money";
                       }),
                   ElevatedButton(
                       onPressed: () {
