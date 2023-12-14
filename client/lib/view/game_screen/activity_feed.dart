@@ -15,8 +15,17 @@ class DisplayActivityFeed extends StatelessWidget {
         itemCount: activityList.length,
         itemBuilder: (context, index) {
           final item = activityList[index];
-          return ListTile(
-            title: Center(child: Text(item)),
+          // Calculate opacity based on the item's position
+          final opacity = 1.0 - (index / activityList.length);
+
+          return AnimatedOpacity(
+            opacity: opacity,
+            duration: const Duration(seconds: 1), 
+            child: ListTile(
+              title: Center(
+                child: Text(item),
+              ),
+            ),
           );
         },
       ),
@@ -80,13 +89,13 @@ class _ActivityFeedState extends State<ActivityFeed> {
       _addItem("$displayName's turn has started.");
     } else if (state is ShowPassGo) {
       final displayName = state.event.parameters["displayName"];
-      _addItem("$displayName has passed Go.");
+      _addItem("$displayName has passed Go and recieved \$200.");
     } else if (state is ShowRent) {
       final activePlayerName = state.event.parameters["activePlayerName"];
       final landlordName = state.event.parameters["landlordName"];
       final amount = state.event.parameters["amount"];
       _addItem(
-          "$activePlayerName has landed on $landlordName's property and pays $amount");
+          "$activePlayerName has landed on $landlordName's property and pays \$$amount");
     } else if (state is ShowPurchase) {
       final displayName = state.event.parameters["displayName"];
       final propertyName = state.event.parameters["propertyName"];
@@ -103,8 +112,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
       }
     } else if (state is ShowTax) {
       final displayName = state.event.parameters["displayName"];
-      final amount = state.event.parameters["amount"];
-      _addItem("$displayName pays $amount in taxes.");
+      final amount = (state.event.parameters["amount"] as int) * -1;
+      _addItem("$displayName pays \$$amount in taxes.");
     } else if (state is ShowBankruptcy) {
       final displayName = state.event.parameters["displayName"];
       _addItem("$displayName has gone bankrupt.");
@@ -112,15 +121,12 @@ class _ActivityFeedState extends State<ActivityFeed> {
       final winnerName = state.event.parameters["winnerName"];
       _addItem("The game has ended. $winnerName wins!");
     }
-    // Handle other states similarly if needed
   }
 
   void _addItem(String content) {
-    // if (_uniqueMessages.add(content)) {
     _activityList.insert(0, content);
     if (_activityList.length > 5) {
       _activityList.removeLast();
     }
-    // }
   }
 }
