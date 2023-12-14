@@ -67,6 +67,7 @@ class TileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
+      buildWhen: (state, context) => ((state is! GameStateUpdateSuccess) && (state is! GameActionSuccess)),
       builder: (context, state) {
         switch (state) {
           case LoadingState():
