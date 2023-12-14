@@ -145,6 +145,7 @@ class TextInputWidget extends StatefulWidget {
   final double width;
   final String labelText;
   final String buttonText;
+  final Color labelTextColor;
   final bool center;
   final Function(String) onPressed;
 
@@ -153,6 +154,7 @@ class TextInputWidget extends StatefulWidget {
       required this.labelText,
       required this.buttonText,
       required this.onPressed,
+      required this.labelTextColor,
       this.center = true});
 
   @override
@@ -178,8 +180,9 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           TextField(
             controller: _textController,
             decoration: InputDecoration(
-              labelText: widget.labelText,
-            ),
+                labelText: widget.labelText,
+                labelStyle: TextStyle(color: widget.labelTextColor)),
+             style: TextStyle(color: widget.labelTextColor),   
           ),
           const SizedBox(height: 20),
           widget.center
