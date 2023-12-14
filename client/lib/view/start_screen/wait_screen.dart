@@ -5,6 +5,7 @@ import 'package:client/view/game_screen/board.dart';
 import 'package:client/view/game_screen/game_screen.dart';
 import 'package:client/cubit/game_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+const textColor = Color(0xFFFFF0E6);
 
 class WaitScreen extends StatelessWidget {
   const WaitScreen({Key? key});
@@ -12,7 +13,7 @@ class WaitScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Color(int.parse('FF11202D', radix: 16)),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -21,6 +22,7 @@ class WaitScreen extends StatelessWidget {
             child: Text(
               'Welcome to Monopoly',
               style: TextStyle(
+                color: textColor,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
@@ -29,6 +31,7 @@ class WaitScreen extends StatelessWidget {
           const Text(
             'Created by Aidan Bonner, Jordan Bourdeau, Hayden Collins, and Alex Hall',
             style: TextStyle(
+              color: textColor,
               fontSize: 16,
               fontStyle: FontStyle.normal,
             ),
@@ -94,12 +97,13 @@ class PlayerDisplay extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        const Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Center(
             child: Text(
               'Connected Players',
               style: TextStyle(
+                color: textColor,
                 fontSize: 24, // Larger font size for the title
                 fontWeight: FontWeight.bold,
               ),
@@ -117,7 +121,7 @@ class PlayerDisplay extends StatelessWidget {
                           player.displayName ?? "N/A",
                           style: const TextStyle(
                             fontSize: 18,
-                            color: Colors.black87,
+                            color: textColor,
                             fontWeight: FontWeight.normal,
                             decoration: TextDecoration.none,
                           ),

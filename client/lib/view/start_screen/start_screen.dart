@@ -7,14 +7,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({Key? key});
+  static const textColor = Color(0xFFFFF0E6);
 
   @override
   Widget build(BuildContext context) {
     // Load this here so it is already loaded when a player registers.
     BlocProvider.of<GameCubit>(context).loadLocalConfig();
-
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Color(int.parse('FF11202D', radix: 16)),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -23,6 +23,7 @@ class StartScreen extends StatelessWidget {
             child: Text(
               'Welcome to Monopoly',
               style: TextStyle(
+                color: textColor,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
@@ -31,6 +32,7 @@ class StartScreen extends StatelessWidget {
           const Text(
             'Created by Aidan Bonner, Jordan Bourdeau, Hayden Collins, and Alex Hall',
             style: TextStyle(
+              color: textColor,
               fontSize: 16,
               fontStyle: FontStyle.normal,
             ),
@@ -44,6 +46,7 @@ class StartScreen extends StatelessWidget {
                     width: 200,
                     labelText: "Enter Name",
                     buttonText: "Join Game",
+                    labelTextColor: textColor,
                     onPressed: (value) {
                       BlocProvider.of<GameCubit>(context)
                           .registerPlayer(displayName: value);
