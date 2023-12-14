@@ -89,7 +89,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
       _addItem("$displayName's turn has started.");
     } else if (state is ShowPassGo) {
       final displayName = state.event.parameters["displayName"];
-      _addItem("$displayName has passed Go and recieved \$200.");
+      // _addItem("$displayName has passed Go and recieved \$200.");
     } else if (state is ShowRent) {
       final activePlayerName = state.event.parameters["activePlayerName"];
       final landlordName = state.event.parameters["landlordName"];
