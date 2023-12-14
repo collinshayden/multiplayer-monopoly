@@ -40,6 +40,7 @@ class _AdminPanelState extends State<AdminPanel> {
                       width: 200,
                       labelText: "Enter Name",
                       buttonText: "Join Game",
+                      labelTextColor: Colors.black,
                       center: false,
                       onPressed: (value) {
                         BlocProvider.of<GameCubit>(context)
